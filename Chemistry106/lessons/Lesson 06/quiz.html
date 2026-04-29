@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compounds Containing C–Z σ bonds</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f5f3ff;
+            /* خلفية بنفسجي فاتح جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-violet-800 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-link text-violet-600"></i>
+                Compounds Containing C–Z σ bonds
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (65 - 68): Halides, Alcohols,
+                Ethers, Amines & Thiols</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-violet-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-violet-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-violet-100 text-violet-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-violet-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-violet-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-violet-100">
+            <i class="fa-solid fa-flask text-7xl text-violet-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم المركبات التي تحتوي على روابط (C–Z).</p>
+
+            <div class="bg-violet-50 border border-violet-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-violet-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-violet-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-violet-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "Why is the carbon-halogen (C-X) bond in an alkyl halide polar?",
+                options: ["Halogens are less electronegative than carbon.", "Halogens are more electronegative than carbon.", "Carbon and halogens have the exact same electronegativity.", "The bond is fully ionic, not covalent."],
+                a: "Halogens are more electronegative than carbon.",
+                exp: "Electronegative atoms (like F, Cl, Br) pull the shared electrons in the sigma bond toward themselves, giving the carbon a partial positive charge (electrophilic center)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Consider the compound 2-chloro-2-methylpropane. How is this alkyl halide structurally classified?",
+                options: ["Primary (1°)", "Secondary (2°)", "Tertiary (3°)", "Quaternary (4°)"],
+                a: "Tertiary (3°)",
+                exp: "The carbon atom bonded to the chlorine is directly attached to three other carbon atoms (three methyl groups), making it a tertiary (3°) alkyl halide."
+            },
+            {
+                type: "Multiple Choice",
+                q: "How does the structural classification of amines differ from that of alcohols and alkyl halides?",
+                options: ["Amines are classified by the number of carbons attached directly to the Nitrogen atom.", "Amines are classified by the carbon attached to the -OH group.", "Amines cannot be tertiary.", "Amines are classified based on the halogen attached."],
+                a: "Amines are classified by the number of carbons attached directly to the Nitrogen atom.",
+                exp: "Unlike alcohols (classified by the carbon attached to OH), amines are classified as 1°, 2°, or 3° based on how many carbon groups are directly bonded to the Nitrogen atom itself."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the general structural formula of an ether, which contains two C-O sigma bonds?",
+                options: ["R-OH", "R-CO-R'", "R-O-R'", "R-COOH"],
+                a: "R-O-R'",
+                exp: "Ethers consist of a central oxygen atom connected to two alkyl or aryl groups via C-O single (sigma) bonds."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which functional group is the sulfur analog of an alcohol, containing a C-S sigma bond?",
+                options: ["Sulfide", "Thiol (Mercaptan)", "Sulfoxide", "Ether"],
+                a: "Thiol (Mercaptan)",
+                exp: "A thiol has the structure R-SH. It is structurally similar to an alcohol (R-OH) but has a sulfur atom in place of the oxygen atom."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "As the size of the halogen atom increases down the periodic table (from F to I), the C-X bond length increases and the bond strength decreases.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "Iodine is much larger than Fluorine. A larger atomic radius leads to longer, weaker bonds because the orbital overlap between Carbon and the Halogen is less effective."
+            },
+            {
+                type: "True / False",
+                q: "Compounds containing C-O or C-N sigma bonds, such as small alcohols and amines, cannot form hydrogen bonds with water.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Small alcohols and amines are typically very soluble in water because the highly electronegative O and N atoms can readily form strong hydrogen bonds with water molecules."
+            },
+            {
+                type: "True / False",
+                q: "In a C-Z sigma bond where Z is more electronegative than Carbon, the Carbon atom acts as an electrophile.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The electronegative Z atom pulls electron density away, leaving Carbon with a partial positive charge (δ+). This makes Carbon an electrophilic (electron-seeking) center susceptible to nucleophilic attack."
+            },
+            {
+                type: "True / False",
+                q: "An epoxide is a highly stable type of cyclic ether containing a five-membered ring.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. An epoxide is a specific type of cyclic ether that contains a THREE-membered ring (two carbons and one oxygen). The significant ring strain makes them highly reactive, not stable."
+            },
+            {
+                type: "True / False",
+                q: "The nitrogen atom in an amine possesses a lone pair of electrons, allowing the molecule to act as both a Lewis base and a nucleophile.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The non-bonding pair of electrons on the sp³ hybridized Nitrogen can be donated to an electrophile or a proton, which perfectly fits the definition of a Lewis base and a nucleophile."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The polar nature of the C-Z bond creates a molecular ________ moment if the individual bond polarities do not cancel out symmetrically.",
+                options: ["Electronegative", "Primary", "Sulfide", "Dipole", "Hydrogen"],
+                a: "Dipole",
+                exp: "A dipole moment is the measure of net molecular polarity. Since C-Z bonds are inherently polar, asymmetrical molecules containing them will have a permanent dipole."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "An alkyl halide is classified as ________ (1°) if the carbon bonded to the halogen is attached to only one other carbon atom.",
+                options: ["Electronegative", "Primary", "Sulfide", "Dipole", "Hydrogen"],
+                a: "Primary",
+                exp: "A 1° carbon is attached to exactly one other Carbon. For example, in CH₃-CH₂-Cl, the carbon bearing the chlorine is attached only to the methyl group."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In an amine, the nitrogen atom is more ________ than carbon, which naturally polarizes the C-N sigma bond.",
+                options: ["Electronegative", "Primary", "Sulfide", "Dipole", "Hydrogen"],
+                a: "Electronegative",
+                exp: "Nitrogen (group 15) is further to the right on the periodic table than carbon (group 14), meaning it attracts the shared bonding electrons more strongly."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Alcohols have significantly higher boiling points than alkanes of similar molecular weight due to their ability to form strong intermolecular ________ bonds.",
+                options: ["Electronegative", "Primary", "Sulfide", "Dipole", "Hydrogen"],
+                a: "Hydrogen",
+                exp: "The strong electrostatic attraction between the partially positive H of one alcohol and the lone pair on the O of another alcohol requires significant heat energy to break."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "A ________ is the sulfur analog of an ether, characterized by a C-S-C structural connectivity.",
+                options: ["Electronegative", "Primary", "Sulfide", "Dipole", "Hydrogen"],
+                a: "Sulfide",
+                exp: "Just as an ether is R-O-R, a sulfide (also commonly called a thioether) has the structure R-S-R."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the description to the correct functional group: \nContains a hydroxyl (-OH) group directly bonded to an sp³ hybridized carbon.",
+                options: ["Alkyl Halide", "Alcohol", "Ether", "Amine", "Thiol"],
+                a: "Alcohol",
+                exp: "The C-O sigma bond links the alkyl chain directly to the hydroxyl group, forming an alcohol (e.g., Ethanol)."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct functional group: \nContains a halogen atom (F, Cl, Br, or I) bonded to an sp³ hybridized carbon.",
+                options: ["Alkyl Halide", "Alcohol", "Ether", "Amine", "Thiol"],
+                a: "Alkyl Halide",
+                exp: "Alkyl halides (or haloalkanes) feature a highly polarized C-X sigma bond, making them excellent substrates for substitution and elimination reactions."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct functional group: \nContains an oxygen atom bonded to two distinct alkyl or aryl carbon groups.",
+                options: ["Alkyl Halide", "Alcohol", "Ether", "Amine", "Thiol"],
+                a: "Ether",
+                exp: "The general formula is R-O-R'. Diethyl ether is a historically famous example used as an early surgical anesthetic and common laboratory solvent."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct functional group: \nContains a nitrogen atom bonded to one, two, or three alkyl/aryl groups.",
+                options: ["Alkyl Halide", "Alcohol", "Ether", "Amine", "Thiol"],
+                a: "Amine",
+                exp: "Amines are derivatives of ammonia featuring C-N sigma bonds. They are characterized by their basicity and often have strong, fishy odors."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct functional group: \nContains a sulfhydryl (-SH) group bonded to a carbon atom.",
+                options: ["Alkyl Halide", "Alcohol", "Ether", "Amine", "Thiol"],
+                a: "Thiol",
+                exp: "Thiols (R-SH) contain a C-S sigma bond and are infamous for their extremely strong, often foul odors (like skunk spray or rotten eggs)."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Electronegative, Primary, Sulfide, Dipole, Hydrogen";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Alkyl Halide, Alcohol, Ether, Amine, Thiol";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-violet-400 hover:bg-violet-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-violet-400', 'hover:bg-violet-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-violet-400', 'hover:bg-violet-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء استثنائي! فهمك للروابط القطبية والمجموعات الوظيفية عميق جداً. 🎯";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل جيد جداً! مع مراجعة بسيطة لتصنيف الأمينات والكحولات ستكون جاهزاً تماماً. 👍";
+            } else {
+                msgEl.textContent = "تحتاج لمراجعة خواص الكهروسلبية (Electronegativity) وتأثيرها. لا تقلق، التدريب يصنع الفارق! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

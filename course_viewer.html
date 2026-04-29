@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة المقررات | جاري التحميل...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="courses.js"></script>
+    <script src="lessons.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* تأثيرات التبويبات */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .nav-btn {
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+            border-right-width: 4px;
+            border-right-color: #2563eb;
+        }
+
+        .nav-btn:not(.active) {
+            border-right-width: 4px;
+            border-right-color: transparent;
+        }
+
+        .nav-btn:not(.active):hover {
+            background-color: #f8fafc;
+            color: #475569;
+        }
+
+        /* إشعار نسخ الرابط */
+        #copy-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 50;
+            font-weight: bold;
+        }
+        #copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row">
+
+    <!-- إشعار النسخ -->
+    <div id="copy-toast">تم نسخ رابط الحصة بنجاح!</div>
+
+    <!-- القائمة الجانبية -->
+    <aside class="w-full md:w-72 bg-white shadow-lg flex flex-col z-20 flex-shrink-0">
+        <!-- ترويسة القائمة -->
+        <div class="p-6 border-b border-slate-100 flex items-center gap-4">
+            <a href="index.html" title="العودة للبوابة الرئيسية" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
+            <div id="course-icon" class="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-md flex-shrink-0">
+                📚
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <h1 id="course-title" class="text-lg font-extrabold text-slate-800 truncate">جاري التحميل...</h1>
+                <p id="lesson-title" class="text-sm text-blue-600 font-bold mt-0.5 truncate">يرجى الانتظار</p>
+            </div>
+        </div>
+
+        <!-- أزرار التنقل بين التبويبات -->
+        <nav class="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto">
+
+            <button id="btn-pdf" onclick="switchTab('pdf')"
+                class="nav-btn active flex items-center gap-3 px-4 py-3.5 rounded-lg text-right whitespace-nowrap w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                </svg>
+                <span class="text-base">مذكرة الشرح (PDF)</span>
+            </button>
+
+            <button id="btn-info" onclick="switchTab('info')"
+                class="nav-btn flex items-center gap-3 px-4 py-3.5 rounded-lg text-right whitespace-nowrap w-full text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="21" x2="9" y2="9" />
+                </svg>
+                <span class="text-base">الإنفوجرافيك التلخيصي</span>
+            </button>
+
+            <button id="btn-map" onclick="switchTab('map')"
+                class="nav-btn flex items-center gap-3 px-4 py-3.5 rounded-lg text-right whitespace-nowrap w-full text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+                <span class="text-base">الخريطة الذهنية</span>
+            </button>
+
+            <button id="btn-quiz" onclick="switchTab('quiz')"
+                class="nav-btn flex items-center gap-3 px-4 py-3.5 rounded-lg text-right whitespace-nowrap w-full text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <path d="M9 15L11 17L15 13" />
+                </svg>
+                <span class="text-base">الاختبار التفاعلي</span>
+            </button>
+
+        </nav>
+
+        <!-- أزرار التنقل بين الدروس (المجلدات) -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+            <button id="btn-prev" onclick="changeLesson(-1)"
+                class="p-2 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                title="الدرس السابق">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </button>
+            <div class="text-center flex flex-col">
+                <span class="text-xs text-slate-500 font-bold">الحصة الحالية</span>
+                <span id="lesson-counter" class="text-sm font-bold text-slate-800 mt-0.5">1 / 1</span>
+            </div>
+            <button id="btn-next" onclick="changeLesson(1)"
+                class="p-2 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                title="الدرس التالي">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- منطقة المحتوى الرئيسي -->
+    <main class="flex-1 overflow-hidden relative bg-slate-100/50">
+
+        <!-- شريط علوي للتحكم -->
+        <div class="absolute top-4 left-4 z-20 flex gap-2">
+            <button onclick="copyLessonLink()" title="نسخ رابط هذه الحصة"
+                class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm text-slate-600 font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                نسخ رابط الحصة
+            </button>
+            <button onclick="location.reload()" title="تحديث المنصة"
+                class="p-2 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition shadow-sm text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- 1. تبويب المذكرة (PDF) -->
+        <div id="tab-pdf" class="tab-content active w-full h-full flex-col">
+            <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-10 flex-shrink-0">
+                <h2 class="font-bold text-lg text-slate-800">مذكرة الشرح الخاصة بالدرس</h2>
+                <a id="pdf-link" href="#" target="_blank"
+                    class="text-sm bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 flex items-center gap-2 transition-colors shadow-sm font-medium mr-auto ml-24">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    فتح في نافذة مستقلة
+                </a>
+            </div>
+            <div class="flex-1 w-full h-full p-2 md:p-4 relative">
+                <div id="loading-pdf" class="absolute inset-0 flex items-center justify-center bg-slate-100 z-0">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+                <iframe id="pdf-viewer"
+                    class="w-full h-full rounded-xl shadow-sm border border-slate-200 bg-white relative z-10"
+                    allow="autoplay" onload="document.getElementById('loading-pdf').style.display='none'"></iframe>
+            </div>
+        </div>
+
+        <!-- 2. تبويب الإنفوجرافيك -->
+        <div id="tab-info" class="tab-content w-full h-full flex-col">
+            <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-10 flex-shrink-0">
+                <h2 class="font-bold text-lg text-slate-800">الإنفوجرافيك الشامل للمقرر</h2>
+                <a id="info-link" href="#" target="_blank"
+                    class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors shadow-sm font-medium mr-auto ml-24">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    فتح / تحميل الصورة
+                </a>
+            </div>
+            <div class="flex-1 overflow-auto p-4 md:p-8 flex items-start justify-center">
+                <img id="info-img" alt="إنفوجرافيك الدرس"
+                    class="max-w-full h-auto rounded-xl shadow-lg border border-slate-200">
+            </div>
+        </div>
+
+        <!-- 3. تبويب الخريطة الذهنية -->
+        <div id="tab-map" class="tab-content w-full h-full flex-col">
+            <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-10 flex-shrink-0">
+                <h2 class="font-bold text-lg text-slate-800">الخريطة الذهنية للمفاهيم</h2>
+                <a id="map-link" href="#" target="_blank"
+                    class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors shadow-sm font-medium mr-auto ml-24">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    فتح / تحميل الخريطة
+                </a>
+            </div>
+            <div class="flex-1 overflow-auto p-4 md:p-8 flex items-start justify-center">
+                <img id="map-img" alt="خريطة ذهنية للدرس"
+                    class="max-w-full h-auto rounded-xl shadow-lg border border-slate-200">
+            </div>
+        </div>
+
+        <!-- 4. تبويب الاختبار التفاعلي -->
+        <div id="tab-quiz" class="tab-content w-full h-full flex-col">
+            <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-10 flex-shrink-0">
+                <h2 class="font-bold text-lg text-slate-800">تطبيق تفاعلي: اختبر معلوماتك</h2>
+                <a id="quiz-link" href="#" target="_blank"
+                    class="text-sm bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 flex items-center gap-2 transition-colors shadow-sm font-medium mr-auto ml-24">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h6v6" />
+                        <path d="M10 14 21 3" />
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    </svg>
+                    توسيع الشاشة
+                </a>
+            </div>
+            <div class="flex-1 w-full h-full p-0 relative">
+                <iframe id="quiz-frame" class="w-full h-full border-0 bg-white relative z-10"></iframe>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // دوال تبديل التبويبات ونسخ الرابط يتم إدارتها جزئياً هنا، والباقي في lessons.js
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('active');
+                el.classList.add('text-slate-600');
+            });
+
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.remove('text-slate-600');
+            }
+        }
+
+        function copyLessonLink() {
+            // نأخذ الرابط الحالي ونقوم بتحديث أو إضافة معامل lesson
+            const url = new URL(window.location.href);
+            url.searchParams.set('lesson', window.currentLessonIndex + 1); // الرابط يبدأ من 1 للمستخدم
+            
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert("لم نتمكن من نسخ الرابط. متصفحك قد لا يدعم هذه الخاصية.");
+            });
+        }
+    </script>
+</body>
+
+</html>

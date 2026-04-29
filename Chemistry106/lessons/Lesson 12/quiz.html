@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aromatic Compounds</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f1f5f9;
+            /* خلفية رمادية مزرقة هادئة */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-indigo-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-hexagon-nodes text-indigo-700"></i>
+                Aromatic Compounds
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (127 - 134): Structure, Nomenclature
+                & EAS Reactions</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-indigo-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-indigo-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-indigo-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-indigo-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-indigo-100">
+            <i class="fa-solid fa-award text-7xl text-indigo-700 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم المركبات الأروماتية بنجاح.</p>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-indigo-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-indigo-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-indigo-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "According to Hückel's Rule, which of the following is NOT a strict requirement for a compound to be considered aromatic?",
+                options: ["It must be cyclic.", "It must be planar.", "It must contain exactly 4n pi electrons.", "It must have a continuous system of overlapping p-orbitals."],
+                a: "It must contain exactly 4n pi electrons.",
+                exp: "Hückel's Rule specifically states that an aromatic compound must contain (4n + 2) pi electrons (e.g., 2, 6, 10, 14). A compound with exactly 4n pi electrons is considered antiaromatic."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the common, widely accepted IUPAC name for a benzene ring bearing a single methyl group (-CH₃)?",
+                options: ["Phenol", "Aniline", "Toluene", "Styrene"],
+                a: "Toluene",
+                exp: "Methylbenzene is universally known as Toluene. Phenol has an -OH, Aniline has an -NH₂, and Styrene has a vinyl (-CH=CH₂) group."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which specific combination of reagents is used to perform the nitration of benzene (adding an -NO₂ group)?",
+                options: ["HNO₃ only", "HNO₃ and H₂SO₄", "NO₂ and FeBr₃", "NH₃ and H₂O₂"],
+                a: "HNO₃ and H₂SO₄",
+                exp: "A mixture of concentrated nitric acid (HNO₃) and concentrated sulfuric acid (H₂SO₄) is used. Sulfuric acid acts as a catalyst to generate the highly reactive nitronium ion (NO₂⁺) electrophile."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In Electrophilic Aromatic Substitution (EAS), which of the following substituents acts as a strongly activating ortho/para director?",
+                options: ["-NO₂ (Nitro)", "-COOH (Carboxyl)", "-OH (Hydroxyl)", "-Cl (Chloro)"],
+                a: "-OH (Hydroxyl)",
+                exp: "The -OH group has lone pairs of electrons on the oxygen that it can donate into the benzene ring via resonance. This strongly activates the ring and directs incoming electrophiles to the ortho and para positions."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What type of catalyst is absolutely essential for a Friedel-Crafts alkylation reaction to occur between benzene and an alkyl halide (R-Cl)?",
+                options: ["A strong Brønsted-Lowry base", "A Lewis acid catalyst (like AlCl₃)", "A transition metal like Pt or Pd", "Ultraviolet light (hν)"],
+                a: "A Lewis acid catalyst (like AlCl₃)",
+                exp: "The Lewis acid catalyst (AlCl₃) is required to interact with the alkyl chloride to generate the strongly electrophilic carbocation (R⁺) that can then attack the stable benzene ring."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Benzene consists of alternating distinct single and double carbon-carbon bonds that rapidly flip back and forth in equilibrium.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Benzene is a resonance hybrid. It does not flip between structures; rather, all six C-C bonds are perfectly identical in length and strength (intermediate between a single and double bond)."
+            },
+            {
+                type: "True / False",
+                q: "The prefix 'meta' (m-) indicates that two substituents on a benzene ring are located at positions 1 and 3 relative to each other.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. In disubstituted benzenes, 1,2- is 'ortho' (o-), 1,3- is 'meta' (m-), and 1,4- is 'para' (p-)."
+            },
+            {
+                type: "True / False",
+                q: "Deactivating groups withdraw electron density from the benzene ring, causing it to react much slower in EAS reactions compared to unsubstituted benzene.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Groups like -NO₂ or -CF₃ pull electrons away, making the ring less nucleophilic, which raises the activation energy and slows down the attack on an electrophile."
+            },
+            {
+                type: "True / False",
+                q: "Halogens (like -Cl and -Br) are unique substituents because they are deactivating groups, yet they direct incoming electrophiles to the ortho and para positions.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Halogens deactivate the ring via a strong electron-withdrawing inductive effect, but their lone pairs provide resonance stabilization to the ortho/para intermediate states, directing substitution there."
+            },
+            {
+                type: "True / False",
+                q: "In the historical Kekulé representation of benzene, the molecule is depicted as a highly strained, non-planar cyclic hexatriene.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Benzene is an exceptionally flat (planar) molecule. All carbon atoms are sp² hybridized, which allows the p-orbitals to align perfectly parallel for maximum delocalization."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The extraordinary thermodynamic stability of benzene compared to the hypothetical '1,3,5-cyclohexatriene' is known as ________ energy.",
+                options: ["Resonance", "Acylation", "Ortho", "Aniline", "Heterocyclic"],
+                a: "Resonance",
+                exp: "Resonance energy (or delocalization energy) is the energy difference between the real, stable benzene molecule and the calculated value for a molecule with localized alternating double bonds."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Aminobenzene, a critical compound used in the dye industry, is almost exclusively referred to by its common name, ________.",
+                options: ["Resonance", "Acylation", "Ortho", "Aniline", "Heterocyclic"],
+                a: "Aniline",
+                exp: "Aniline (C₆H₅NH₂) is the simplest aromatic amine and acts as an ortho/para directing, strongly activating group on the ring."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When naming a di-substituted benzene, if the two substituents are located on adjacent carbon atoms (a 1,2-relationship), they are in the ________ position.",
+                options: ["Resonance", "Acylation", "Ortho", "Aniline", "Heterocyclic"],
+                a: "Ortho",
+                exp: "Ortho refers to the 1,2- position. For example, 1,2-dimethylbenzene is commonly called ortho-xylene (or o-xylene)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Friedel-Crafts ________ is a reaction that involves adding an acyl group (R-C=O) to a benzene ring using an acid chloride and AlCl₃ to form a ketone.",
+                options: ["Resonance", "Acylation", "Ortho", "Aniline", "Heterocyclic"],
+                a: "Acylation",
+                exp: "Unlike alkylation (which adds alkyl chains like -CH₃), acylation adds the R-C=O group, producing an aromatic ketone. This avoids polyalkylation issues."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Pyridine and pyrrole are aromatic, but their rings contain a nitrogen atom instead of just carbons. They are classified as ________ aromatic compounds.",
+                options: ["Resonance", "Acylation", "Ortho", "Aniline", "Heterocyclic"],
+                a: "Heterocyclic",
+                exp: "Heterocyclic compounds have a cyclic structure where at least one atom in the ring is a heteroatom (an element other than carbon, such as N, O, or S)."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the description/formula to the correct term: \nA benzene ring bonded directly to a hydroxyl (-OH) group.",
+                options: ["Phenol", "-NO₂ (Nitro group)", "Styrene", "Sulfonation", "4n + 2"],
+                a: "Phenol",
+                exp: "Phenol (C₆H₅OH) is a mildly acidic aromatic compound, widely used as an antiseptic and in plastic manufacturing."
+            },
+            {
+                type: "Matching",
+                q: "Match the description/formula to the correct term: \nA substituent that acts as a strong meta-directing and deactivating group.",
+                options: ["Phenol", "-NO₂ (Nitro group)", "Styrene", "Sulfonation", "4n + 2"],
+                a: "-NO₂ (Nitro group)",
+                exp: "The nitro group pulls significant electron density out of the ring, severely slowing down EAS reactions and directing electrophiles to the meta position."
+            },
+            {
+                type: "Matching",
+                q: "Match the description/formula to the correct term: \nA benzene ring bonded to a vinyl (-CH=CH₂) group.",
+                options: ["Phenol", "-NO₂ (Nitro group)", "Styrene", "Sulfonation", "4n + 2"],
+                a: "Styrene",
+                exp: "Styrene (vinylbenzene) is an important industrial monomer used to produce the polymer polystyrene (Styrofoam)."
+            },
+            {
+                type: "Matching",
+                q: "Match the description/formula to the correct term: \nThe electrophilic aromatic substitution reaction using fuming sulfuric acid (SO₃/H₂SO₄).",
+                options: ["Phenol", "-NO₂ (Nitro group)", "Styrene", "Sulfonation", "4n + 2"],
+                a: "Sulfonation",
+                exp: "Sulfonation adds a sulfonic acid group (-SO₃H) to the ring. Uniquely among EAS reactions, sulfonation is highly reversible."
+            },
+            {
+                type: "Matching",
+                q: "Match the description/formula to the correct term: \nThe mathematical formula defining the specific number of pi electrons required for a ring to be aromatic.",
+                options: ["Phenol", "-NO₂ (Nitro group)", "Styrene", "Sulfonation", "4n + 2"],
+                a: "4n + 2",
+                exp: "Hückel's Rule states that if n is an integer (0, 1, 2, ...), then 2, 6, 10, or 14 pi electrons will yield an aromatic system."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-purple-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Resonance, Acylation, Ortho, Aniline, Heterocyclic";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-purple-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Phenol, -NO₂ (Nitro group), Styrene, Sulfonation, 4n + 2";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-indigo-500 hover:bg-purple-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-indigo-500', 'hover:bg-purple-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-indigo-500', 'hover:bg-purple-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى احترافي عالٍ! استيعابك لقاعدة هوكل وميكانيكيات (EAS) ممتاز جداً. 🏆";
+            } else if (score >= 13) {
+                msgEl.textContent = "أداء قوي! مع مراجعة بسيطة للمجموعات الموجهة (Ortho/Meta/Para) ستصل للعلامة الكاملة. ✨";
+            } else {
+                msgEl.textContent = "تحتاج لتركيز أكبر في تفاعلات البنزين وتسمياته. اقرأ التوضيحات جيداً وأعد الاختبار! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

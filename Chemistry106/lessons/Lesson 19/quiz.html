@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Carbonyl Group</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #eff6ff;
+            /* خلفية زرقاء فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #1d4ed8 0%, #06b6d4 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-blue-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-atom text-blue-600"></i>
+                The Carbonyl Group
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (184 - 198): Nucleophilic Additions,
+                Grignard & Oxidation</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-blue-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-blue-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-cyan-50 border-l-4 border-cyan-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-blue-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-cyan-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-blue-200">
+            <i class="fa-solid fa-microscope text-7xl text-blue-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تفاعلات مجموعة الكربونيل بنجاح.</p>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-blue-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-blue-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-blue-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the most characteristic and common type of chemical reaction undergone by aldehydes and ketones?",
+                options: ["Electrophilic substitution", "Nucleophilic addition", "Free-radical substitution", "Electrophilic addition"],
+                a: "Nucleophilic addition",
+                exp: "Because the carbonyl carbon is partially positive (electrophilic) and the pi bond is easily broken, nucleophiles attack the carbon, resulting in a nucleophilic addition reaction."
+            },
+            {
+                type: "Multiple Choice",
+                q: "The reaction of a Grignard reagent (RMgX) with formaldehyde (HCHO) followed by acidic hydrolysis yields which type of product?",
+                options: ["A primary (1°) alcohol", "A secondary (2°) alcohol", "A tertiary (3°) alcohol", "A carboxylic acid"],
+                a: "A primary (1°) alcohol",
+                exp: "Formaldehyde has two hydrogen atoms attached to the carbonyl carbon. Adding one R group from the Grignard reagent produces a 1° alcohol. Other aldehydes yield 2° alcohols, and ketones yield 3° alcohols."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which reagent is used in Tollens' test to distinguish an aldehyde from a ketone by forming a 'silver mirror'?",
+                options: ["Potassium permanganate (KMnO₄)", "Ammoniacal silver nitrate [Ag(NH₃)₂⁺]", "Sodium borohydride (NaBH₄)", "Chromic acid (H₂CrO₄)"],
+                a: "Ammoniacal silver nitrate [Ag(NH₃)₂⁺]",
+                exp: "Tollens' reagent is a mild oxidizing agent. It oxidizes aldehydes to carboxylic acids while being reduced to metallic silver (the mirror). Ketones cannot be oxidized by it."
+            },
+            {
+                type: "Multiple Choice",
+                q: "When an aldehyde reacts with ONE equivalent (molecule) of an alcohol in the presence of an acid catalyst, what is the product?",
+                options: ["An acetal", "An ester", "A hemiacetal", "An ether"],
+                a: "A hemiacetal",
+                exp: "A hemiacetal is a compound with both a hydroxyl group (-OH) and an ether group (-OR) attached to the same carbon. Adding a second molecule of alcohol would convert it to an acetal."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Reduction of cyclopentanone with sodium borohydride (NaBH₄) followed by an acid workup produces:",
+                options: ["Cyclopentane", "Cyclopentanol", "Cyclopentene", "1,2-cyclopentanediol"],
+                a: "Cyclopentanol",
+                exp: "Sodium borohydride (NaBH₄) is a reducing agent that delivers a hydride ion (H⁻) to the carbonyl carbon of the ketone, converting it into a secondary alcohol (cyclopentanol)."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Ketones are generally more reactive toward nucleophilic addition reactions than aldehydes.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Aldehydes are MORE reactive. Ketones are sterically hindered by two bulky alkyl groups, and these alkyl groups also stabilize the carbonyl carbon's partial positive charge (making it less electrophilic)."
+            },
+            {
+                type: "True / False",
+                q: "In a Grignard reagent (R-Mg-X), the carbon atom bonded to the magnesium is highly nucleophilic because the C-Mg bond is strongly polarized toward carbon.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Magnesium is much less electronegative than carbon. Therefore, the carbon atom holds most of the electron density, making it act almost like a carbanion (a powerful nucleophile)."
+            },
+            {
+                type: "True / False",
+                q: "An acetal is characterized by having two alkoxy (-OR) groups bonded to the exact same carbon atom.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Acetals are stable compounds formed when an aldehyde or ketone completely reacts with two equivalents of an alcohol under acidic conditions."
+            },
+            {
+                type: "True / False",
+                q: "The reduction of an aldehyde using LiAlH₄ or NaBH₄ produces a secondary (2°) alcohol.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The reduction of an aldehyde (R-CHO) always produces a PRIMARY (1°) alcohol (R-CH₂-OH), because the carbonyl carbon already has one hydrogen attached."
+            },
+            {
+                type: "True / False",
+                q: "The addition of hydrogen cyanide (HCN) to a ketone forms a cyanohydrin, which contains both a hydroxyl group (-OH) and a cyano group (-C≡N) on the same carbon.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The nucleophilic cyanide ion (CN⁻) attacks the carbonyl carbon, and the oxygen gets protonated, forming a cyanohydrin."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The reaction of a Grignard reagent with any ketone (e.g., acetone) followed by hydrolysis always yields a ________ alcohol.",
+                options: ["Nucleophilic", "Primary", "Tertiary", "Hemiacetal", "Tollens"],
+                a: "Tertiary",
+                exp: "A ketone already has two alkyl groups attached to the carbonyl carbon. The Grignard reagent adds a third alkyl group, resulting in a 3° alcohol."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "________ reagent is a mild oxidizing agent consisting of an ammoniacal silver nitrate solution, used to chemically distinguish aldehydes from ketones.",
+                options: ["Nucleophilic", "Primary", "Tertiary", "Hemiacetal", "Tollens"],
+                a: "Tollens",
+                exp: "The Tollens' test exploits the fact that aldehydes are easily oxidized while ketones are not, leaving a beautiful silver mirror on the glass."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Because oxygen is more electronegative than carbon, the carbonyl carbon is partially positive, making it highly susceptible to ________ attack.",
+                options: ["Nucleophilic", "Primary", "Tertiary", "Hemiacetal", "Tollens"],
+                a: "Nucleophilic",
+                exp: "A nucleophile ('nucleus loving' / electron-rich species) naturally attacks the electron-deficient carbonyl carbon."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The addition of a Grignard reagent specifically to formaldehyde (H-CHO) produces a ________ alcohol.",
+                options: ["Nucleophilic", "Primary", "Tertiary", "Hemiacetal", "Tollens"],
+                a: "Primary",
+                exp: "Formaldehyde has no alkyl groups on its carbonyl carbon. Adding one R group from the Grignard reagent forms an R-CH₂-OH (primary alcohol)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "An intermediate compound formed by adding just one molecule of alcohol to an aldehyde is called a ________.",
+                options: ["Nucleophilic", "Primary", "Tertiary", "Hemiacetal", "Tollens"],
+                a: "Hemiacetal",
+                exp: "The prefix 'Hemi-' means half. It represents the halfway point to forming a full acetal."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the reaction or reactant to the correct product/term: \nReaction of an aldehyde with Tollens' reagent.",
+                options: ["Silver mirror", "Secondary alcohol", "Grignard Reagent", "Acetal", "Cyanohydrin"],
+                a: "Silver mirror",
+                exp: "The reduction of the $Ag^+$ ions in Tollens' reagent produces solid, elemental silver that coats the test tube."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction or reactant to the correct product/term: \nProduct of a ketone reacting with NaBH₄ and then acid.",
+                options: ["Silver mirror", "Secondary alcohol", "Grignard Reagent", "Acetal", "Cyanohydrin"],
+                a: "Secondary alcohol",
+                exp: "NaBH₄ reduces the C=O double bond of a ketone to a C-OH single bond, yielding a 2° alcohol."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction or reactant to the correct product/term: \nA highly nucleophilic compound with the general formula RMgX.",
+                options: ["Silver mirror", "Secondary alcohol", "Grignard Reagent", "Acetal", "Cyanohydrin"],
+                a: "Grignard Reagent",
+                exp: "Victor Grignard discovered these organomagnesium halides, which are invaluable for forming new Carbon-Carbon bonds."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction or reactant to the correct product/term: \nA stable product formed by reacting an aldehyde with TWO equivalents of alcohol and acid.",
+                options: ["Silver mirror", "Secondary alcohol", "Grignard Reagent", "Acetal", "Cyanohydrin"],
+                a: "Acetal",
+                exp: "Acetals (containing two -OR groups on one carbon) are often used as 'protecting groups' for aldehydes and ketones during complex syntheses."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction or reactant to the correct product/term: \nProduct of the addition of Hydrogen Cyanide (HCN) to a carbonyl group.",
+                options: ["Silver mirror", "Secondary alcohol", "Grignard Reagent", "Acetal", "Cyanohydrin"],
+                a: "Cyanohydrin",
+                exp: "The resulting cyanohydrin has both a hydroxyl (-OH) and a nitrile (-C≡N) group, extending the carbon chain by one atom."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Nucleophilic, Primary, Tertiary, Hemiacetal, Tollens";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Silver mirror, Secondary alcohol, Grignard Reagent, Acetal, Cyanohydrin";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-blue-600 hover:bg-cyan-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-600', 'hover:bg-cyan-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-600', 'hover:bg-cyan-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى مذهل! 🌟 فهمك لميكانيكيات الإضافة النيوكليوفيلية وتفاعلات جرينيارد مثالي جداً.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل ممتاز! 👏 راجع الفروقات الدقيقة بين الأكسدة والاختزال للوصول للعلامة الكاملة.";
+            } else {
+                msgEl.textContent = "تفاعلات الكربونيل تتطلب تركيزاً. راجع تكوين الأسيتال وتفاعلات جرينيارد وأعد المحاولة! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

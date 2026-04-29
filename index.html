@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة المقررات الدراسية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="courses.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-blue-800 mb-4">منصة المقررات الدراسية</h1>
+        <p class="text-slate-600 text-lg">اختر المقرر الذي ترغب في تصفحه</p>
+    </div>
+
+    <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+        <!-- سيتم إضافة المقررات هنا عبر الجافاسكربت -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById('courses-container');
+
+            if (typeof COURSES_CONFIG === 'undefined') {
+                container.innerHTML = "<p class='text-red-600 text-center col-span-2'>خطأ: ملف courses.js غير موجود أو به خطأ.</p>";
+                return;
+            }
+
+            Object.values(COURSES_CONFIG).forEach(course => {
+                const card = document.createElement('a');
+                card.href = `course_viewer.html?courseId=${course.id}`;
+                card.className = "bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-8 border border-slate-100 flex items-center gap-6 group hover:-translate-y-1";
+
+                card.innerHTML = `
+                    <div class="w-16 h-16 bg-gradient-to-br ${course.color} rounded-2xl flex items-center justify-center text-3xl shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
+                        ${course.icon}
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${course.title}</h2>
+                        <p class="text-slate-500 mt-2 text-sm">تصفح المذكرات، الخرائط الذهنية، والاختبارات التفاعلية</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        });
+    </script>
+</body>
+
+</html>

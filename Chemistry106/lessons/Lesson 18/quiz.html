@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nomenclature of Aldehydes and ketones</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #eff6ff;
+            /* خلفية زرقاء فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #0369a1 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-blue-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-tags text-blue-600"></i>
+                Nomenclature of Aldehydes and Ketones
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (177 - 184): IUPAC Rules & Common
+                Names</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-blue-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-blue-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-sky-50 border-l-4 border-sky-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-blue-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-blue-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-blue-200">
+            <i class="fa-solid fa-graduation-cap text-7xl text-blue-700 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تسمية الألدهيدات والكيتونات بنجاح.</p>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-blue-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-blue-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-blue-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the correct IUPAC suffix used to identify an aliphatic aldehyde?",
+                options: ["-ol", "-one", "-al", "-oic acid"],
+                a: "-al",
+                exp: "In IUPAC nomenclature, the 'e' ending of the parent alkane is replaced by '-al' for aldehydes (e.g., methane becomes methanal)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In the IUPAC name '3-methyl-2-butanone', what does the number '2' specifically indicate?",
+                options: ["The position of the methyl group.", "The position of the carbonyl group (C=O).", "The number of double bonds in the molecule.", "The length of the parent carbon chain."],
+                a: "The position of the carbonyl group (C=O).",
+                exp: "The parent chain is numbered from the end that gives the carbonyl carbon the lowest possible number. Here, the ketone (C=O) is on carbon 2."
+            },
+            {
+                type: "Multiple Choice",
+                q: "If an organic compound contains BOTH a ketone group (C=O) and a hydroxyl group (-OH), how is the -OH group named?",
+                options: ["As the primary suffix '-ol'.", "As an '-oxy' prefix.", "As a 'hydroxy-' prefix.", "The -OH group has priority over the ketone."],
+                a: "As a 'hydroxy-' prefix.",
+                exp: "Aldehydes and ketones have a higher nomenclature priority than alcohols. Therefore, the ketone takes the suffix '-one', and the alcohol is treated as a substituent called 'hydroxy'."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the common name for the simplest possible aldehyde (H-CHO)?",
+                options: ["Acetaldehyde", "Formaldehyde", "Acetone", "Formic acid"],
+                a: "Formaldehyde",
+                exp: "Its IUPAC name is methanal. However, the common name formaldehyde (derived from the corresponding carboxylic acid, formic acid) is almost exclusively used."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the accepted IUPAC name for a benzene ring with a directly attached aldehyde group (-CHO)?",
+                options: ["Phenol", "Acetophenone", "Benzaldehyde", "Benzyl alcohol"],
+                a: "Benzaldehyde",
+                exp: "Benzaldehyde is the simplest aromatic aldehyde. IUPAC fully accepts this common-style name as the standard systematic name."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "When numbering the carbon chain of an acyclic aldehyde, the carbonyl carbon is always designated as Carbon-1.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because the aldehyde group (-CHO) is terminal (located at the absolute end of the chain), it naturally dictates the starting point for numbering."
+            },
+            {
+                type: "True / False",
+                q: "A ketone can easily have its carbonyl group located at the very end (terminal position) of a carbon chain.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. By definition, a ketone's carbonyl carbon must be bonded to two other carbon atoms (R-CO-R'). If it is at the end, it is bonded to a hydrogen, making it an aldehyde."
+            },
+            {
+                type: "True / False",
+                q: "The common name for 2-propanone (CH₃-CO-CH₃) is acetone.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Acetone is the simplest possible ketone and its common name is universally used in both laboratories and industry (e.g., nail polish remover)."
+            },
+            {
+                type: "True / False",
+                q: "Cyclohexanone is classified as an aromatic ketone.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Cyclohexanone is a cyclic aliphatic (alicyclic) ketone. It does not possess the alternating double bonds (delocalized pi system) required to be aromatic."
+            },
+            {
+                type: "True / False",
+                q: "When an aldehyde group (-CHO) is directly attached to a cycloalkane ring, the suffix '-carbaldehyde' is added to the ring name.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because the carbon of the -CHO group is not part of the ring structure, the suffix '-carbaldehyde' is used (e.g., cyclopentanecarbaldehyde)."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The simplest ketone, consisting of three carbon atoms, is commonly known in laboratories as ________.",
+                options: ["Acetone", "One", "Hydroxy", "Acetaldehyde", "Carbaldehyde"],
+                a: "Acetone",
+                exp: "Acetone (propan-2-one) is widely used as a volatile, water-miscible solvent."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The IUPAC suffix used specifically to denote a ketone functional group is -________.",
+                options: ["Acetone", "One", "Hydroxy", "Acetaldehyde", "Carbaldehyde"],
+                a: "One",
+                exp: "The 'e' of the alkane name is dropped and '-one' is added (e.g., pentane becomes pentanone)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When an -OH group is present in a molecule that also contains an aldehyde or ketone, it loses priority and is named as a ________ substituent.",
+                options: ["Acetone", "One", "Hydroxy", "Acetaldehyde", "Carbaldehyde"],
+                a: "Hydroxy",
+                exp: "Carbonyl groups generally take precedence over hydroxyl groups in IUPAC naming rules."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The common name for ethanal (CH₃-CHO), a two-carbon aldehyde, is ________.",
+                options: ["Acetone", "One", "Hydroxy", "Acetaldehyde", "Carbaldehyde"],
+                a: "Acetaldehyde",
+                exp: "The prefix 'acet-' refers to a two-carbon chain (similar to acetic acid)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "If an aldehyde group is attached directly to a cyclohexane ring, the compound is named cyclohexane________.",
+                options: ["Acetone", "One", "Hydroxy", "Acetaldehyde", "Carbaldehyde"],
+                a: "Carbaldehyde",
+                exp: "The '-carbaldehyde' suffix explicitly includes the carbonyl carbon that exists outside the main ring."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the IUPAC or systematic name to its equivalent Common Name: \nMethanal (HCHO)",
+                options: ["Formaldehyde", "Acetophenone", "Benzophenone", "Butyraldehyde", "Ethyl methyl ketone"],
+                a: "Formaldehyde",
+                exp: "Methanal is a one-carbon aldehyde. Its common name comes from formic acid."
+            },
+            {
+                type: "Matching",
+                q: "Match the IUPAC or systematic name to its equivalent Common Name: \nMethyl phenyl ketone",
+                options: ["Formaldehyde", "Acetophenone", "Benzophenone", "Butyraldehyde", "Ethyl methyl ketone"],
+                a: "Acetophenone",
+                exp: "Acetophenone contains an acetyl group (CH₃CO-) attached directly to a benzene ring."
+            },
+            {
+                type: "Matching",
+                q: "Match the IUPAC or systematic name to its equivalent Common Name: \nDiphenyl ketone",
+                options: ["Formaldehyde", "Acetophenone", "Benzophenone", "Butyraldehyde", "Ethyl methyl ketone"],
+                a: "Benzophenone",
+                exp: "Benzophenone has a carbonyl carbon perfectly flanked by two complete benzene rings."
+            },
+            {
+                type: "Matching",
+                q: "Match the IUPAC or systematic name to its equivalent Common Name: \nButanal (CH₃CH₂CH₂CHO)",
+                options: ["Formaldehyde", "Acetophenone", "Benzophenone", "Butyraldehyde", "Ethyl methyl ketone"],
+                a: "Butyraldehyde",
+                exp: "The prefix 'butyr-' is the common nomenclature root for a four-carbon straight chain."
+            },
+            {
+                type: "Matching",
+                q: "Match the IUPAC or systematic name to its equivalent Common Name: \n2-Butanone (CH₃-CO-CH₂CH₃)",
+                options: ["Formaldehyde", "Acetophenone", "Benzophenone", "Butyraldehyde", "Ethyl methyl ketone"],
+                a: "Ethyl methyl ketone",
+                exp: "In common ketone naming, you list the two alkyl groups alphabetically (Ethyl, then Methyl) followed by 'ketone'."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Acetone, One, Hydroxy, Acetaldehyde, Carbaldehyde";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Formaldehyde, Acetophenone, Benzophenone, Butyraldehyde, Ethyl methyl ketone";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-blue-600 hover:bg-blue-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-600', 'hover:bg-blue-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-600', 'hover:bg-blue-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى استثنائي! 🌟 إلمامك بقواعد الأيوباك والأسماء الشائعة دقيق جداً.";
+            } else if (score >= 13) {
+                msgEl.textContent = "أداء قوي جداً! 👏 مع مراجعة بسيطة لأولويات التسمية ستصبح محترفاً.";
+            } else {
+                msgEl.textContent = "تسمية المركبات تحتاج لممارسة مستمرة. راجع التفسيرات وأعد التجربة لترسيخ القواعد! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>
