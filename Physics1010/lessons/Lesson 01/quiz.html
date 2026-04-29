@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الفيزياء - Units and Dimensions</title>
+    <!-- استدعاء خطوط جوجل (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- استدعاء Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .english-text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-left: 2.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden relative fade-in" id="quiz-container">
+        
+        <!-- الهيدر -->
+        <div class="bg-blue-600 text-white p-6 text-center relative">
+            <h1 class="text-3xl font-bold mb-2">اختبار الفيزياء التفاعلي</h1>
+            <p class="text-blue-100 text-lg english-text text-center">Chapter 1 & 2: Units, Dimensions & Elasticity</p>
+            
+            <!-- شريط التقدم -->
+            <div class="w-full bg-blue-900 rounded-full h-2.5 mt-4">
+                <div id="progress-bar" class="bg-yellow-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p class="text-sm mt-2 font-semibold">السؤال <span id="current-q-num">1</span> من 20</p>
+        </div>
+
+        <!-- منطقة الأسئلة -->
+        <div class="p-6 md:p-10">
+            <!-- نوع السؤال -->
+            <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full border border-blue-200" id="question-type">
+                Multiple Choice
+            </div>
+
+            <!-- نص السؤال -->
+            <div class="mb-8">
+                <h2 id="question-text" class="text-2xl font-bold text-gray-800 english-text leading-relaxed">
+                    <!-- يضاف بالبرمجة -->
+                </h2>
+            </div>
+
+            <!-- منطقة التفاعل (تتغير حسب نوع السؤال) -->
+            <div id="interaction-area" class="space-y-3 mb-8 english-text">
+                <!-- تضاف الخيارات بالبرمجة -->
+            </div>
+
+            <!-- منطقة التغذية الراجعة (التصحيح والشرح) -->
+            <div id="feedback-area" class="hidden rounded-xl p-5 mb-8 border-2 fade-in">
+                <div class="flex items-start gap-4">
+                    <div id="feedback-icon" class="text-3xl mt-1"></div>
+                    <div>
+                        <h3 id="feedback-title" class="text-xl font-bold mb-2"></h3>
+                        <div id="correct-answer-display" class="mb-3 text-lg font-semibold english-text text-gray-800 hidden"></div>
+                        <div class="bg-white/60 p-4 rounded-lg border border-gray-200">
+                            <span class="font-bold text-gray-700 block mb-1">📝 Explanation:</span>
+                            <p id="feedback-explanation" class="text-gray-800 english-text leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أزرار التحكم -->
+            <div class="flex justify-end border-t pt-6">
+                <button id="next-btn" disabled class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg flex items-center gap-2">
+                    السؤال التالي <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة النتيجة النهائية -->
+    <div id="result-screen" class="hidden bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-10 text-center fade-in">
+        <i class="fas fa-trophy text-6xl text-yellow-400 mb-6"></i>
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">اكتمل الاختبار!</h2>
+        <p class="text-xl text-gray-600 mb-6">لقد أنهيت جميع الأسئلة بنجاح.</p>
+        <div class="bg-blue-50 rounded-2xl p-6 border-2 border-blue-100 mb-8 inline-block w-full">
+            <span class="block text-lg font-semibold text-gray-600 mb-2">نتيجتك هي:</span>
+            <span id="final-score" class="text-5xl font-bold text-blue-600">0 / 20</span>
+        </div>
+        <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-xl transition-colors text-xl">
+            إعادة الاختبار <i class="fas fa-redo ml-2"></i>
+        </button>
+    </div>
+
+    <script>
+        // قاعدة بيانات الأسئلة (20 سؤال موزعة كما طلب المستخدم من الصفحات 9-24)
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: 'Multiple Choice',
+                qTypeCode: 'mcq',
+                question: 'Convert 90 km/h to m/s.',
+                options: ['15 m/s', '20 m/s', '25 m/s', '30 m/s'],
+                correct: '25 m/s',
+                explanation: 'To convert km/h to m/s, multiply by (1000 m / 3600 s).<br> 90 × (1000/3600) = 90 × (5/18) = 25 m/s.'
+            },
+            {
+                type: 'Multiple Choice',
+                qTypeCode: 'mcq',
+                question: 'What is the dimensional formula for Work (or Energy)?',
+                options: ['M L T<sup>-2</sup>', 'M L<sup>2</sup> T<sup>-2</sup>', 'M L<sup>2</sup> T<sup>-3</sup>', 'M L<sup>-1</sup> T<sup>-2</sup>'],
+                correct: 'M L<sup>2</sup> T<sup>-2</sup>',
+                explanation: 'Work = Force × Distance.<br>Force = M L T<sup>-2</sup>.<br>Distance = L.<br>Therefore, Work = (M L T<sup>-2</sup>) × L = M L<sup>2</sup> T<sup>-2</sup>.'
+            },
+            {
+                type: 'Multiple Choice',
+                qTypeCode: 'mcq',
+                question: 'Which of the following is the correct definition of Young\'s Modulus (Y)?',
+                options: ['Volume Stress / Volume Strain', 'Shear Stress / Shear Strain', 'Tensile Stress / Tensile Strain', 'Force × Cross-sectional Area'],
+                correct: 'Tensile Stress / Tensile Strain',
+                explanation: 'Young\'s Modulus (Y) characterizes elasticity in length. It is defined as the ratio of Tensile Stress (F/A) to Tensile Strain (ΔL/L<sub>0</sub>).'
+            },
+            {
+                type: 'Multiple Choice',
+                qTypeCode: 'mcq',
+                question: 'If the position of a particle is given by x = v t + 0.5 a t<sup>2</sup>, what is the dimension of the constant \'a\'?',
+                options: ['L T<sup>-1</sup>', 'L T<sup>-2</sup>', 'M L T<sup>-2</sup>', 'Dimensionless'],
+                correct: 'L T<sup>-2</sup>',
+                explanation: 'By the principle of dimensional homogeneity, each term must have the dimension of length (L).<br>For 0.5 a t<sup>2</sup> to be L, \'a\' must have dimensions of L / T<sup>2</sup> (which is Acceleration).'
+            },
+            {
+                type: 'Multiple Choice',
+                qTypeCode: 'mcq',
+                question: 'What is the SI unit for Stress?',
+                options: ['Newton (N)', 'Joule (J)', 'Watt (W)', 'Pascal (Pa) or N/m<sup>2</sup>'],
+                correct: 'Pascal (Pa) or N/m<sup>2</sup>',
+                explanation: 'Stress is defined as Force per unit Area (F/A). The SI unit of Force is Newton, and Area is m<sup>2</sup>. Therefore, N/m<sup>2</sup>, which is also called Pascal (Pa).'
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: 'True / False',
+                qTypeCode: 'tf',
+                question: 'Strain is a dimensionless quantity.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: 'Strain is the ratio of the change in dimension to the original dimension (e.g., ΔL/L). Since it divides length by length (m/m), the units cancel out, making it dimensionless.'
+            },
+            {
+                type: 'True / False',
+                qTypeCode: 'tf',
+                question: 'The prefix "Micro" (μ) corresponds to the multiplier 10<sup>-9</sup>.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: 'False. The prefix "Micro" (μ) corresponds to 10<sup>-6</sup>. The multiplier 10<sup>-9</sup> corresponds to the prefix "Nano" (n).'
+            },
+            {
+                type: 'True / False',
+                qTypeCode: 'tf',
+                question: 'Dimensional analysis can be used to prove that an equation is completely correct, including its numerical constants.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: 'False. Dimensional analysis can only verify if an equation is dimensionally consistent. It cannot determine the value of dimensionless constants (like 1/2 or 2π).'
+            },
+            {
+                type: 'True / False',
+                qTypeCode: 'tf',
+                question: 'Bulk Modulus characterizes the response of an object to changes in a force of uniform magnitude applied over the entire surface (volume change).',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: 'True. Bulk modulus measures resistance to changes in volume due to uniform pressure (like an object submerged in a fluid).'
+            },
+            {
+                type: 'True / False',
+                qTypeCode: 'tf',
+                question: 'The dimension of Density (ρ) is M L<sup>3</sup>.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: 'False. Density is Mass / Volume. Mass = M, Volume = L<sup>3</sup>. Therefore, Density = M / L<sup>3</sup> = M L<sup>-3</sup>.'
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: 'Fill in the Blank',
+                qTypeCode: 'fib',
+                question: 'The maximum stress a material can withstand without undergoing permanent deformation is called the [BLANK].',
+                wordBank: ['Elastic Limit', 'Plastic Limit', 'Proportionality Constant', 'Shear Modulus', 'Volume Strain'],
+                correct: 'Elastic Limit',
+                explanation: 'If the stress exceeds the elastic limit, the object will not return to its original shape and size when the stress is removed; it will undergo permanent (plastic) deformation.'
+            },
+            {
+                type: 'Fill in the Blank',
+                qTypeCode: 'fib',
+                question: 'Velocity has the dimensional formula of [BLANK].',
+                wordBank: ['L T<sup>-2</sup>', 'M L T', 'L T<sup>-1</sup>', 'M L<sup>2</sup>', 'Dimensionless'],
+                correct: 'L T<sup>-1</sup>',
+                explanation: 'Velocity is Displacement (Length, L) divided by Time (T). Hence, L / T or L T<sup>-1</sup>.'
+            },
+            {
+                type: 'Fill in the Blank',
+                qTypeCode: 'fib',
+                question: 'Hooke\'s Law states that for small deformations, Stress is directly proportional to [BLANK].',
+                wordBank: ['Force', 'Area', 'Volume', 'Strain', 'Time'],
+                correct: 'Strain',
+                explanation: 'Hooke\'s law establishes the linear relationship in the elastic region: Stress = Elastic Modulus × Strain.'
+            },
+            {
+                type: 'Fill in the Blank',
+                qTypeCode: 'fib',
+                question: 'Shear modulus (S) represents elasticity in [BLANK].',
+                wordBank: ['Length', 'Volume', 'Shape', 'Mass', 'Temperature'],
+                correct: 'Shape',
+                explanation: 'Shear stress is caused by forces acting parallel to the surfaces, which deforms the shape of the object without changing its volume.'
+            },
+            {
+                type: 'Fill in the Blank',
+                qTypeCode: 'fib',
+                question: '1 nanometer (nm) is equal to 10 to the power of [BLANK] meters.',
+                wordBank: ['-3', '-6', '-9', '3', '6'],
+                correct: '-9',
+                explanation: 'The prefix "nano" denotes a factor of 10<sup>-9</sup>.'
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: 'Matching',
+                qTypeCode: 'match',
+                question: 'Match the Fundamental Dimension to its symbol:',
+                listA: 'Length',
+                wordBank: ['M', 'L', 'T', 'K', 'A'],
+                correct: 'L',
+                explanation: 'In dimensional analysis, the fundamental dimension for Length is represented by the capital letter L.'
+            },
+            {
+                type: 'Matching',
+                qTypeCode: 'match',
+                question: 'Match the Fundamental Dimension to its symbol:',
+                listA: 'Mass',
+                wordBank: ['M', 'L', 'T', 'K', 'A'],
+                correct: 'M',
+                explanation: 'In dimensional analysis, the fundamental dimension for Mass is represented by the capital letter M.'
+            },
+            {
+                type: 'Matching',
+                qTypeCode: 'match',
+                question: 'Match the Formula to the correct Modulus:',
+                listA: 'F / A (Force applied parallel to the surface)',
+                wordBank: ['Tensile Stress', 'Shear Stress', 'Volume Stress (Pressure)', 'Strain'],
+                correct: 'Shear Stress',
+                explanation: 'Forces applied parallel (tangential) to the surfaces result in Shear Stress, which leads to a change in shape.'
+            },
+            {
+                type: 'Matching',
+                qTypeCode: 'match',
+                question: 'Match the Formula to the correct Modulus:',
+                listA: 'ΔV / V<sub>i</sub>',
+                wordBank: ['Tensile Strain', 'Shear Strain', 'Volume Strain', 'Young\'s Modulus'],
+                correct: 'Volume Strain',
+                explanation: 'Volume strain is defined as the change in volume (ΔV) divided by the initial volume (V<sub>i</sub>).'
+            },
+            {
+                type: 'Matching',
+                qTypeCode: 'match',
+                question: 'Match the Prefix to its numerical multiplier:',
+                listA: 'Kilo (k)',
+                wordBank: ['10<sup>-3</sup>', '10<sup>3</sup>', '10<sup>6</sup>', '10<sup>-6</sup>'],
+                correct: '10<sup>3</sup>',
+                explanation: 'The prefix Kilo means one thousand, which is mathematically represented as 10<sup>3</sup>.'
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // Elements
+        const questionTypeEl = document.getElementById('question-type');
+        const questionTextEl = document.getElementById('question-text');
+        const interactionAreaEl = document.getElementById('interaction-area');
+        const feedbackAreaEl = document.getElementById('feedback-area');
+        const feedbackIconEl = document.getElementById('feedback-icon');
+        const feedbackTitleEl = document.getElementById('feedback-title');
+        const feedbackExplanationEl = document.getElementById('feedback-explanation');
+        const correctAnswerDisplayEl = document.getElementById('correct-answer-display');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const currentQNum = document.getElementById('current-q-num');
+        
+        // Load Initial Question
+        loadQuestion();
+
+        function loadQuestion() {
+            const currentQ = quizData[currentIndex];
+            answered = false;
+            
+            // Update Header info
+            questionTypeEl.textContent = currentQ.type;
+            currentQNum.textContent = currentIndex + 1;
+            progressBar.style.width = `${((currentIndex) / quizData.length) * 100}%`;
+            
+            // Reset UI
+            interactionAreaEl.innerHTML = '';
+            feedbackAreaEl.classList.add('hidden');
+            feedbackAreaEl.classList.remove('bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+            correctAnswerDisplayEl.classList.add('hidden');
+            nextBtn.disabled = true;
+
+            // Generate Question UI based on type
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                currentQ.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.innerHTML = opt;
+                    btn.className = 'option-btn w-full text-left bg-gray-50 border-2 border-gray-200 text-gray-800 text-lg font-medium py-4 px-6 rounded-xl hover:bg-blue-50 hover:border-blue-300 focus:outline-none';
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    interactionAreaEl.appendChild(btn);
+                });
+            } 
+            else if (currentQ.qTypeCode === 'fib') {
+                // Replace [BLANK] with a dropdown
+                let parts = currentQ.question.split('[BLANK]');
+                questionTextEl.innerHTML = parts[0] + ' <span class="text-blue-600 border-b-2 border-blue-600 inline-block w-24 text-center">_____</span> ' + parts[1];
+
+                const selectWrapper = document.createElement('div');
+                selectWrapper.className = 'flex flex-col sm:flex-row gap-4 items-center bg-gray-50 p-6 rounded-xl border-2 border-gray-200';
+                
+                const label = document.createElement('span');
+                label.className = 'font-bold text-gray-700';
+                label.textContent = 'Select the missing word:';
+                
+                const select = document.createElement('select');
+                select.className = 'flex-1 appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg focus:outline-none focus:border-blue-500 text-lg';
+                select.innerHTML = `<option value="" disabled selected>-- Choose an option --</option>`;
+                
+                // Shuffle wordbank
+                let shuffledWords = [...currentQ.wordBank].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach(word => {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.textContent = 'Submit';
+                submitBtn.className = 'bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700';
+                
+                selectWrapper.appendChild(label);
+                selectWrapper.appendChild(select);
+                selectWrapper.appendChild(submitBtn);
+                interactionAreaEl.appendChild(selectWrapper);
+
+                submitBtn.onclick = () => {
+                    if(!select.value) {
+                        alert("الرجاء اختيار إجابة أولاً!");
+                        return;
+                    }
+                    handleAnswer(select.value, selectWrapper);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+            else if (currentQ.qTypeCode === 'match') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                const matchContainer = document.createElement('div');
+                matchContainer.className = 'bg-gray-50 p-6 rounded-xl border-2 border-gray-200 flex flex-col gap-4';
+                
+                const listA = document.createElement('div');
+                listA.className = 'bg-white p-4 rounded-lg shadow-sm border border-gray-100 font-bold text-xl text-center text-blue-800';
+                listA.innerHTML = currentQ.listA;
+
+                const icon = document.createElement('div');
+                icon.className = 'text-center text-gray-400 text-2xl';
+                icon.innerHTML = '<i class="fas fa-arrow-down"></i>';
+
+                const select = document.createElement('select');
+                select.className = 'appearance-none bg-white border-2 border-gray-300 text-gray-700 py-4 px-4 rounded-lg focus:outline-none focus:border-blue-500 text-lg w-full text-center font-semibold';
+                select.innerHTML = `<option value="" disabled selected>-- Select Matching Option --</option>`;
+                
+                let shuffledWords = [...currentQ.wordBank].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach(word => {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.textContent = 'Check Match';
+                submitBtn.className = 'bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 w-full mt-2';
+
+                matchContainer.appendChild(listA);
+                matchContainer.appendChild(icon);
+                matchContainer.appendChild(select);
+                matchContainer.appendChild(submitBtn);
+                
+                interactionAreaEl.appendChild(matchContainer);
+
+                submitBtn.onclick = () => {
+                    if(!select.value) {
+                        alert("الرجاء اختيار المطابقة أولاً!");
+                        return;
+                    }
+                    handleAnswer(select.value, matchContainer);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+        }
+
+        function handleAnswer(userAnswer, element) {
+            if (answered) return;
+            answered = true;
+
+            const currentQ = quizData[currentIndex];
+            const isCorrect = userAnswer === currentQ.correct;
+
+            // Handle styling based on question type
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                const buttons = interactionAreaEl.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.remove('hover:bg-blue-50', 'hover:border-blue-300');
+                    if (btn.innerHTML === currentQ.correct) {
+                        btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                        btn.innerHTML += ' <i class="fas fa-check-circle float-right text-green-600 mt-1"></i>';
+                    } else if (btn === element && !isCorrect) {
+                        btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                        btn.innerHTML += ' <i class="fas fa-times-circle float-right text-red-600 mt-1"></i>';
+                    } else {
+                        btn.classList.add('opacity-50');
+                    }
+                });
+            } else {
+                // For FIB and Match
+                if (isCorrect) {
+                    element.classList.add('border-green-500', 'bg-green-50');
+                } else {
+                    element.classList.add('border-red-500', 'bg-red-50');
+                }
+            }
+
+            // Show Feedback Area
+            feedbackAreaEl.classList.remove('hidden');
+            
+            if (isCorrect) {
+                score++;
+                feedbackAreaEl.classList.add('bg-green-50', 'border-green-200', 'text-green-800');
+                feedbackIconEl.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة صحيحة! أحسنت 👏';
+                feedbackTitleEl.className = 'text-xl font-bold mb-2 text-green-800 text-right';
+            } else {
+                feedbackAreaEl.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+                feedbackIconEl.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة خاطئة! ❌';
+                feedbackTitleEl.className = 'text-xl font-bold mb-2 text-red-800 text-right';
+                
+                correctAnswerDisplayEl.classList.remove('hidden');
+                correctAnswerDisplayEl.innerHTML = `Correct Answer: <span class="text-green-700 bg-green-100 px-2 py-1 rounded">${currentQ.correct}</span>`;
+            }
+
+            feedbackExplanationEl.innerHTML = currentQ.explanation;
+            
+            // Update Next Button
+            nextBtn.disabled = false;
+            if (currentIndex === quizData.length - 1) {
+                nextBtn.innerHTML = 'إنهاء الاختبار <i class="fas fa-flag-checkered"></i>';
+                nextBtn.classList.replace('bg-blue-600', 'bg-green-600');
+                nextBtn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+            }
+        }
+
+        // Next Button Event
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score} / 20`;
+            progressBar.style.width = '100%';
+        }
+    </script>
+</body>
+</html>

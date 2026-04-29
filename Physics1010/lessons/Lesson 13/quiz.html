@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Quiz: Chapter Problems (Kinematics)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #fff1f2; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .disabled-card { pointer-events: none; opacity: 0.9; }
+        
+        /* Custom styling for physics equations and math */
+        .eq { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.15em; font-weight: 700; color: #9f1239; letter-spacing: 0.02em; }
+        .math-symbol { font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold; }
+        .physics-block { background-color: #ffe4e6; padding: 2px 8px; border-radius: 6px; border: 1px solid #fecdd3; font-weight: bold; color: #be123c; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-gradient-to-br from-rose-800 to-slate-900 text-white rounded-3xl p-8 mb-10 shadow-2xl text-center fade-in border-b-8 border-rose-500 relative overflow-hidden">
+            <!-- Decorative Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20%" cy="50%" r="200" fill="none" stroke="white" stroke-width="4" stroke-dasharray="10, 10"/>
+                    <circle cx="80%" cy="50%" r="200" fill="none" stroke="white" stroke-width="4" stroke-dasharray="10, 10"/>
+                </svg>
+            </div>
+            
+            <h1 class="relative z-10 text-3xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Chapter Problems</h1>
+            <p class="relative z-10 text-rose-200 text-lg md:text-xl font-medium">Kinematics Final Assessment</p>
+            <div class="relative z-10 mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">20 Questions</span>
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">Problem Solving</span>
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">Detailed Solutions</span>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12"></div>
+        
+        <!-- Completion Section -->
+        <div id="completion-message" class="hidden text-center mt-12 mb-12 fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-2xl border-2 border-rose-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rose-400 to-slate-800"></div>
+                <h2 class="text-3xl font-black text-slate-800 mb-3">Assessment Completed! 🎉</h2>
+                <p class="text-lg text-slate-600">You have completed the final problems section. Review your step-by-step solutions below.</p>
+                <div class="mt-6 text-6xl font-black text-rose-600 drop-shadow-sm mb-2" id="final-score"></div>
+                <button onclick="location.reload()" class="mt-8 bg-rose-600 text-white px-8 py-3 rounded-xl font-bold text-lg hover:bg-rose-700 hover:shadow-lg transition-all transform hover:-translate-y-1">Retake Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Model based on Kinematics Problems (Pages 158-160 context)
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                id: 1, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A stone is thrown vertically upward with an initial speed of <span class='physics-block'>19.6 m/s</span>. How long does it take to reach its maximum height? <br><span class='text-sm text-slate-500'>(Use g = 9.8 m/s&sup2;)</span>",
+                options: ["1.0 s", "2.0 s", "3.0 s", "4.0 s"],
+                correct: 1,
+                explanation: "Using the kinematic equation <span class='eq'>v = v<sub>0</sub> - gt</span>. At the maximum height, the vertical velocity is zero (<span class='eq'>v = 0</span>). <br>Therefore, <span class='eq'>0 = 19.6 - 9.8t &rarr; 9.8t = 19.6 &rarr; t = 2.0 s</span>."
+            },
+            {
+                id: 2, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> An object moves along a straight line with its velocity given by <span class='eq'>v(t) = 4t + 2</span> (in m/s). What is the exact acceleration of the object?",
+                options: ["2 m/s&sup2;", "4 m/s&sup2;", "4t m/s&sup2;", "6 m/s&sup2;"],
+                correct: 1,
+                explanation: "Acceleration is the first derivative of velocity with respect to time: <span class='eq'>a(t) = dv/dt</span>. <br>Taking the derivative of <span class='eq'>4t + 2</span> gives a constant acceleration of <strong>4 m/s&sup2;</strong>."
+            },
+            {
+                id: 3, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A car accelerates uniformly from rest at a constant rate of <span class='physics-block'>2.0 m/s&sup2;</span> for exactly <span class='physics-block'>5.0 s</span>. What is its final velocity?",
+                options: ["10 m/s", "20 m/s", "25 m/s", "50 m/s"],
+                correct: 0,
+                explanation: "Using the kinematic equation <span class='eq'>v = v<sub>0</sub> + at</span>. <br>Since the car starts from rest, <span class='eq'>v<sub>0</sub> = 0</span>. <br><span class='eq'>v = 0 + (2.0 m/s&sup2;) &times; (5.0 s) = 10 m/s</span>."
+            },
+            {
+                id: 4, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A particle moves <span class='physics-block'>3.0 m</span> exactly east, and then turns and moves <span class='physics-block'>4.0 m</span> exactly north. What is the magnitude of the particle's total displacement?",
+                options: ["1.0 m", "5.0 m", "7.0 m", "12.0 m"],
+                correct: 1,
+                explanation: "Displacement is a vector pointing from the initial to the final position. Since east and north are perpendicular, we use the Pythagorean theorem: <br><span class='eq'>|&Delta;x| = &radic;(3.0<sup>2</sup> + 4.0<sup>2</sup>) = &radic;(9 + 16) = &radic;25 = 5.0 m</span>."
+            },
+            {
+                id: 5, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> An object is dropped from rest from a building that is <span class='physics-block'>49.0 m</span> high. How long does it take to hit the ground? <br><span class='text-sm text-slate-500'>(Use g = 9.8 m/s&sup2;)</span>",
+                options: ["3.16 s", "5.00 s", "10.0 s", "2.23 s"],
+                correct: 0,
+                explanation: "Using the free fall equation for distance: <span class='eq'>y = &frac12;gt<sup>2</sup></span> (starting from rest). <br><span class='eq'>49.0 = &frac12;(9.8)t<sup>2</sup> &rarr; 49.0 = 4.9t<sup>2</sup> &rarr; t<sup>2</sup> = 10 &rarr; t = &radic;10 &asymp; 3.16 s</span>."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                id: 6, section: "True / False", type: "tf",
+                question: "In a velocity-time graph, a perfectly horizontal straight line indicates that the object is moving with a constant acceleration of zero.",
+                correct: true,
+                explanation: "True. A horizontal line on a v-t graph means the velocity is constant (not changing). Since acceleration is the rate of change of velocity, a constant velocity dictates an acceleration of exactly zero."
+            },
+            {
+                id: 7, section: "True / False", type: "tf",
+                question: "The average velocity of a particle moving at a constant speed in a complete perfect circle is equal to its average speed.",
+                correct: false,
+                explanation: "False. After completing a full circle, the particle returns to its starting point, making its <strong>displacement zero</strong>. Therefore, average velocity is zero. However, its average speed (distance/time) is non-zero."
+            },
+            {
+                id: 8, section: "True / False", type: "tf",
+                question: "If the acceleration of an object is constant and non-zero, its position-time graph will be a straight diagonal line.",
+                correct: false,
+                explanation: "False. For constant acceleration, the position equation is quadratic (<span class='eq'>x = v<sub>0</sub>t + &frac12;at<sup>2</sup></span>). A quadratic function produces a <strong>parabola</strong> on a graph, not a straight line."
+            },
+            {
+                id: 9, section: "True / False", type: "tf",
+                question: "Two vectors can be mathematically added together only if they represent the same physical quantity and have identical units.",
+                correct: true,
+                explanation: "True. You cannot add a velocity vector (m/s) to a force vector (N). Dimensional consistency is a fundamental rule in physics; only quantities of the same dimension can be added or subtracted."
+            },
+            {
+                id: 10, section: "True / False", type: "tf",
+                question: "The horizontal velocity of a projectile, in the complete absence of air resistance, changes continuously due to the force of gravity.",
+                correct: false,
+                explanation: "False. Gravity acts strictly in the <i>vertical</i> direction. Without air resistance, there is absolutely no force acting horizontally, so according to Newton's first law, the <strong>horizontal velocity remains perfectly constant</strong>."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                id: 11, section: "Fill in the Blanks", type: "fib",
+                question: "The rate of change of displacement with respect to time is physically defined as ______.",
+                correct: "Velocity",
+                explanation: "Velocity is a vector quantity that specifies both the speed of an object and its direction of motion, derived by dividing the displacement by the time interval."
+            },
+            {
+                id: 12, section: "Fill in the Blanks", type: "fib",
+                question: "The maximum horizontal distance traveled by a projectile before returning to its launch height is called its ______.",
+                correct: "Range",
+                explanation: "The Range (<span class='math-symbol'>R</span>) depends on both the initial launch speed and the angle of launch, reaching its theoretical maximum at an angle of 45 degrees."
+            },
+            {
+                id: 13, section: "Fill in the Blanks", type: "fib",
+                question: "On a graph plotting velocity on the y-axis and time on the x-axis, the slope of the line directly represents the object's ______.",
+                correct: "Acceleration",
+                explanation: "Slope is defined as 'rise over run', which translates to <span class='eq'>&Delta;v / &Delta;t</span>. This is the exact mathematical definition of acceleration."
+            },
+            {
+                id: 14, section: "Fill in the Blanks", type: "fib",
+                question: "An object moving vertically under the sole influence of gravity, regardless of its initial motion, is said to be in ______ fall.",
+                correct: "Free",
+                explanation: "Free fall implies that gravity is the <i>only</i> force doing work on the object, with air resistance being completely ignored."
+            },
+            {
+                id: 15, section: "Fill in the Blanks", type: "fib",
+                question: "A mathematical entity that possesses both a specific magnitude and a spatial ______ is called a vector.",
+                correct: "Direction",
+                explanation: "Direction is what separates vectors (like force and velocity) from scalars (like mass and temperature), which only have magnitude."
+            },
+
+            // --- MATCHING ---
+            {
+                id: 16, section: "Matching", type: "match",
+                question: "Symbol: <span class='eq'>&Delta;x</span>",
+                correct: "B",
+                explanation: "<span class='eq'>&Delta;x</span> mathematically represents the change in position, which is the definition of displacement."
+            },
+            {
+                id: 17, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>v = v<sub>0</sub> + at</span>",
+                correct: "C",
+                explanation: "This is the fundamental kinematic equation that provides the velocity of an object as a function of time under constant acceleration."
+            },
+            {
+                id: 18, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>dx/dt</span>",
+                correct: "E",
+                explanation: "The first derivative of position with respect to time yields the instantaneous velocity at that precise moment."
+            },
+            {
+                id: 19, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>dv/dt</span>",
+                correct: "A",
+                explanation: "The first derivative of velocity with respect to time (or second derivative of position) yields the instantaneous acceleration."
+            },
+            {
+                id: 20, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>&Delta;x / &Delta;t</span>",
+                correct: "D",
+                explanation: "Dividing the total displacement by the total elapsed time interval gives the average velocity of the object over that interval."
+            }
+        ];
+
+        // Shared resources
+        const wordBank = ["Velocity", "Range", "Acceleration", "Free", "Direction"];
+        const matchOptions = [
+            { letter: "A", text: "Instantaneous Acceleration" },
+            { letter: "B", text: "Displacement (Change in position)" },
+            { letter: "C", text: "Velocity as a function of time" },
+            { letter: "D", text: "Average Velocity" },
+            { letter: "E", text: "Instantaneous Velocity" }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        // Render Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const sections = ["Multiple Choice", "True / False", "Fill in the Blanks", "Matching"];
+
+            sections.forEach(sectionTitle => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "mb-16";
+                
+                const sectionHeader = document.createElement('h2');
+                sectionHeader.className = "text-2xl md:text-3xl font-black text-rose-900 border-b-4 border-rose-200 pb-3 mb-8 flex items-center gap-3";
+                
+                let iconSvg = '';
+                if(sectionTitle === "Multiple Choice") iconSvg = '<svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>';
+                else if(sectionTitle === "True / False") iconSvg = '<svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                else if(sectionTitle === "Fill in the Blanks") iconSvg = '<svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>';
+                else iconSvg = '<svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>';
+
+                sectionHeader.innerHTML = `${iconSvg} ${sectionTitle}`;
+                sectionDiv.appendChild(sectionHeader);
+
+                if (sectionTitle === "Fill in the Blanks") {
+                    const wbDiv = document.createElement('div');
+                    wbDiv.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-rose-100";
+                    wbDiv.innerHTML = `<h3 class="font-bold text-rose-700 mb-3 text-sm uppercase tracking-widest">Word Bank Collection</h3>
+                                       <div class="flex flex-wrap gap-3">${wordBank.sort().map(w => `<span class="bg-rose-50 border border-rose-200 px-4 py-2 rounded-lg text-rose-900 font-bold shadow-sm">${w}</span>`).join('')}</div>`;
+                    sectionDiv.appendChild(wbDiv);
+                } else if (sectionTitle === "Matching") {
+                    const matchTable = document.createElement('div');
+                    matchTable.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-rose-100";
+                    matchTable.innerHTML = `<h3 class="font-bold text-rose-700 mb-4 text-sm uppercase tracking-widest">List B (Definitions)</h3>
+                                            <ul class="space-y-3">
+                                                ${matchOptions.map(opt => `<li class="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200"><strong class="text-rose-700 font-black text-lg bg-rose-100 w-8 h-8 flex items-center justify-center rounded-lg shrink-0 shadow-sm">${opt.letter}</strong> <span class="text-slate-800 font-medium">${opt.text}</span></li>`).join('')}
+                                            </ul>`;
+                    sectionDiv.appendChild(matchTable);
+                }
+
+                const sectionQuestions = quizData.filter(q => q.section === sectionTitle);
+                
+                sectionQuestions.forEach((q, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = "bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 mb-6 transition-all relative overflow-hidden group hover:border-rose-400 hover:shadow-lg";
+                    qCard.id = `q-card-${q.id}`;
+
+                    let interactionHTML = '';
+
+                    if (q.type === 'mcq') {
+                        interactionHTML = `<div class="mt-6 grid gap-3">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="checkAnswer(${q.id}, ${i})" id="btn-${q.id}-${i}" 
+                                class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-rose-400 hover:bg-rose-50 transition-all font-medium text-slate-700 text-lg flex items-start gap-4">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 font-bold text-sm shrink-0 mt-0.5">${String.fromCharCode(65 + i)}</span> 
+                                    <span class="leading-relaxed">${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>`;
+                    } else if (q.type === 'tf') {
+                        interactionHTML = `<div class="mt-6 flex gap-4">
+                            <button onclick="checkAnswer(${q.id}, true)" id="btn-${q.id}-true" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-rose-400 hover:bg-rose-50 transition-all font-black text-xl text-slate-700 shadow-sm">True</button>
+                            <button onclick="checkAnswer(${q.id}, false)" id="btn-${q.id}-false" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-rose-400 hover:bg-rose-50 transition-all font-black text-xl text-slate-700 shadow-sm">False</button>
+                        </div>`;
+                    } else if (q.type === 'fib') {
+                        interactionHTML = `<div class="mt-6">
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full md:w-2/3 p-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 text-lg font-bold text-slate-700 cursor-pointer shadow-sm transition-all">
+                                <option value="" disabled selected>--- Select the correct missing word ---</option>
+                                ${wordBank.sort().map(w => `<option value="${w}">${w}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    } else if (q.type === 'match') {
+                        interactionHTML = `<div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-500 text-sm uppercase tracking-wider whitespace-nowrap">Matches with list B:</span>
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full p-4 rounded-xl border-2 border-slate-200 bg-white focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 font-black text-slate-700 cursor-pointer shadow-sm transition-all text-center">
+                                <option value="" disabled selected>--- Select Correct Option ---</option>
+                                ${matchOptions.map(o => `<option value="${o.letter}">Option ${o.letter}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    }
+
+                    qCard.innerHTML = `
+                        <div class="flex gap-5">
+                            <div class="bg-rose-100 text-rose-800 w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl flex-shrink-0 shadow-sm border border-rose-200">${index + 1}</div>
+                            <div class="flex-1 text-xl font-semibold text-slate-800 leading-relaxed pt-1">${q.question}</div>
+                        </div>
+                        ${interactionHTML}
+                        <div id="feedback-${q.id}" class="mt-6 hidden rounded-2xl p-6 text-base animate-fadeIn border-l-4 shadow-sm"></div>
+                    `;
+                    sectionDiv.appendChild(qCard);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle Evaluation
+        function checkAnswer(questionId, userAnswer) {
+            const questionData = quizData.find(q => q.id === questionId);
+            const isCorrect = userAnswer === questionData.correct;
+            const card = document.getElementById(`q-card-${questionId}`);
+            const feedbackBox = document.getElementById(`feedback-${questionId}`);
+
+            card.classList.add('disabled-card');
+            card.classList.remove('hover:border-rose-400', 'hover:shadow-lg');
+            
+            let correctIndicator = '';
+            let explanationText = `<div class="mt-4 text-slate-800 font-medium leading-relaxed bg-white/80 p-5 rounded-xl border border-white/50 text-[1.05rem] shadow-sm"><span class="block font-black mb-2 text-sm uppercase tracking-widest text-slate-400">Detailed Solution & Concept</span>${questionData.explanation}</div>`;
+            let bestAnswerNotice = '';
+
+            if (isCorrect) {
+                score++;
+                card.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-emerald-700 text-2xl mb-2">
+                                        <svg class="w-8 h-8 bg-emerald-100 rounded-full p-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        Correct! Well done.
+                                    </div>`;
+                feedbackBox.className = "mt-6 rounded-2xl p-6 bg-emerald-100 border-l-8 border-emerald-500 block fade-in";
+                
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const btn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    btn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-start gap-4 shadow-md";
+                }
+            } else {
+                card.classList.add('border-rose-300', 'bg-rose-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-rose-700 text-2xl mb-1">
+                                        <svg class="w-8 h-8 bg-rose-100 rounded-full p-1 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        Incorrect
+                                    </div>`;
+                
+                let correctAnswerLabel = questionData.correct;
+                if (questionData.type === 'mcq') {
+                    correctAnswerLabel = `${String.fromCharCode(65 + questionData.correct)}. ${questionData.options[questionData.correct]}`;
+                } else if (questionData.type === 'tf') {
+                    correctAnswerLabel = questionData.correct ? "True" : "False";
+                } else if (questionData.type === 'match') {
+                    correctAnswerLabel = `Option ${questionData.correct}`;
+                }
+
+                bestAnswerNotice = `<div class="text-rose-900 font-medium mt-3 text-lg bg-rose-200/50 p-4 rounded-lg border border-rose-300">
+                    The structurally correct answer is: <span class="bg-white px-3 py-1.5 rounded-md border border-rose-300 shadow-sm inline-block ml-1 font-black">${correctAnswerLabel}</span>
+                </div>`;
+                
+                feedbackBox.className = "mt-6 rounded-2xl p-6 bg-rose-100 border-l-8 border-rose-500 block fade-in";
+
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const wrongBtn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    if(wrongBtn) wrongBtn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-300 bg-rose-50 font-medium text-rose-900 text-lg flex items-start gap-4 opacity-50 line-through";
+                    
+                    const rightBtn = document.getElementById(`btn-${questionId}-${questionData.correct}`);
+                    if(rightBtn) rightBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-start gap-4 shadow-md mt-2";
+                }
+            }
+
+            if(questionData.type === 'fib' || questionData.type === 'match') {
+                const sel = document.getElementById(`select-${questionId}`);
+                sel.disabled = true;
+                if(isCorrect) {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-black text-center appearance-none shadow-md";
+                } else {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-800 font-bold text-center appearance-none line-through opacity-70";
+                }
+            }
+
+            feedbackBox.innerHTML = correctIndicator + bestAnswerNotice + explanationText;
+
+            answeredQuestions++;
+            if(answeredQuestions === quizData.length) {
+                document.getElementById('completion-message').classList.remove('hidden');
+                
+                const finalScoreElem = document.getElementById('final-score');
+                finalScoreElem.innerText = `${score} / ${quizData.length}`;
+                if (score === 20) finalScoreElem.className = "mt-6 text-6xl font-black text-emerald-500 drop-shadow-md mb-2";
+                else if (score >= 15) finalScoreElem.className = "mt-6 text-6xl font-black text-rose-600 drop-shadow-md mb-2";
+                else if (score >= 10) finalScoreElem.className = "mt-6 text-6xl font-black text-amber-500 drop-shadow-md mb-2";
+                else finalScoreElem.className = "mt-6 text-6xl font-black text-rose-500 drop-shadow-md mb-2";
+            }
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>

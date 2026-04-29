@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Quiz: Volume Expansion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f0fdfa; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .disabled-card { pointer-events: none; opacity: 0.85; }
+        
+        /* Custom styling for physics equations */
+        .eq { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.15em; font-weight: 500; color: #1e293b; }
+        .math-symbol { font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-teal-700 text-white rounded-2xl p-8 mb-10 shadow-xl text-center fade-in">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">Volume Expansion</h1>
+            <p class="text-teal-100 text-lg md:text-xl">General Physics (1) - Interactive Quiz</p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
+                <span class="bg-teal-500/50 border border-teal-400 px-4 py-1.5 rounded-full shadow-sm">20 Questions</span>
+                <span class="bg-teal-500/50 border border-teal-400 px-4 py-1.5 rounded-full shadow-sm">Immediate Feedback</span>
+                <span class="bg-teal-500/50 border border-teal-400 px-4 py-1.5 rounded-full shadow-sm">Physics Equations</span>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12"></div>
+        
+        <!-- Completion Section -->
+        <div id="completion-message" class="hidden text-center mt-12 mb-12 fade-in">
+            <div class="bg-white p-8 rounded-3xl shadow-xl border-2 border-teal-100">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Quiz Completed! 🎉</h2>
+                <p class="text-lg text-slate-600">You have answered all the questions. Please review your feedback above.</p>
+                <div class="mt-6 text-5xl font-black text-teal-600 drop-shadow-sm" id="final-score"></div>
+                <button onclick="location.reload()" class="mt-8 bg-teal-600 text-white px-8 py-3 rounded-xl font-bold text-lg hover:bg-teal-700 hover:shadow-lg transition-all transform hover:-translate-y-1">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Model based on General Physics (1) - Volume Expansion
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                id: 1, section: "Multiple Choice", type: "mcq",
+                question: "What is the relationship between the coefficient of volume expansion (<span class='math-symbol'>&beta;</span>) and the coefficient of linear expansion (<span class='math-symbol'>&alpha;</span>) for an isotropic solid?",
+                options: [
+                    "<span class='eq'>&beta; = &alpha;</span>", 
+                    "<span class='eq'>&beta; = 2&alpha;</span>", 
+                    "<span class='eq'>&beta; = 3&alpha;</span>", 
+                    "<span class='eq'>&beta; = &alpha;<sup>3</sup></span>"
+                ],
+                correct: 2,
+                explanation: "For an isotropic material (which expands equally in all three dimensions), the volume expansion coefficient is mathematically derived to be approximately three times the linear expansion coefficient: <span class='eq'>&beta; &asymp; 3&alpha;</span>."
+            },
+            {
+                id: 2, section: "Multiple Choice", type: "mcq",
+                question: "Which equation correctly represents the change in volume (<span class='eq'>&Delta;V</span>) of a substance when subjected to a temperature change (<span class='eq'>&Delta;T</span>)?",
+                options: [
+                    "<span class='eq'>&Delta;V = &alpha; V<sub>0</sub> &Delta;T</span>", 
+                    "<span class='eq'>&Delta;V = &beta; V<sub>0</sub> &Delta;T</span>", 
+                    "<span class='eq'>&Delta;V = &beta; V<sub>0</sub> / &Delta;T</span>", 
+                    "<span class='eq'>&Delta;V = &beta; &Delta;T / V<sub>0</sub></span>"
+                ],
+                correct: 1,
+                explanation: "The change in volume (<span class='eq'>&Delta;V</span>) is directly proportional to the initial volume (<span class='eq'>V<sub>0</sub></span>), the temperature change (<span class='eq'>&Delta;T</span>), and the material's specific coefficient of volume expansion (<span class='eq'>&beta;</span>)."
+            },
+            {
+                id: 3, section: "Multiple Choice", type: "mcq",
+                question: "Water exhibits an anomalous volume expansion behavior. At what temperature does liquid water reach its <strong>maximum density</strong>?",
+                options: ["0&deg;C", "4&deg;C", "100&deg;C", "-4&deg;C"],
+                correct: 1,
+                explanation: "Unlike most substances, water contracts when heated from 0&deg;C to 4&deg;C. Because its volume decreases while mass is constant, its density increases, reaching a maximum exactly at 4&deg;C before expanding at higher temperatures."
+            },
+            {
+                id: 4, section: "Multiple Choice", type: "mcq",
+                question: "A solid metal sphere with a hollow cavity in its center is heated. What happens to the volume of the hollow cavity?",
+                options: [
+                    "It decreases because the surrounding metal expands inwards.",
+                    "It remains exactly the same.",
+                    "It increases as if the cavity were made of the solid metal.",
+                    "It increases initially, then rapidly decreases."
+                ],
+                correct: 2,
+                explanation: "Thermal expansion acts like a photographic enlargement. The distance between any two points in the solid increases. Therefore, the cavity expands outwards exactly as if it were a solid block of the same material."
+            },
+            {
+                id: 5, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A <span class='eq'>2.0 m<sup>3</sup></span> aluminum tank (<span class='eq'>&beta; = 7.2 &times; 10<sup>-5</sup> &deg;C<sup>-1</sup></span>) is heated by <span class='eq'>100&deg;C</span>. What is the increase in its volume?",
+                options: ["0.0144 m<sup>3</sup>", "0.0072 m<sup>3</sup>", "1.44 m<sup>3</sup>", "0.0288 m<sup>3</sup>"],
+                correct: 0,
+                explanation: "Using the formula <span class='eq'>&Delta;V = &beta; V<sub>0</sub> &Delta;T</span>:<br> &Delta;V = (7.2 &times; 10<sup>-5</sup> &deg;C<sup>-1</sup>) &times; (2.0 m<sup>3</sup>) &times; (100&deg;C) = <strong>0.0144 m<sup>3</sup></strong>."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                id: 6, section: "True / False", type: "tf",
+                question: "The coefficient of volume expansion (<span class='eq'>&beta;</span>) always has the exact same value for both solids and liquids.",
+                correct: false,
+                explanation: "Liquids generally have much higher coefficients of volume expansion than solids. This is because the intermolecular forces holding liquid molecules together are significantly weaker than the rigid bonds in a solid crystal lattice."
+            },
+            {
+                id: 7, section: "True / False", type: "tf",
+                question: "When a solid substance undergoes thermal volume expansion, its overall mass remains constant, but its density decreases.",
+                correct: true,
+                explanation: "Density is defined as mass divided by volume (<span class='eq'>&rho; = m/V</span>). By the law of conservation of mass, 'm' is constant. As heating increases the volume 'V' (the denominator), the overall density must decrease."
+            },
+            {
+                id: 8, section: "True / False", type: "tf",
+                question: "The standard SI unit for the coefficient of volume expansion (<span class='eq'>&beta;</span>) is cubic meters per degree Celsius (<span class='eq'>m<sup>3</sup>/&deg;C</span>).",
+                correct: false,
+                explanation: "The unit for <span class='eq'>&beta;</span> is inverse Kelvin (<span class='eq'>K<sup>-1</sup></span>) or inverse Celsius (<span class='eq'>&deg;C<sup>-1</sup></span>). Looking at the formula <span class='eq'>&beta; = &Delta;V / (V<sub>0</sub> &Delta;T)</span>, the volume units (m&sup3;) cancel out, leaving only the inverse temperature unit."
+            },
+            {
+                id: 9, section: "True / False", type: "tf",
+                question: "If a glass beaker is filled to the brim with water at 20&deg;C and then the entire system is heated to 50&deg;C, the water will likely spill over the edge.",
+                correct: true,
+                explanation: "Both the glass and the water will expand when heated. However, liquids (water) typically have a significantly larger volume expansion coefficient than solids (glass beaker). The water expands more than the capacity of the expanding beaker, causing a spill. This is known as apparent expansion."
+            },
+            {
+                id: 10, section: "True / False", type: "tf",
+                question: "An isotropic material is one that expands at completely different rates in the x, y, and z directions when heated.",
+                correct: false,
+                explanation: "An <strong>isotropic</strong> material has identical physical properties in all directions, meaning it expands uniformly (<span class='eq'>&beta; = 3&alpha;</span>). Materials that expand differently in different directions (like certain crystals or wood) are called <strong>anisotropic</strong>."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                id: 11, section: "Fill in the Blanks", type: "fib",
+                question: "When a solid with a hollow ______ is heated, the empty space expands exactly as if it were filled with the surrounding solid material.",
+                correct: "Cavity",
+                explanation: "A cavity (or hole) inside a material undergoes thermal expansion in the exact same proportion as the material itself because the atomic bonds bordering the hole push outwards as they expand."
+            },
+            {
+                id: 12, section: "Fill in the Blanks", type: "fib",
+                question: "For an ______ material, the thermal expansion behaves uniformly and is the same in every direction.",
+                correct: "Isotropic",
+                explanation: "The prefix 'iso-' means equal. Isotropic materials have a uniform atomic structure, causing symmetric expansion across length, width, and height."
+            },
+            {
+                id: 13, section: "Fill in the Blanks", type: "fib",
+                question: "When water is heated from 0&deg;C to 4&deg;C, its ______ actually increases until it reaches a maximum peak, rather than decreasing.",
+                correct: "Density",
+                explanation: "This is the anomalous expansion of water. Due to the breaking of open hydrogen-bonded structures formed in ice, the water molecules pack closer together up to 4&deg;C, maximizing density."
+            },
+            {
+                id: 14, section: "Fill in the Blanks", type: "fib",
+                question: "The general rule of thermal behavior states that most ordinary matter will ______ when heated and contract when cooled.",
+                correct: "Expand",
+                explanation: "Heating increases the kinetic energy of atoms, causing them to vibrate more violently and push further apart, resulting in macroscopic expansion."
+            },
+            {
+                id: 15, section: "Fill in the Blanks", type: "fib",
+                question: "For solid materials, the coefficient of volume expansion (<span class='math-symbol'>&beta;</span>) is approximately equal to ______ the coefficient of linear expansion (<span class='math-symbol'>&alpha;</span>).",
+                correct: "Triple",
+                explanation: "Since volume is a three-dimensional property (Length &times; Width &times; Height), small linear expansions in all three directions compound to yield a total volume expansion roughly three times the linear expansion."
+            },
+
+            // --- MATCHING ---
+            {
+                id: 16, section: "Matching", type: "match",
+                question: "Symbol: <span class='eq'>&Delta;V</span>",
+                correct: "C",
+                explanation: "<span class='eq'>&Delta;V</span> represents the absolute change in volume experienced by a substance due to a change in temperature (<span class='eq'>V<sub>final</sub> - V<sub>initial</sub></span>)."
+            },
+            {
+                id: 17, section: "Matching", type: "match",
+                question: "Symbol: <span class='eq'>&beta;</span>",
+                correct: "E",
+                explanation: "<span class='eq'>&beta;</span> is the standard symbol for the coefficient of volume expansion, a material-specific constant."
+            },
+            {
+                id: 18, section: "Matching", type: "match",
+                question: "Concept: Anomalous Expansion",
+                correct: "D",
+                explanation: "This refers to the unique and irregular behavior of water where it contracts (instead of expanding) as it is heated from 0&deg;C to 4&deg;C."
+            },
+            {
+                id: 19, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>V = V<sub>0</sub>(1 + &beta;&Delta;T)</span>",
+                correct: "A",
+                explanation: "This equation is derived from <span class='eq'>&Delta;V = V - V<sub>0</sub></span> and is used to calculate the <strong>final total volume</strong> of an object after heating or cooling."
+            },
+            {
+                id: 20, section: "Matching", type: "match",
+                question: "Concept: Apparent Expansion",
+                correct: "B",
+                explanation: "When a liquid is heated inside a solid container, both expand. The 'apparent' expansion of the liquid is what we observe, which is the difference between the true liquid expansion and the container's expansion."
+            }
+        ];
+
+        // Shared resources for specific sections
+        const wordBank = ["Density", "Isotropic", "Expand", "Triple", "Cavity"];
+        const matchOptions = [
+            { letter: "A", text: "Equation for the final total volume of an object after a temperature change." },
+            { letter: "B", text: "The observable difference between the volume expansion of a liquid and its expanding solid container." },
+            { letter: "C", text: "The change in volume experienced by a substance due to a change in temperature." },
+            { letter: "D", text: "The unique behavior of water contracting as it is heated from 0&deg;C to 4&deg;C." },
+            { letter: "E", text: "The coefficient of volume expansion." }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        // Render the Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const sections = ["Multiple Choice", "True / False", "Fill in the Blanks", "Matching"];
+
+            sections.forEach(sectionTitle => {
+                // Section Wrapper
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "mb-14";
+                
+                // Section Header
+                const sectionHeader = document.createElement('h2');
+                sectionHeader.className = "text-2xl md:text-3xl font-extrabold text-teal-800 border-b-4 border-teal-200 pb-3 mb-8";
+                sectionHeader.innerText = sectionTitle;
+                sectionDiv.appendChild(sectionHeader);
+
+                // Add Helpers for FIB and Matching
+                if (sectionTitle === "Fill in the Blanks") {
+                    const wbDiv = document.createElement('div');
+                    wbDiv.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-slate-200";
+                    wbDiv.innerHTML = `<h3 class="font-bold text-teal-700 mb-3 text-sm uppercase tracking-widest">Word Bank (Select from these)</h3>
+                                       <div class="flex flex-wrap gap-3">${wordBank.sort().map(w => `<span class="bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-lg text-slate-700 font-semibold shadow-sm">${w}</span>`).join('')}</div>`;
+                    sectionDiv.appendChild(wbDiv);
+                } else if (sectionTitle === "Matching") {
+                    const matchTable = document.createElement('div');
+                    matchTable.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-slate-200";
+                    matchTable.innerHTML = `<h3 class="font-bold text-teal-700 mb-4 text-sm uppercase tracking-widest">List B (Definitions & Concepts)</h3>
+                                            <ul class="space-y-3">
+                                                ${matchOptions.map(opt => `<li class="flex gap-4 p-3 bg-slate-50 rounded-lg border border-slate-100"><strong class="text-teal-600 font-black text-lg">${opt.letter}</strong> <span class="text-slate-700 font-medium">${opt.text}</span></li>`).join('')}
+                                            </ul>`;
+                    sectionDiv.appendChild(matchTable);
+                }
+
+                // Filter Questions
+                const sectionQuestions = quizData.filter(q => q.section === sectionTitle);
+                
+                sectionQuestions.forEach((q, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = "bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 mb-6 transition-all relative overflow-hidden group hover:border-teal-300 hover:shadow-md";
+                    qCard.id = `q-card-${q.id}`;
+
+                    let interactionHTML = '';
+
+                    // Generate Interactions based on type
+                    if (q.type === 'mcq') {
+                        interactionHTML = `<div class="mt-6 grid gap-3">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="checkAnswer(${q.id}, ${i})" id="btn-${q.id}-${i}" 
+                                class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 transition-all font-medium text-slate-700 text-lg flex items-center gap-4">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 font-bold text-sm shrink-0">${String.fromCharCode(65 + i)}</span> 
+                                    <span>${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>`;
+                    } else if (q.type === 'tf') {
+                        interactionHTML = `<div class="mt-6 flex gap-4">
+                            <button onclick="checkAnswer(${q.id}, true)" id="btn-${q.id}-true" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 transition-all font-bold text-xl text-slate-700 shadow-sm">True</button>
+                            <button onclick="checkAnswer(${q.id}, false)" id="btn-${q.id}-false" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-rose-400 hover:bg-rose-50 transition-all font-bold text-xl text-slate-700 shadow-sm">False</button>
+                        </div>`;
+                    } else if (q.type === 'fib') {
+                        interactionHTML = `<div class="mt-6">
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full md:w-2/3 p-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 text-lg font-semibold text-slate-700 cursor-pointer shadow-sm transition-all">
+                                <option value="" disabled selected>--- Select the correct word ---</option>
+                                ${wordBank.sort().map(w => `<option value="${w}">${w}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    } else if (q.type === 'match') {
+                        interactionHTML = `<div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-500 text-sm uppercase tracking-wider whitespace-nowrap">Matches with list B:</span>
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full p-4 rounded-xl border-2 border-slate-200 bg-white focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 font-bold text-slate-700 cursor-pointer shadow-sm transition-all text-center">
+                                <option value="" disabled selected>--- Select Option ---</option>
+                                ${matchOptions.map(o => `<option value="${o.letter}">Option ${o.letter}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    }
+
+                    qCard.innerHTML = `
+                        <div class="flex gap-5">
+                            <div class="bg-teal-100 text-teal-800 w-10 h-10 rounded-full flex items-center justify-center font-black text-lg flex-shrink-0 shadow-inner">${index + 1}</div>
+                            <div class="flex-1 text-xl font-semibold text-slate-800 leading-relaxed">${q.question}</div>
+                        </div>
+                        ${interactionHTML}
+                        <div id="feedback-${q.id}" class="mt-6 hidden rounded-2xl p-5 text-base animate-fadeIn border-l-4 shadow-sm"></div>
+                    `;
+                    sectionDiv.appendChild(qCard);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle Evaluation
+        function checkAnswer(questionId, userAnswer) {
+            const questionData = quizData.find(q => q.id === questionId);
+            const isCorrect = userAnswer === questionData.correct;
+            const card = document.getElementById(`q-card-${questionId}`);
+            const feedbackBox = document.getElementById(`feedback-${questionId}`);
+
+            // Lock interaction
+            card.classList.add('disabled-card');
+            card.classList.remove('hover:border-teal-300', 'hover:shadow-md');
+            
+            // Format Feedback
+            let correctIndicator = '';
+            let explanationText = `<div class="mt-3 text-slate-700 font-medium leading-relaxed bg-white/50 p-3 rounded-xl">${questionData.explanation}</div>`;
+            let bestAnswerNotice = '';
+
+            if (isCorrect) {
+                score++;
+                card.classList.add('border-emerald-200', 'bg-emerald-50/30');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-emerald-700 text-xl mb-1">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        Correct!
+                                    </div>`;
+                feedbackBox.className = "mt-6 rounded-2xl p-5 bg-emerald-100 border-l-4 border-emerald-500 block fade-in";
+                
+                // Highlight selected button (if applicable)
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const btn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    btn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-center gap-4 shadow-sm";
+                }
+            } else {
+                card.classList.add('border-rose-200', 'bg-rose-50/30');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-rose-700 text-xl mb-1">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        Incorrect
+                                    </div>`;
+                
+                // Formulate what the correct answer was
+                let correctAnswerLabel = questionData.correct;
+                if (questionData.type === 'mcq') {
+                    correctAnswerLabel = `${String.fromCharCode(65 + questionData.correct)}. ${questionData.options[questionData.correct]}`;
+                } else if (questionData.type === 'tf') {
+                    correctAnswerLabel = questionData.correct ? "True" : "False";
+                } else if (questionData.type === 'match') {
+                    correctAnswerLabel = `Option ${questionData.correct}`;
+                }
+
+                bestAnswerNotice = `<p class="text-rose-900 font-semibold mt-2 text-lg">The correct answer is: <span class="bg-white px-3 py-1 rounded-md border border-rose-200 shadow-sm inline-block mt-1">${correctAnswerLabel}</span></p>`;
+                
+                feedbackBox.className = "mt-6 rounded-2xl p-5 bg-rose-100 border-l-4 border-rose-500 block fade-in";
+
+                // Highlight selected wrong button & correct button
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const wrongBtn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    if(wrongBtn) wrongBtn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-400 bg-rose-50 font-medium text-rose-900 text-lg flex items-center gap-4 opacity-70 line-through";
+                    
+                    const rightBtn = document.getElementById(`btn-${questionId}-${questionData.correct}`);
+                    if(rightBtn) rightBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-center gap-4 shadow-sm mt-2";
+                }
+            }
+
+            // For select inputs, lock them and change color
+            if(questionData.type === 'fib' || questionData.type === 'match') {
+                const sel = document.getElementById(`select-${questionId}`);
+                sel.disabled = true;
+                if(isCorrect) {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-center appearance-none";
+                } else {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-800 font-bold text-center appearance-none line-through opacity-80";
+                }
+            }
+
+            feedbackBox.innerHTML = correctIndicator + bestAnswerNotice + explanationText;
+
+            // Check for completion
+            answeredQuestions++;
+            if(answeredQuestions === quizData.length) {
+                document.getElementById('completion-message').classList.remove('hidden');
+                
+                // Color final score based on performance
+                const finalScoreElem = document.getElementById('final-score');
+                finalScoreElem.innerText = `${score} / ${quizData.length}`;
+                if (score === 20) finalScoreElem.className = "mt-6 text-5xl font-black text-emerald-500 drop-shadow-sm";
+                else if (score >= 15) finalScoreElem.className = "mt-6 text-5xl font-black text-teal-600 drop-shadow-sm";
+                else if (score >= 10) finalScoreElem.className = "mt-6 text-5xl font-black text-amber-500 drop-shadow-sm";
+                else finalScoreElem.className = "mt-6 text-5xl font-black text-rose-500 drop-shadow-sm";
+            }
+        }
+
+        // Initialize Quiz on load
+        window.onload = renderQuiz;
+
+    </script>
+</body>
+</html>
