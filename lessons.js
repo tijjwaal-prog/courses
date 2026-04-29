@@ -146,11 +146,28 @@ window.changeLesson = function(step) {
 
 // تهيئة التطبيق عند الفتح
 document.addEventListener("DOMContentLoaded", async () => {
+    // التحقق من صلاحيات الطالب قبل عرض أي شيء
+    const authData = localStorage.getItem('studentAuth');
+    if (!authData) {
+        alert("يرجى تسجيل الدخول أولاً من الصفحة الرئيسية.");
+        window.location.href = "index.html";
+        return;
+    }
+    
+    const student = JSON.parse(authData);
     const courseConfig = getCourseConfig();
     
     if (!courseConfig) {
         document.getElementById('course-title').innerText = "خطأ: المقرر غير موجود";
         document.getElementById('lesson-title').innerText = "الرجاء العودة للبوابة واختيار مقرر صالح.";
+        return;
+    }
+
+    // التحقق من أن المقرر المطلوب موجود ضمن صلاحيات الطالب (مع تجاهل حالة الأحرف)
+    const normalizedStudentCourses = student.courses.map(c => c.toLowerCase());
+    if (!normalizedStudentCourses.includes(courseConfig.id.toLowerCase())) {
+        alert("عذراً، ليس لديك صلاحية للوصول إلى هذا المقرر.");
+        window.location.href = "index.html";
         return;
     }
     

@@ -16,42 +16,166 @@
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col items-center justify-center p-6">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-extrabold text-blue-800 mb-4">منصة المقررات الدراسية</h1>
-        <p class="text-slate-600 text-lg">اختر المقرر الذي ترغب في تصفحه</p>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col items-center justify-center p-6 relative">
+
+    <!-- User Info & Logout (Hidden by default) -->
+    <div id="user-header" class="absolute top-4 left-6 flex items-center gap-4 hidden">
+        <span id="user-name-display" class="font-bold text-blue-800 text-lg"></span>
+        <button onclick="logout()"
+            class="text-red-500 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg font-bold text-sm transition shadow-sm border border-red-100">تسجيل
+            خروج</button>
     </div>
 
-    <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-blue-800 mb-4">منصة المقررات الدراسية</h1>
+        <p id="page-subtitle" class="text-slate-600 text-lg">مرحباً بك، يرجى تسجيل الدخول للوصول למقرراتك</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-container"
+        class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 w-full max-w-md text-center">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6">تسجيل الدخول</h2>
+        <input type="text" id="phone-input" placeholder="رقم الجوال (مثال: +966500000000)"
+            class="w-full text-left p-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none mb-4 text-lg font-bold text-slate-700"
+            dir="ltr">
+        <button id="login-btn" onclick="login()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 rounded-xl transition shadow-md">تسجيل
+            الدخول</button>
+        <p id="login-error" class="text-red-500 mt-4 font-bold hidden"></p>
+    </div>
+
+    <!-- Courses Grid -->
+    <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl hidden">
         <!-- سيتم إضافة المقررات هنا عبر الجافاسكربت -->
     </div>
 
     <script>
+        // ضع هنا الرابط الخاص بـ Auth_Script.js بعد نشره كـ Web App
+        const AUTH_API_URL = "https://script.google.com/macros/s/AKfycbw5zgLxso35aN5fURw-CFXRDczmyhubwE3ho0EriaDvmeprKClfPq8BSWNibbw-AeWF/exec";
+
         document.addEventListener("DOMContentLoaded", () => {
+            checkAuth();
+
+            // دعم ضغطة Enter لتسجيل الدخول
+            document.getElementById('phone-input').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+
+        function checkAuth() {
+            const authData = localStorage.getItem('studentAuth');
+            if (authData) {
+                const student = JSON.parse(authData);
+                showCourses(student);
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('login-container').classList.remove('hidden');
+            document.getElementById('courses-container').classList.add('hidden');
+            document.getElementById('user-header').classList.add('hidden');
+            document.getElementById('page-subtitle').innerText = "مرحباً بك، يرجى تسجيل الدخول للوصول لمقرراتك";
+        }
+
+        function showCourses(student) {
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('courses-container').classList.remove('hidden');
+            document.getElementById('user-header').classList.remove('hidden');
+            document.getElementById('user-name-display').innerText = student.name;
+            document.getElementById('page-subtitle').innerText = "اختر المقرر الذي ترغب في تصفحه";
+
             const container = document.getElementById('courses-container');
+            container.innerHTML = "";
 
             if (typeof COURSES_CONFIG === 'undefined') {
                 container.innerHTML = "<p class='text-red-600 text-center col-span-2'>خطأ: ملف courses.js غير موجود أو به خطأ.</p>";
                 return;
             }
 
-            Object.values(COURSES_CONFIG).forEach(course => {
-                const card = document.createElement('a');
-                card.href = `course_viewer.html?courseId=${course.id}`;
-                card.className = "bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-8 border border-slate-100 flex items-center gap-6 group hover:-translate-y-1";
+            let hasCourses = false;
 
-                card.innerHTML = `
-                    <div class="w-16 h-16 bg-gradient-to-br ${course.color} rounded-2xl flex items-center justify-center text-3xl shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
-                        ${course.icon}
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${course.title}</h2>
-                        <p class="text-slate-500 mt-2 text-sm">تصفح المذكرات، الخرائط الذهنية، والاختبارات التفاعلية</p>
-                    </div>
-                `;
-                container.appendChild(card);
+            Object.values(COURSES_CONFIG).forEach(course => {
+                // عرض المقرر فقط إذا كان ضمن قائمة مقررات الطالب المسموحة (مع تجاهل حالة الأحرف)
+                const normalizedStudentCourses = student.courses.map(c => c.toLowerCase());
+                if (normalizedStudentCourses.includes(course.id.toLowerCase())) {
+                    hasCourses = true;
+                    const card = document.createElement('a');
+                    card.href = `course_viewer.html?courseId=${course.id}`;
+                    card.className = "bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-8 border border-slate-100 flex items-center gap-6 group hover:-translate-y-1";
+
+                    card.innerHTML = `
+                        <div class="w-16 h-16 bg-gradient-to-br ${course.color} rounded-2xl flex items-center justify-center text-3xl shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
+                            ${course.icon}
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${course.title}</h2>
+                            <p class="text-slate-500 mt-2 text-sm">تصفح المذكرات، الخرائط الذهنية، والاختبارات التفاعلية</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
             });
-        });
+
+            if (!hasCourses) {
+                container.innerHTML = "<p class='text-slate-500 text-center col-span-2 text-xl font-bold mt-10 bg-white p-8 rounded-2xl border border-slate-100'>عذراً، لا يوجد لديك صلاحية لأي مقرر حالياً. يرجى مراجعة الإدارة.</p>";
+            }
+        }
+
+        async function login() {
+            const phone = document.getElementById('phone-input').value.trim();
+            const btn = document.getElementById('login-btn');
+            const errorText = document.getElementById('login-error');
+
+            if (!phone) {
+                errorText.innerText = "الرجاء إدخال رقم الجوال";
+                errorText.classList.remove('hidden');
+                return;
+            }
+
+            if (AUTH_API_URL === "ضع_الرابط_هنا") {
+                errorText.innerText = "لم يتم إضافة رابط الـ API بعد في الكود. الرجاء مراجعة المطور.";
+                errorText.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "جاري التحقق...";
+            errorText.classList.add('hidden');
+
+            try {
+                // منع التخزين المؤقت للبيانات من المتصفح باستخدام طابع زمني
+                const ts = new Date().getTime();
+                const response = await fetch(`${AUTH_API_URL}?phone=${encodeURIComponent(phone)}&ts=${ts}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('studentAuth', JSON.stringify({
+                        name: result.name,
+                        courses: result.courses,
+                        phone: phone
+                    }));
+                    checkAuth();
+                } else {
+                    errorText.innerText = result.message;
+                    errorText.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorText.innerText = "حدث خطأ في الاتصال بالسيرفر. تأكد من الإنترنت أو الرابط.";
+                errorText.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "تسجيل الدخول";
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('studentAuth');
+            checkAuth();
+        }
     </script>
 </body>
 

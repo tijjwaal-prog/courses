@@ -10,7 +10,7 @@ const COURSES_CONFIG = {
     "Physics1010": {
         id: "Physics1010",
         title: "الفيزياء العامة",
-        driveFolderId: "1pcfdQ2TTATprTqkfL44PdJ_SkfYR6jqm", // يرجى تغيير هذا المعرف لاحقاً ليكون خاصاً بمجلد الفيزياء
+        driveFolderId: "1grmhjxcSCDGZmRQiip4JSwOhi2K3xA5f",
         icon: "⚛️",
         color: "from-emerald-500 to-teal-700"
     }
