@@ -59,7 +59,7 @@ async function fetchLessonsFromDrive(driveFolderId, coursePathId) {
             const finalBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
             // لاحظ أن مجلد الحصص الآن يتم توقعه كالتالي: Chemistry106/Lessons/Lesson 01/quiz.html
             // إذا كان المجلد Lessons بحرف كبير يجب أن يكون هكذا في جميع المقررات
-            lesson.quiz = encodeURI(finalBaseUrl + `${coursePathId}/Lessons/Lesson ${folderNumber}/quiz.html`);
+            lesson.quiz = encodeURI(finalBaseUrl + `${coursePathId}/lessons/Lesson ${folderNumber}/quiz.html`);
 
             return lesson;
         });
