@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactions of Alkanes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fffbeb;
+            /* خلفية صفراء/كهرمانية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #d97706 0%, #dc2626 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-amber-700 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-fire text-red-600"></i>
+                Reactions of Alkanes
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (91 - 98): Combustion & Radical
+                Halogenation</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-amber-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-amber-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-amber-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-amber-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-amber-200">
+            <i class="fa-solid fa-flask-vial text-7xl text-amber-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تفاعلات الألكانات بنجاح.</p>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-amber-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-amber-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-amber-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "Alkanes are generally unreactive, but they readily undergo combustion. What are the products of the complete combustion of methane (CH₄ + 2O₂)?",
+                options: ["CO and H₂O", "CO₂ and H₂O", "C (Soot) and H₂O", "CH₃OH and O₂"],
+                a: "CO₂ and H₂O",
+                exp: "Complete combustion of any hydrocarbon with sufficient oxygen always yields Carbon Dioxide (CO₂) and Water (H₂O), accompanied by the release of heat energy."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What essential condition is required to initiate the radical halogenation of an alkane (e.g., reacting CH₄ with Cl₂)?",
+                options: ["Strong acid catalyst (H₂SO₄)", "Aqueous alkaline solution (NaOH)", "Ultraviolet (UV) light (hν) or high heat", "Low temperatures and darkness"],
+                a: "Ultraviolet (UV) light (hν) or high heat",
+                exp: "The reaction requires energy in the form of UV light (hν) or heat (Δ) to homolytically break the weak halogen-halogen bond (Cl-Cl) and create the initial free radicals."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In the free radical halogenation mechanism, which step involves the reaction of two radicals combining to form a stable, neutral molecule?",
+                options: ["Initiation", "Propagation", "Termination", "Substitution"],
+                a: "Termination",
+                exp: "Termination steps stop the chain reaction. They occur when two highly reactive radicals collide and combine their unpaired electrons to form a stable sigma bond (e.g., Cl• + Cl• → Cl₂)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "When comparing the halogenation of alkanes, which statement is true regarding selectivity?",
+                options: ["Chlorination is highly selective, while bromination is unselective.", "Bromination is highly selective for 3° hydrogens, while chlorination is much less selective.", "Both are equally selective.", "Neither reaction discriminates between 1°, 2°, or 3° hydrogens."],
+                a: "Bromination is highly selective for 3° hydrogens, while chlorination is much less selective.",
+                exp: "Bromine radicals are less reactive and therefore more selective. They wait to attack the weakest C-H bond (which forms the most stable 3° radical). Chlorine radicals are highly reactive and attack almost randomly."
+            },
+            {
+                type: "Multiple Choice",
+                q: "If isobutane (2-methylpropane) reacts with Br₂ and UV light, what will be the major organic product?",
+                options: ["1-Bromo-2-methylpropane", "2-Bromo-2-methylpropane", "Bromomethane", "1,2-Dibromopropane"],
+                a: "2-Bromo-2-methylpropane",
+                exp: "Isobutane has one tertiary (3°) hydrogen and nine primary (1°) hydrogens. Because bromination is highly selective for the most stable radical intermediate, the 3° radical forms almost exclusively, yielding 2-bromo-2-methylpropane."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Alkanes are highly reactive towards acids, bases, and oxidizing agents at room temperature without any catalyst.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Alkanes are called 'paraffins' (little affinity) because their strong, non-polar C-C and C-H sigma bonds make them chemically inert to most reagents under standard conditions."
+            },
+            {
+                type: "True / False",
+                q: "The combustion of alkanes is an exothermic process, which is why they are primarily used as fuels.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Breaking the C-C/C-H bonds and forming much stronger C=O and O-H bonds releases a massive amount of energy as heat (exothermic reaction)."
+            },
+            {
+                type: "True / False",
+                q: "During the propagation steps of radical halogenation, a free radical reacts with a neutral molecule to produce a new radical, keeping the chain reaction going.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Propagation is characterized by consuming one radical and generating another (e.g., Cl• + CH₄ → HCl + CH₃•), which allows the cycle to repeat thousands of times."
+            },
+            {
+                type: "True / False",
+                q: "The stability order of carbon radicals is Primary (1°) > Secondary (2°) > Tertiary (3°).",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The stability order is the exact opposite: 3° > 2° > 1° > Methyl. Radicals are electron-deficient, so they are stabilized by the electron-donating inductive effect of surrounding alkyl groups."
+            },
+            {
+                type: "True / False",
+                q: "In radical halogenation, if an excess of halogen (like Cl₂) is used, multiple substitutions can occur, yielding di-, tri-, or tetra-halogenated products.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. For example, chlorinating methane can sequentially produce CH₃Cl, CH₂Cl₂, CHCl₃ (chloroform), and finally CCl₄ (carbon tetrachloride) if left to react."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Halogenation of an alkane is classified as a radical ________ reaction because a halogen atom replaces a hydrogen atom on the carbon chain.",
+                options: ["Exothermic", "Initiation", "Tertiary", "Substitution", "Homolytic"],
+                a: "Substitution",
+                exp: "The overall process does not change the degree of unsaturation; it simply substitutes an 'H' with an 'X' (Cl or Br)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The very first step of the halogenation mechanism, where UV light breaks the Cl-Cl bond, is called the ________ step.",
+                options: ["Exothermic", "Initiation", "Tertiary", "Substitution", "Homolytic"],
+                a: "Initiation",
+                exp: "Initiation creates the first free radicals. The number of radicals goes from zero (neutral Cl₂ molecule) to two (2 Cl• atoms)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Because of the high selectivity of bromine, it predominantly attacks the ________ hydrogen in a branched alkane.",
+                options: ["Exothermic", "Initiation", "Tertiary", "Substitution", "Homolytic"],
+                a: "Tertiary",
+                exp: "The tertiary (3°) C-H bond is the weakest and forms the most stable 3° radical. Bromine is selective enough to 'wait' for this specific bond to break."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The breaking of the halogen-halogen bond by UV light is an example of ________ cleavage, where each atom takes one electron.",
+                options: ["Exothermic", "Initiation", "Tertiary", "Substitution", "Homolytic"],
+                a: "Homolytic",
+                exp: "Homolytic (equal) cleavage produces uncharged free radicals. Heterolytic cleavage would produce ions."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The combustion of octane (gasoline) in a car engine is highly ________, providing the energy needed to move the vehicle.",
+                options: ["Exothermic", "Initiation", "Tertiary", "Substitution", "Homolytic"],
+                a: "Exothermic",
+                exp: "Exothermic reactions release energy to the surroundings, usually in the form of heat and light."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the reaction/description to its correct chemical term: \nCH₄ + 2O₂ → CO₂ + 2H₂O + Heat",
+                options: ["Combustion", "Initiation step", "Propagation step", "Termination step", "Tertiary radical"],
+                a: "Combustion",
+                exp: "This is the classic, balanced chemical equation for the complete combustion of methane."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction/description to its correct chemical term: \nCl₂ →(UV light)→ 2Cl•",
+                options: ["Combustion", "Initiation step", "Propagation step", "Termination step", "Tertiary radical"],
+                a: "Initiation step",
+                exp: "This is the initiation step. Energy is used to homolytically cleave the weak Cl-Cl bond, creating the initial radicals."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction/description to its correct chemical term: \nCl• + CH₄ → HCl + CH₃• \nCH₃• + Cl₂ → CH₃Cl + Cl•",
+                options: ["Combustion", "Initiation step", "Propagation step", "Termination step", "Tertiary radical"],
+                a: "Propagation step",
+                exp: "These are propagation steps. A radical reacts with a stable molecule, creating a product and a NEW radical, allowing the chain to continue."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction/description to its correct chemical term: \nCH₃• + Cl• → CH₃Cl \n(Two radicals combine)",
+                options: ["Combustion", "Initiation step", "Propagation step", "Termination step", "Tertiary radical"],
+                a: "Termination step",
+                exp: "When two radicals collide, they form a stable bond. This consumes radicals without creating new ones, thereby terminating the chain reaction."
+            },
+            {
+                type: "Matching",
+                q: "Match the reaction/description to its correct chemical term: \nThe most stable intermediate formed during the radical halogenation of isobutane.",
+                options: ["Combustion", "Initiation step", "Propagation step", "Termination step", "Tertiary radical"],
+                a: "Tertiary radical",
+                exp: "Isobutane has a 3° hydrogen. Removing it forms a 3° radical, which is the most stable carbon radical due to the inductive effect of three alkyl groups."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-orange-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Exothermic, Initiation, Tertiary, Substitution, Homolytic";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-orange-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Combustion, Initiation step, Propagation step, Termination step, Tertiary radical";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-amber-500 hover:bg-orange-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-amber-500', 'hover:bg-orange-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-amber-500', 'hover:bg-orange-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء ناري ومثالي! 🔥 ميكانيكية الهلجنة والاحتراق واضحة تماماً بالنسبة لك.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع! تذكر دائماً الفرق بين انتقائية البروم والكلور لتصبح خبيراً. ✨";
+            } else {
+                msgEl.textContent = "التفاعلات الجذرية تحتاج لبعض التركيز. راجع خطوات (Initiation, Propagation, Termination) وأعد الاختبار! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

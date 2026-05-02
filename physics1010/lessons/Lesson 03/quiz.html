@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Mechanics Quiz</title>
+    <!-- استدعاء الخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- مكتبة Tailwind للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة الأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+            min-height: 100vh;
+        }
+        .english-text {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-left: 3rem;
+        }
+        .math-expr {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.15em;
+            font-weight: bold;
+            color: #1e40af;
+            background: #eff6ff;
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <!-- حاوية الاختبار -->
+    <div class="glass-card rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden relative fade-in" id="quiz-container">
+        
+        <!-- الهيدر -->
+        <div class="bg-blue-800 text-white p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                <i class="fas fa-water text-9xl"></i>
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">اختبار الفيزياء التفاعلي</h1>
+                    <p class="text-blue-200 text-xl english-text font-semibold">Chapter: Fluid Mechanics (Pages 47-60)</p>
+                </div>
+                <div class="bg-white/20 px-6 py-3 rounded-2xl text-center backdrop-blur-sm border border-white/20">
+                    <p class="text-sm text-blue-100 mb-1">التقدم</p>
+                    <p class="text-2xl font-bold" id="score-display">0 / 20</p>
+                </div>
+            </div>
+            
+            <!-- شريط التقدم -->
+            <div class="w-full bg-blue-900/50 rounded-full h-3 mt-6 border border-blue-700">
+                <div id="progress-bar" class="bg-gradient-to-r from-cyan-400 to-blue-400 h-3 rounded-full transition-all duration-700 shadow-[0_0_10px_rgba(34,211,238,0.5)]" style="width: 0%"></div>
+            </div>
+            <p class="text-sm mt-3 font-semibold text-blue-100">السؤال <span id="current-q-num" class="text-white text-lg">1</span> من 20</p>
+        </div>
+
+        <!-- منطقة الأسئلة -->
+        <div class="p-6 md:p-10 bg-slate-50/50">
+            <!-- نوع السؤال -->
+            <div class="mb-5 inline-flex items-center gap-2 bg-blue-100 text-blue-800 text-sm font-bold px-4 py-1.5 rounded-full shadow-sm border border-blue-200" id="question-type-badge">
+                <i class="fas fa-list-ul"></i>
+                <span id="question-type">Multiple Choice</span>
+            </div>
+
+            <!-- نص السؤال -->
+            <div class="mb-8">
+                <h2 id="question-text" class="text-2xl font-bold text-gray-800 english-text leading-relaxed tracking-wide">
+                    <!-- يضاف ديناميكياً -->
+                </h2>
+            </div>
+
+            <!-- منطقة الخيارات -->
+            <div id="interaction-area" class="space-y-4 mb-8 english-text">
+                <!-- يضاف ديناميكياً -->
+            </div>
+
+            <!-- منطقة التغذية الراجعة -->
+            <div id="feedback-area" class="hidden rounded-2xl p-6 mb-8 border-2 fade-in shadow-inner relative">
+                <div class="flex items-start gap-5">
+                    <div id="feedback-icon" class="text-4xl mt-1 drop-shadow-md"></div>
+                    <div class="flex-1">
+                        <h3 id="feedback-title" class="text-2xl font-bold mb-3"></h3>
+                        <div id="correct-answer-display" class="mb-4 text-lg font-semibold english-text text-gray-800 hidden"></div>
+                        <div class="bg-white/90 p-5 rounded-xl border shadow-sm">
+                            <div class="font-bold text-gray-700 flex items-center gap-2 mb-2 border-b pb-2">
+                                <i class="fas fa-lightbulb text-yellow-500"></i> Explanation:
+                            </div>
+                            <p id="feedback-explanation" class="text-gray-800 english-text leading-relaxed text-[1.05rem]"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أزرار التحكم -->
+            <div class="flex justify-end border-t border-gray-200 pt-6 mt-4">
+                <button id="next-btn" disabled class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all text-lg flex items-center gap-3 shadow-lg hover:shadow-blue-500/30">
+                    السؤال التالي <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة النتيجة -->
+    <div id="result-screen" class="hidden glass-card rounded-3xl shadow-2xl w-full max-w-2xl p-12 text-center fade-in mx-auto mt-10">
+        <i class="fas fa-ship text-8xl text-blue-500 mb-6 drop-shadow-xl animate-bounce"></i>
+        <h2 class="text-4xl font-extrabold text-gray-800 mb-4">تم إنهاء الاختبار!</h2>
+        <p class="text-xl text-gray-600 mb-8">لقد اختبرت معلوماتك في ميكانيكا الموائع بنجاح.</p>
+        
+        <div class="bg-blue-50 rounded-2xl p-8 border-2 border-blue-100 mb-10 shadow-inner">
+            <span class="block text-xl font-semibold text-gray-600 mb-3">نتيجتك النهائية هي:</span>
+            <div class="text-6xl font-black text-blue-700" id="final-score-text">0 / 20</div>
+            <p id="evaluation-text" class="mt-4 text-lg font-bold text-blue-600"></p>
+        </div>
+        
+        <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-2xl text-xl mx-auto flex items-center gap-3 shadow-lg hover:shadow-blue-500/50 transition-transform active:scale-95">
+            إعادة الاختبار <i class="fas fa-redo-alt"></i>
+        </button>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'A submarine dives to a depth of <span class="math-expr">50 m</span> in seawater (density = <span class="math-expr">1030 kg/m³</span>). What is the gauge pressure on the submarine? (Assume <span class="math-expr">g = 9.8 m/s²</span>)',
+                options: ['5.05 × 10⁵ Pa', '1.01 × 10⁵ Pa', '6.06 × 10⁵ Pa', '4.90 × 10⁴ Pa'],
+                correct: '5.05 × 10⁵ Pa',
+                explanation: '<strong>Gauge Pressure (P_gauge) = ρgh</strong>.<br>P = 1030 kg/m³ × 9.8 m/s² × 50 m = 504,700 Pa. <br>In scientific notation, this is approximately <strong>5.05 × 10⁵ Pa</strong>.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'An object weighs <span class="math-expr">50 N</span> in air and <span class="math-expr">30 N</span> when fully submerged in water. What is the magnitude of the buoyant force acting on it?',
+                options: ['80 N', '50 N', '30 N', '20 N'],
+                correct: '20 N',
+                explanation: 'According to Archimedes\' Principle, the buoyant force equals the apparent loss in weight. <br><strong>Buoyant Force = Weight (in air) - Apparent Weight (in fluid)</strong>.<br>F_b = 50 N - 30 N = <strong>20 N</strong>.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'Water flows through a pipe of radius <span class="math-expr">2 cm</span> at <span class="math-expr">3 m/s</span>. It then enters a narrower section of radius <span class="math-expr">1 cm</span>. What is the fluid velocity in the narrower section?',
+                options: ['1.5 m/s', '3 m/s', '6 m/s', '12 m/s'],
+                correct: '12 m/s',
+                explanation: 'Using the <strong>Equation of Continuity (A₁V₁ = A₂V₂)</strong> and A = πr²: <br>(r₁)²V₁ = (r₂)²V₂ ➔ (2²) × 3 = (1²) × V₂ ➔ 4 × 3 = 1 × V₂.<br>Therefore, V₂ = <strong>12 m/s</strong>. (Velocity increases as the square of the radius decreases).'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'Bernoulli\'s equation is primarily a mathematical statement of the conservation of which physical quantity for a flowing fluid?',
+                options: ['Mass', 'Momentum', 'Energy', 'Volume'],
+                correct: 'Energy',
+                explanation: '<strong>Bernoulli\'s equation</strong> is derived from the work-energy theorem. It states that the work done on a fluid is equal to the change in its kinetic and potential <strong>Energy</strong>.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'In a hydraulic lift, a <span class="math-expr">10 N</span> force is applied to a small piston with an area of <span class="math-expr">0.01 m²</span>. What is the lifting force on the large piston with an area of <span class="math-expr">0.1 m²</span>?',
+                options: ['1 N', '10 N', '100 N', '1000 N'],
+                correct: '100 N',
+                explanation: 'Using <strong>Pascal\'s Principle (F₁/A₁ = F₂/A₂)</strong>:<br>10 / 0.01 = F₂ / 0.1 ➔ 1000 = F₂ / 0.1 ➔ F₂ = 1000 × 0.1 = <strong>100 N</strong>.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'The density of an ideal, incompressible liquid increases significantly as the depth and pressure increase.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: '<strong>False.</strong> By definition, an <strong>incompressible</strong> fluid (like most liquids) has a constant density (ρ) regardless of the pressure or depth.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'A totally submerged object displaces a volume of fluid that is exactly equal to its own volume.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: '<strong>True.</strong> This is a fundamental concept of fluid displacement. If an object is completely underwater, it pushes aside a volume of water equal to its total physical volume.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'According to Bernoulli\'s principle, an increase in the speed of a fluid occurs simultaneously with an increase in its internal pressure.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: '<strong>False.</strong> Bernoulli\'s principle states the exact opposite: an increase in the speed of the fluid occurs simultaneously with a <strong>decrease</strong> in pressure.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'If the buoyant force acting on an object is greater than its weight, the object will accelerate upward in the fluid.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: '<strong>True.</strong> According to Newton\'s second law, if the upward force (Buoyancy) is greater than the downward force (Gravity/Weight), the net force is upward, causing the object to rise.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'An "Ideal Fluid" in physics is typically characterized by being viscous, compressible, and having turbulent flow.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: '<strong>False.</strong> An ideal fluid model assumes the fluid is <strong>non-viscous</strong> (no internal friction), <strong>incompressible</strong> (constant density), and has a <strong>steady</strong> (laminar) flow.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: '[BLANK] is defined as the magnitude of the normal force acting per unit surface area.',
+                wordBank: ['Pressure', 'Density', 'Buoyancy', 'Viscosity'],
+                correct: 'Pressure',
+                explanation: '<strong>Pressure (P = F/A)</strong> is the force exerted perpendicularly (normal) to the surface of an object per unit area.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'The Equation of Continuity states that the [BLANK] rate of flow is constant for an incompressible fluid throughout a pipe.',
+                wordBank: ['Volume', 'Mass', 'Energy', 'Momentum'],
+                correct: 'Volume',
+                explanation: 'The <strong>Volume flow rate</strong> (<span class="math-expr">R = A × V</span>) remains constant in an incompressible fluid.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: '[BLANK] Principle states that a change in pressure applied to an enclosed fluid is transmitted undiminished to every portion of the fluid.',
+                wordBank: ['Archimedes\'', 'Pascal\'s', 'Bernoulli\'s', 'Newton\'s'],
+                correct: 'Pascal\'s',
+                explanation: 'This is the definition of <strong>Pascal\'s Principle</strong>, which is the underlying concept behind hydraulic presses.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'A fluid flow where the velocity of the fluid particles at any specific point is constant as time passes is called [BLANK] flow.',
+                wordBank: ['Turbulent', 'Steady', 'Viscous', 'Compressible'],
+                correct: 'Steady',
+                explanation: '<strong>Steady (or Laminar) flow</strong> means the flow properties at a given point in space do not change over time, creating smooth streamlines.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'Specific gravity is defined as the ratio of the [BLANK] of a substance to the density of water at 4°C.',
+                wordBank: ['Density', 'Weight', 'Mass', 'Volume'],
+                correct: 'Density',
+                explanation: 'Specific Gravity is a dimensionless quantity that compares the <strong>Density</strong> of a given substance to the density of a reference substance (usually water).'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the mathematical formula to its physical law:',
+                listA: '<span class="math-expr">P + ½ρv² + ρgy = constant</span>',
+                wordBank: ['Bernoulli\'s Equation', 'Equation of Continuity', 'Pascal\'s Principle', 'Archimedes\' Principle'],
+                correct: 'Bernoulli\'s Equation',
+                explanation: 'This is <strong>Bernoulli\'s Equation</strong>, representing the conservation of energy per unit volume in a flowing fluid.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the formula to its concept:',
+                listA: '<span class="math-expr">A₁V₁ = A₂V₂</span>',
+                wordBank: ['Equation of Continuity', 'Archimedes\' Principle', 'Absolute Pressure', 'Volume Flow Rate'],
+                correct: 'Equation of Continuity',
+                explanation: 'This is the <strong>Equation of Continuity</strong>, showing that the product of cross-sectional area and fluid velocity is constant.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the physical description to its specific term:',
+                listA: 'The upward force exerted by a fluid on any completely or partially immersed object.',
+                wordBank: ['Buoyant Force', 'Gauge Pressure', 'Viscous Drag', 'Absolute Pressure'],
+                correct: 'Buoyant Force',
+                explanation: 'The <strong>Buoyant Force</strong> opposes gravity and makes objects feel lighter when placed in a fluid.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the pressure term to its definition:',
+                listA: 'The total pressure at a certain depth, equal to atmospheric pressure plus the fluid pressure.',
+                wordBank: ['Absolute Pressure', 'Gauge Pressure', 'Dynamic Pressure', 'Vapor Pressure'],
+                correct: 'Absolute Pressure',
+                explanation: '<strong>Absolute Pressure</strong> is the actual total pressure. Gauge pressure is just the fluid pressure part (ignoring the atmosphere).'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the physical quantity to its correct SI unit:',
+                listA: 'Density (ρ)',
+                wordBank: ['kg/m³', 'N/m²', 'm³/s', 'N'],
+                correct: 'kg/m³',
+                explanation: 'Density is Mass divided by Volume. The SI unit for mass is kilograms (kg) and for volume is cubic meters (m³).'
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionTypeBadgeEl = document.getElementById('question-type-badge');
+        const questionTypeEl = document.getElementById('question-type');
+        const questionTextEl = document.getElementById('question-text');
+        const interactionAreaEl = document.getElementById('interaction-area');
+        const feedbackAreaEl = document.getElementById('feedback-area');
+        const feedbackIconEl = document.getElementById('feedback-icon');
+        const feedbackTitleEl = document.getElementById('feedback-title');
+        const feedbackExplanationEl = document.getElementById('feedback-explanation');
+        const correctAnswerDisplayEl = document.getElementById('correct-answer-display');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const currentQNum = document.getElementById('current-q-num');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        loadQuestion();
+
+        function loadQuestion() {
+            const currentQ = quizData[currentIndex];
+            answered = false;
+            
+            questionTypeEl.textContent = currentQ.type;
+            questionTypeBadgeEl.querySelector('i').className = 'fas ' + currentQ.icon;
+            currentQNum.textContent = currentIndex + 1;
+            progressBar.style.width = ((currentIndex) / quizData.length * 100) + '%';
+            scoreDisplay.textContent = score + ' / 20';
+            
+            interactionAreaEl.innerHTML = '';
+            feedbackAreaEl.classList.add('hidden');
+            feedbackAreaEl.className = 'hidden rounded-2xl p-6 mb-8 border-2 fade-in shadow-inner relative';
+            correctAnswerDisplayEl.classList.add('hidden');
+            nextBtn.disabled = true;
+
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                const gridClass = currentQ.qTypeCode === 'tf' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1';
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'grid ' + gridClass + ' gap-4';
+                
+                currentQ.options.forEach(function(opt) {
+                    const btn = document.createElement('button');
+                    btn.innerHTML = '<span class="flex-1 text-left">' + opt + '</span> <div class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center icon-container transition-colors"><i class="fas fa-check text-transparent text-sm"></i></div>';
+                    btn.className = 'option-btn flex items-center justify-between w-full bg-white border-2 border-slate-200 text-slate-800 text-lg font-medium py-4 px-6 rounded-2xl hover:bg-blue-50 hover:border-blue-400 focus:outline-none shadow-sm';
+                    
+                    btn.onclick = function() { handleAnswer(opt, btn); };
+                    optionsContainer.appendChild(btn);
+                });
+                interactionAreaEl.appendChild(optionsContainer);
+            } 
+            else if (currentQ.qTypeCode === 'fib') {
+                let parts = currentQ.question.split('[BLANK]');
+                questionTextEl.innerHTML = parts[0] + ' <span class="inline-block min-w-[120px] border-b-4 border-blue-500 pb-1 text-center text-blue-700 font-bold mx-2 relative" id="blank-space">?</span> ' + parts[1];
+
+                const selectWrapper = document.createElement('div');
+                selectWrapper.className = 'flex flex-col sm:flex-row gap-4 items-center bg-white p-6 rounded-2xl border-2 border-blue-100 shadow-sm mt-6';
+                
+                const label = document.createElement('span');
+                label.className = 'font-bold text-blue-900 text-lg whitespace-nowrap';
+                label.innerHTML = '<i class="fas fa-hand-pointer mr-2 text-blue-500"></i> Select Word:';
+                
+                const select = document.createElement('select');
+                select.className = 'flex-1 appearance-none bg-blue-50 border-2 border-blue-200 text-slate-800 py-3 px-4 rounded-xl focus:outline-none focus:border-blue-500 text-lg font-semibold w-full cursor-pointer';
+                select.innerHTML = '<option value="" disabled selected>-- Choose from word bank --</option>';
+                
+                let shuffledWords = [...currentQ.wordBank].sort(function() { return Math.random() - 0.5; });
+                shuffledWords.forEach(function(word) {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.innerHTML = 'تأكيد الإجابة <i class="fas fa-check ml-1"></i>';
+                submitBtn.className = 'bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 w-full sm:w-auto shadow-md transition-all';
+                
+                select.addEventListener('change', function(e) {
+                    document.getElementById('blank-space').innerHTML = '<span class="bg-blue-100 px-2 py-1 rounded">' + e.target.value + '</span>';
+                });
+
+                selectWrapper.appendChild(label);
+                selectWrapper.appendChild(select);
+                selectWrapper.appendChild(submitBtn);
+                interactionAreaEl.appendChild(selectWrapper);
+
+                submitBtn.onclick = function() {
+                    if(!select.value) {
+                        submitBtn.innerHTML = 'اختر إجابة ⚠️';
+                        submitBtn.classList.replace('bg-blue-600', 'bg-red-500');
+                        setTimeout(function() {
+                            submitBtn.innerHTML = 'تأكيد الإجابة <i class="fas fa-check ml-1"></i>';
+                            submitBtn.classList.replace('bg-red-500', 'bg-blue-600');
+                        }, 2000);
+                        return;
+                    }
+                    handleAnswer(select.value, selectWrapper);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+            else if (currentQ.qTypeCode === 'match') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                const matchContainer = document.createElement('div');
+                matchContainer.className = 'bg-white p-8 rounded-3xl border-2 border-blue-100 shadow-md flex flex-col gap-6 mt-4 relative';
+                
+                const listA = document.createElement('div');
+                listA.className = 'bg-blue-50 p-6 rounded-2xl border border-blue-200 font-bold text-xl text-center text-blue-900 leading-relaxed';
+                listA.innerHTML = currentQ.listA;
+
+                const mobileIcon = document.createElement('div');
+                mobileIcon.className = 'text-center text-blue-300 text-3xl';
+                mobileIcon.innerHTML = '<i class="fas fa-arrow-down"></i>';
+
+                const selectBox = document.createElement('div');
+                selectBox.className = 'relative w-full';
+
+                const select = document.createElement('select');
+                select.className = 'appearance-none bg-cyan-50 border-2 border-cyan-200 text-cyan-900 py-5 px-6 rounded-2xl focus:outline-none focus:border-cyan-500 text-xl font-bold w-full text-center cursor-pointer shadow-sm';
+                select.innerHTML = '<option value="" disabled selected>-- اختر المصطلح المطابق من هنا --</option>';
+                
+                let shuffledWords = [...currentQ.wordBank].sort(function() { return Math.random() - 0.5; });
+                shuffledWords.forEach(function(word) {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                selectBox.appendChild(select);
+
+                const submitBtn = document.createElement('button');
+                submitBtn.innerHTML = 'تحقق من المطابقة <i class="fas fa-shield-check ml-2"></i>';
+                submitBtn.className = 'bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 w-full md:w-1/2 mx-auto text-lg shadow-md transition-all';
+
+                matchContainer.appendChild(listA);
+                matchContainer.appendChild(mobileIcon);
+                matchContainer.appendChild(selectBox);
+                matchContainer.appendChild(submitBtn);
+                
+                interactionAreaEl.appendChild(matchContainer);
+
+                submitBtn.onclick = function() {
+                    if(!select.value) {
+                        submitBtn.innerHTML = 'اختر إجابة ⚠️';
+                        submitBtn.classList.replace('bg-blue-600', 'bg-red-500');
+                        setTimeout(function() {
+                            submitBtn.innerHTML = 'تحقق من المطابقة <i class="fas fa-shield-check ml-2"></i>';
+                            submitBtn.classList.replace('bg-red-500', 'bg-blue-600');
+                        }, 2000);
+                        return;
+                    }
+                    handleAnswer(select.value, matchContainer);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+        }
+
+        function handleAnswer(userAnswer, element) {
+            if (answered) return;
+            answered = true;
+
+            const currentQ = quizData[currentIndex];
+            const isCorrect = userAnswer === currentQ.correct;
+
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                const buttons = interactionAreaEl.querySelectorAll('button');
+                buttons.forEach(function(btn) {
+                    btn.disabled = true;
+                    const optText = btn.querySelector('span').innerHTML;
+                    const iconContainer = btn.querySelector('.icon-container');
+                    const icon = iconContainer.querySelector('i');
+                    
+                    if (optText === currentQ.correct) {
+                        btn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                        btn.classList.remove('border-slate-200');
+                        iconContainer.classList.add('bg-emerald-500', 'border-emerald-500');
+                        icon.classList.remove('text-transparent');
+                        icon.classList.add('text-white', 'fa-check');
+                    } else if (btn === element && !isCorrect) {
+                        btn.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                        btn.classList.remove('border-slate-200');
+                        iconContainer.classList.add('bg-rose-500', 'border-rose-500');
+                        icon.classList.remove('text-transparent');
+                        icon.classList.add('text-white', 'fa-times');
+                    } else {
+                        btn.classList.add('opacity-40');
+                    }
+                });
+            } else {
+                if (isCorrect) {
+                    element.classList.add('border-emerald-500', 'ring-4', 'ring-emerald-100');
+                } else {
+                    element.classList.add('border-rose-500', 'ring-4', 'ring-rose-100');
+                    if(currentQ.qTypeCode === 'fib') {
+                        document.getElementById('blank-space').classList.add('text-rose-600', 'line-through');
+                    }
+                }
+            }
+
+            feedbackAreaEl.classList.remove('hidden');
+            
+            if (isCorrect) {
+                score++;
+                scoreDisplay.textContent = score + ' / 20';
+                feedbackAreaEl.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-900');
+                feedbackIconEl.innerHTML = '<i class="fas fa-check-circle text-emerald-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة صحيحة! أحسنت 👏';
+                feedbackTitleEl.className = 'text-2xl font-black mb-2 text-emerald-800 text-right';
+            } else {
+                feedbackAreaEl.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-900');
+                feedbackIconEl.innerHTML = '<i class="fas fa-times-circle text-rose-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة خاطئة! ❌';
+                feedbackTitleEl.className = 'text-2xl font-black mb-2 text-rose-800 text-right';
+                
+                correctAnswerDisplayEl.classList.remove('hidden');
+                correctAnswerDisplayEl.innerHTML = 'Correct Answer: <strong class="text-emerald-700 bg-emerald-100 px-2 py-1 rounded">' + currentQ.correct + '</strong>';
+            }
+
+            feedbackExplanationEl.innerHTML = currentQ.explanation;
+            
+            nextBtn.disabled = false;
+            if (currentIndex === quizData.length - 1) {
+                nextBtn.innerHTML = 'عرض النتيجة النهائية <i class="fas fa-flag-checkered ml-2"></i>';
+                nextBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl text-lg flex items-center gap-2 shadow-lg hover:shadow-emerald-500/40";
+            }
+        }
+
+        nextBtn.addEventListener('click', function() {
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+                document.getElementById('final-score-text').innerText = score + ' / 20';
+                progressBar.style.width = '100%';
+
+                const evalText = document.getElementById('evaluation-text');
+                if(score >= 18) {
+                    evalText.textContent = "ممتاز جداً! لديك فهم عميق لميكانيكا الموائع.";
+                } else if(score >= 14) {
+                    evalText.textContent = "جيد جداً! مستوى رائع، راجع بعض قوانين الضغط أو مبدأ برنولي.";
+                } else if(score >= 10) {
+                    evalText.textContent = "متوسط. تحتاج لمراجعة قوانين طفو أرخميدس ومعادلة الاستمرارية.";
+                } else {
+                    evalText.textContent = "ننصحك بإعادة قراءة الفصل والمحاولة مجدداً.";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

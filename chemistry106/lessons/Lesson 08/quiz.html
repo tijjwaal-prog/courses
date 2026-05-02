@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Structures of Alkanes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #ecfdf5;
+            /* خلفية خضراء فاتحة جداً (زمردي) */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-emerald-800 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-project-diagram text-emerald-600"></i>
+                The Structures of Alkanes
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (79 - 90): IUPAC, Alkyl Groups &
+                Carbon Types</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-emerald-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-emerald-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-lime-50 border-l-4 border-lime-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-emerald-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-emerald-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-emerald-100">
+            <i class="fa-solid fa-leaf text-7xl text-emerald-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم هياكل الألكانات وتسمياتها.</p>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-emerald-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-emerald-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-emerald-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the correct IUPAC name for the alkane with the structure CH₃-CH(CH₃)-CH₂-CH₃?",
+                options: ["2-Methylbutane", "Isopentane", "3-Methylbutane", "Pentane"],
+                a: "2-Methylbutane",
+                exp: "The longest continuous carbon chain has 4 carbons (butane). Numbering from left to right gives the methyl substituent the lowest possible number (2). 'Isopentane' is its common name."
+            },
+            {
+                type: "Multiple Choice",
+                q: "How many constitutional (structural) isomers exist for the molecular formula C₄H₁₀?",
+                options: ["1", "2", "3", "4"],
+                a: "2",
+                exp: "Butane (C₄H₁₀) has exactly two isomers: the unbranched n-butane (CH₃-CH₂-CH₂-CH₃) and the branched isobutane (2-methylpropane)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following correctly describes a tertiary (3°) carbon atom?",
+                options: ["A carbon bonded to three hydrogens.", "A carbon bonded to three other carbon atoms.", "A carbon with a triple bond.", "A carbon bonded to three halogens."],
+                a: "A carbon bonded to three other carbon atoms.",
+                exp: "The degree of a carbon atom (1°, 2°, 3°, 4°) in an alkane is determined solely by the number of other carbon atoms it is directly attached to."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the name of the alkyl group formed by removing a hydrogen from the middle (secondary) carbon of propane (CH₃-CH₂-CH₃)?",
+                options: ["Propyl", "Isopropyl", "Butyl", "Isobutyl"],
+                a: "Isopropyl",
+                exp: "Removing a hydrogen from the end carbon creates a 'propyl' group. Removing it from the middle carbon creates an 'isopropyl' group (-CH(CH₃)₂), which has a branched, Y-like structure."
+            },
+            {
+                type: "Multiple Choice",
+                q: "According to IUPAC rules, how are multiple identical substituents indicated in a chemical name?",
+                options: ["By listing the number multiple times.", "By using prefixes like di-, tri-, tetra-.", "By adding the suffix -ane.", "By listing the substituents in alphabetical order."],
+                a: "By using prefixes like di-, tri-, tetra-.",
+                exp: "If two methyl groups are present, you use 'dimethyl'. The numbers locating them must still be listed, separated by a comma (e.g., 2,3-dimethylbutane)."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Alkanes are highly polar molecules and dissolve easily in polar solvents like water.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Alkanes consist of C-H and C-C bonds which have very small differences in electronegativity. This makes them entirely nonpolar and insoluble in water (they are hydrophobic)."
+            },
+            {
+                type: "True / False",
+                q: "The longest continuous carbon chain in a molecule is always drawn in a straight horizontal line on paper.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Molecules can be drawn with twists and turns. You must trace the path that gives the maximum number of connected carbon atoms, regardless of how it is visually represented."
+            },
+            {
+                type: "True / False",
+                q: "When numbering the parent chain of a branched alkane, you should start from the end closest to the first substituent.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. This fundamental IUPAC rule ensures that the locants (the numbers indicating the positions of the substituents) are kept as low as possible."
+            },
+            {
+                type: "True / False",
+                q: "Neopentane (2,2-dimethylpropane) has a higher boiling point than its unbranched isomer, n-pentane.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Branching makes the molecule more spherical and compact, which decreases the surface area available for London dispersion forces. Therefore, branched alkanes have LOWER boiling points."
+            },
+            {
+                type: "True / False",
+                q: "A quaternary (4°) carbon atom is bonded to zero hydrogen atoms in an alkane.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. A quaternary carbon is bonded to four other carbon atoms. Since carbon can only form a maximum of four bonds, there are no available bonds left for hydrogen."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Isomers that have the same molecular formula but a different sequence or connectivity of their atoms are called ________ isomers.",
+                options: ["Substituent", "Methylene", "Constitutional", "Suffix", "Hydrophobic"],
+                a: "Constitutional",
+                exp: "Constitutional (or structural) isomers have the exact same atoms, but they are 'wired' together differently, giving them unique chemical and physical properties."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "A -CH₂- group located internally within a straight-chain alkane is called a ________ group.",
+                options: ["Substituent", "Methylene", "Constitutional", "Suffix", "Hydrophobic"],
+                a: "Methylene",
+                exp: "Straight-chain alkanes consist of two terminal methyl (-CH₃) groups and several internal methylene (-CH₂-) groups linking them together."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In IUPAC nomenclature, any group or branch attached to the main parent carbon chain is generally referred to as a ________.",
+                options: ["Substituent", "Methylene", "Constitutional", "Suffix", "Hydrophobic"],
+                a: "Substituent",
+                exp: "A substituent 'substitutes' a hydrogen atom on the parent hydrocarbon chain. Common examples include methyl, ethyl, and halogen groups."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Because alkanes do not mix with water and tend to separate into their own layer, they are described as being ________.",
+                options: ["Substituent", "Methylene", "Constitutional", "Suffix", "Hydrophobic"],
+                a: "Hydrophobic",
+                exp: "Hydrophobic means 'water-fearing'. Because 'like dissolves like', nonpolar alkanes will not dissolve in polar water."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In an IUPAC name, the ________ indicates the primary functional group or the family to which the compound belongs (e.g., '-ane' for alkanes).",
+                options: ["Substituent", "Methylene", "Constitutional", "Suffix", "Hydrophobic"],
+                a: "Suffix",
+                exp: "The suffix is the end of the name. '-ane' indicates an alkane, '-ene' indicates an alkene, and '-ol' indicates an alcohol."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the structure to its common alkyl group name: \n-CH₃",
+                options: ["Methyl", "Ethyl", "Isobutyl", "sec-Butyl", "tert-Butyl"],
+                a: "Methyl",
+                exp: "The methyl group is the simplest alkyl group, derived by removing one hydrogen atom from methane (CH₄)."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure to its common alkyl group name: \n-CH₂-CH₃",
+                options: ["Methyl", "Ethyl", "Isobutyl", "sec-Butyl", "tert-Butyl"],
+                a: "Ethyl",
+                exp: "The ethyl group is a two-carbon alkyl group derived by removing a hydrogen from ethane (CH₃-CH₃)."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure to its common alkyl group name: \n-C(CH₃)₃ (A central carbon attached to the parent chain and three methyls).",
+                options: ["Methyl", "Ethyl", "Isobutyl", "sec-Butyl", "tert-Butyl"],
+                a: "tert-Butyl",
+                exp: "The tertiary-butyl (tert-butyl) group involves a tertiary carbon directly connecting the three methyl groups to the parent chain."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure to its common alkyl group name: \n-CH(CH₃)CH₂CH₃ (Attached to the parent chain at the second carbon of a four-carbon chain).",
+                options: ["Methyl", "Ethyl", "Isobutyl", "sec-Butyl", "tert-Butyl"],
+                a: "sec-Butyl",
+                exp: "The secondary-butyl (sec-butyl) group attaches to the parent chain via a secondary carbon. It is unbranched except at the attachment point."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure to its common alkyl group name: \n-CH₂-CH(CH₃)₂ (A -CH₂- group attached to an isopropyl-like end).",
+                options: ["Methyl", "Ethyl", "Isobutyl", "sec-Butyl", "tert-Butyl"],
+                a: "Isobutyl",
+                exp: "The isobutyl group connects to the parent chain via a primary carbon (-CH₂-), but has a branch at the end of its chain (a 'Y' shape)."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-lime-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Substituent, Methylene, Constitutional, Suffix, Hydrophobic";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-lime-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Methyl, Ethyl, Isobutyl, sec-Butyl, tert-Butyl";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-emerald-400 hover:bg-emerald-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-emerald-400', 'hover:bg-emerald-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-emerald-400', 'hover:bg-emerald-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "إتقان مبهر! قواعد تسمية IUPAC وتحديد تفرعات الألكيل أصبحت من تخصصك. 🏆";
+            } else if (score >= 13) {
+                msgEl.textContent = "أداء رائع! مع مراجعة بسيطة لأشكال مجموعات (Iso, sec, tert) ستصل للعلامة الكاملة. 🌿";
+            } else {
+                msgEl.textContent = "تسمية الألكانات تحتاج إلى ممارسة. اقرأ التفسيرات بعناية وأعد الاختبار لترسيخ القواعد! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

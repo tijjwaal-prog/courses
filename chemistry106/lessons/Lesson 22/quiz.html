@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amino acids, Peptides and Proteins</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fdf4ff;
+            /* خلفية وردية/بنفسجية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #a21caf 0%, #be185d 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-fuchsia-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-dna text-fuchsia-600"></i>
+                Amino Acids & Proteins
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (243 - 252): Structures, Properties
+                & Peptides</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-fuchsia-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-fuchsia-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-fuchsia-100 text-fuchsia-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-pink-50 border-l-4 border-pink-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-fuchsia-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-fuchsia-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-fuchsia-200">
+            <i class="fa-solid fa-microscope text-7xl text-fuchsia-700 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم الأحماض الأمينية والبروتينات بنجاح.</p>
+
+            <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-fuchsia-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-fuchsia-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-fuchsia-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What type of chemical bond links amino acids together to form peptides and proteins?",
+                options: ["Hydrogen bond", "Peptide bond (Amide linkage)", "Ester bond", "Glycosidic bond"],
+                a: "Peptide bond (Amide linkage)",
+                exp: "A peptide bond is a covalent amide linkage formed by a condensation reaction between the carboxyl group (-COOH) of one amino acid and the amino group (-NH₂) of another, releasing water."
+            },
+            {
+                type: "Multiple Choice",
+                q: "At its isoelectric point (pI), what is the overall net electrical charge of an amino acid?",
+                options: ["+1", "-1", "Zero", "It varies depending on the amino acid"],
+                a: "Zero",
+                exp: "At the isoelectric point (pI), the amino acid exists exactly as a neutral dipolar ion (zwitterion) where the positive charge of the -NH₃⁺ group perfectly balances the negative charge of the -COO⁻ group."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which stereochemical configuration is found in almost all naturally occurring amino acids in biological proteins?",
+                options: ["D configuration", "L configuration", "Meso configuration", "Racemic mixture"],
+                a: "L configuration",
+                exp: "Unlike carbohydrates (which are mostly D-sugars), almost all naturally occurring building blocks of proteins are L-amino acids."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What happens to the structure of a neutral amino acid when it is placed in a highly acidic solution (low pH)?",
+                options: ["It becomes a zwitterion.", "It loses a proton to become an anion.", "The carboxylate group is protonated, giving the molecule a net positive charge (cation).", "It denatures into separate atoms."],
+                a: "The carboxylate group is protonated, giving the molecule a net positive charge (cation).",
+                exp: "In a low pH (high H⁺ concentration) environment, the -COO⁻ group accepts a proton to become -COOH. Since the -NH₃⁺ group remains positive, the entire molecule acts as a cation."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which chemical reagent is commonly used to detect the presence of amino acids by producing a characteristic deep blue or purple color?",
+                options: ["Benedict's Reagent", "Tollens' Reagent", "Ninhydrin", "Bromine water"],
+                a: "Ninhydrin",
+                exp: "Ninhydrin reacts with the free alpha-amino groups of amino acids to produce a deeply colored product known as Ruhemann's purple, commonly used in chromatography and forensics."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Essential amino acids are those that the human body can easily synthesize on its own in sufficient quantities.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. 'Essential' means they are essential to your diet because your body CANNOT synthesize them (or cannot synthesize them fast enough) to meet its physiological needs."
+            },
+            {
+                type: "True / False",
+                q: "A dipolar ion (zwitterion) contains both a positive and a negative charge but is completely neutral overall.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because the internal acid (-COOH) donates a proton to the internal base (-NH₂), it forms -COO⁻ and -NH₃⁺. The +1 and -1 cancel out, yielding a net charge of zero."
+            },
+            {
+                type: "True / False",
+                q: "The primary structure of a protein refers specifically to its unique, linear sequence of amino acids connected by peptide bonds.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The primary structure is simply the sequence (like letters in a word). It directly dictates how the protein will eventually fold into its 3D shapes."
+            },
+            {
+                type: "True / False",
+                q: "In a highly basic solution (high pH), an amino acid exists primarily as a cation with a net positive charge.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. In a high pH (low H⁺) environment, the base removes a proton from the -NH₃⁺ group, turning it into neutral -NH₂. The molecule retains its -COO⁻ group, becoming an ANION (net negative charge)."
+            },
+            {
+                type: "True / False",
+                q: "An amphoteric compound is defined as a substance that is capable of acting exclusively as an acid.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. An amphoteric substance (like an amino acid or water) can act as BOTH an acid (donating protons) and a base (accepting protons) depending on the environment."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "An amino acid molecule that contains both a positive ammonium group (-NH₃⁺) and a negative carboxylate group (-COO⁻) is chemically known as a ________.",
+                options: ["Isoelectric", "Peptide", "Zwitterion", "Essential", "Denaturation"],
+                a: "Zwitterion",
+                exp: "Zwitterion comes from the German word 'zwitter', meaning hybrid. It perfectly describes a molecule carrying opposite electrical charges."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The exact pH value at which an amino acid has no net electrical charge (existing 100% as a dipolar ion) is its ________ point.",
+                options: ["Isoelectric", "Peptide", "Zwitterion", "Essential", "Denaturation"],
+                a: "Isoelectric",
+                exp: "At the isoelectric point (pI), the amino acid will not migrate in an electric field during electrophoresis."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Amino acids that must be obtained entirely through the food we eat are classified as ________ amino acids.",
+                options: ["Isoelectric", "Peptide", "Zwitterion", "Essential", "Denaturation"],
+                a: "Essential",
+                exp: "Humans typically have 9 essential amino acids (like Leucine, Lysine, and Tryptophan) out of the 20 standard amino acids."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The covalent linkage formed between the carboxyl group of one amino acid and the amino group of another is called a ________ bond.",
+                options: ["Isoelectric", "Peptide", "Zwitterion", "Essential", "Denaturation"],
+                a: "Peptide",
+                exp: "A peptide bond is a specific type of amide bond that forms the backbone of all protein chains."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The process of destroying a protein's 3D shape (secondary, tertiary, or quaternary structures) using heat or acids without breaking the primary sequence is called ________.",
+                options: ["Isoelectric", "Peptide", "Zwitterion", "Essential", "Denaturation"],
+                a: "Denaturation",
+                exp: "Cooking an egg is a classic example of denaturation. The protein loses its biological function because it loses its specific folded shape."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the term to its correct definition: \nPrimary Structure",
+                options: ["The linear sequence of amino acids in a polypeptide chain", "Localized folding patterns like alpha-helices and beta-pleated sheets", "The overall 3D shape of a single polypeptide chain due to R-group interactions", "The arrangement of multiple polypeptide subunits into a single functional complex", "A substance capable of acting as either an acid or a base"],
+                a: "The linear sequence of amino acids in a polypeptide chain",
+                exp: "The primary structure is the simple 'string of pearls', held together exclusively by strong covalent peptide bonds."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its correct definition: \nSecondary Structure",
+                options: ["The linear sequence of amino acids in a polypeptide chain", "Localized folding patterns like alpha-helices and beta-pleated sheets", "The overall 3D shape of a single polypeptide chain due to R-group interactions", "The arrangement of multiple polypeptide subunits into a single functional complex", "A substance capable of acting as either an acid or a base"],
+                a: "Localized folding patterns like alpha-helices and beta-pleated sheets",
+                exp: "Secondary structures are formed primarily by hydrogen bonding between the backbone C=O and N-H groups."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its correct definition: \nTertiary Structure",
+                options: ["The linear sequence of amino acids in a polypeptide chain", "Localized folding patterns like alpha-helices and beta-pleated sheets", "The overall 3D shape of a single polypeptide chain due to R-group interactions", "The arrangement of multiple polypeptide subunits into a single functional complex", "A substance capable of acting as either an acid or a base"],
+                a: "The overall 3D shape of a single polypeptide chain due to R-group interactions",
+                exp: "This is the complete 3D folding driven by the side chains (R-groups) interacting via hydrophobic effects, disulfide bridges, and ionic bonds."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its correct definition: \nQuaternary Structure",
+                options: ["The linear sequence of amino acids in a polypeptide chain", "Localized folding patterns like alpha-helices and beta-pleated sheets", "The overall 3D shape of a single polypeptide chain due to R-group interactions", "The arrangement of multiple polypeptide subunits into a single functional complex", "A substance capable of acting as either an acid or a base"],
+                a: "The arrangement of multiple polypeptide subunits into a single functional complex",
+                exp: "Only proteins with multiple chains (subunits), like Hemoglobin, have a quaternary structure."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its correct definition: \nAmphoteric",
+                options: ["The linear sequence of amino acids in a polypeptide chain", "Localized folding patterns like alpha-helices and beta-pleated sheets", "The overall 3D shape of a single polypeptide chain due to R-group interactions", "The arrangement of multiple polypeptide subunits into a single functional complex", "A substance capable of acting as either an acid or a base"],
+                a: "A substance capable of acting as either an acid or a base",
+                exp: "Because amino acids have a basic amino group and an acidic carboxyl group, they are perfectly amphoteric and act as excellent buffers."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Isoelectric, Peptide, Zwitterion, Essential, Denaturation";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> The linear sequence of amino acids in a polypeptide chain, Localized folding patterns like alpha-helices and beta-pleated sheets, The overall 3D shape of a single polypeptide chain due to R-group interactions, The arrangement of multiple polypeptide subunits into a single functional complex, A substance capable of acting as either an acid or a base";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-fuchsia-600 hover:bg-fuchsia-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-fuchsia-600', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-fuchsia-600', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى احترافي عالٍ! فهمك الدقيق للـ Zwitterions وهياكل البروتين يدل على تركيز ممتاز. 🌟";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع ومجهود يذكر! 👏 مع مراجعة بسيطة لمستويات بناء البروتين ستكون جاهزاً تماماً.";
+            } else {
+                msgEl.textContent = "كيمياء الأحماض الأمينية تحتاج لربط المفاهيم. راجع التفسيرات وأعد الاختبار لتثبيت معلوماتك! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

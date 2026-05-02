@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bernoulli's Equation Interactive Quiz</title>
+    
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax for rendering Physics Equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .wrong {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .blank-space {
+            display: inline-block;
+            min-width: 100px;
+            border-bottom: 2px solid #4b5563;
+            text-align: center;
+            font-weight: bold;
+            color: #2563eb;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto w-full flex-grow flex flex-col justify-center">
+        
+        <!-- Header -->
+        <div class="text-center mb-8 text-white">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2"><i class="fa-solid fa-water mr-2"></i> Fluid Dynamics & Bernoulli's Equation</h1>
+            <p class="text-lg opacity-80">Interactive Physics Quiz - PHYS 1010</p>
+        </div>
+
+        <!-- Main Quiz Card -->
+        <div class="glass-card rounded-2xl p-6 md:p-10 w-full relative overflow-hidden">
+            
+            <!-- Progress Bar -->
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gray-200">
+                <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <!-- Quiz Content Container -->
+            <div id="quiz-container">
+                
+                <!-- Header: Question Number and Type -->
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-counter" class="text-blue-600 font-bold text-sm md:text-base bg-blue-100 px-3 py-1 rounded-full"></span>
+                    <span id="question-type" class="text-gray-500 font-semibold text-xs md:text-sm uppercase tracking-wider"></span>
+                </div>
+
+                <!-- Question Text -->
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 leading-relaxed"></h2>
+
+                <!-- Options / Interactive Area -->
+                <div id="options-container" class="space-y-3 mb-8">
+                    <!-- Dynamic Options go here -->
+                </div>
+
+                <!-- Feedback Area (Hidden by default) -->
+                <div id="feedback-container" class="hidden rounded-xl p-5 mb-6 fade-in border-l-4">
+                    <div class="flex items-start">
+                        <div id="feedback-icon" class="text-2xl mr-4 mt-1"></div>
+                        <div>
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-text" class="text-gray-700"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <button id="next-btn" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-md">
+                    Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+
+            </div>
+
+            <!-- Results Container -->
+            <div id="results-container" class="hidden text-center fade-in py-10">
+                <i class="fa-solid fa-trophy text-6xl text-yellow-500 mb-6"></i>
+                <h2 class="text-3xl font-bold mb-4">Quiz Completed!</h2>
+                <p class="text-xl mb-2">Your Score:</p>
+                <div class="text-5xl font-extrabold text-blue-600 mb-6"><span id="final-score">0</span> / 20</div>
+                <p id="performance-msg" class="text-gray-600 mb-8 max-w-md mx-auto"></p>
+                <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white font-bold py-3 px-8 rounded-xl transition duration-300">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Try Again
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Structure
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                type: "Multiple Choice",
+                question: "Bernoulli's equation is fundamentally a mathematical statement of the conservation of:",
+                options: ["Mass", "Momentum", "Energy", "Volume"],
+                answer: "Energy",
+                explanation: "Bernoulli's equation represents the principle of conservation of energy applied to a flowing fluid. It states that the sum of kinetic energy, potential energy, and internal energy (related to pressure) remains constant along a streamline."
+            },
+            {
+                type: "Multiple Choice",
+                question: "Water flows through a horizontal pipe. The pipe narrows, reducing its cross-sectional area to half its original size. According to the equation of continuity \( (A_1 v_1 = A_2 v_2) \), what happens to the fluid's velocity?",
+                options: ["It decreases by half.", "It remains the same.", "It doubles.", "It quadruples."],
+                answer: "It doubles.",
+                explanation: "Because \( A_1 v_1 = A_2 v_2 \), if \( A_2 = 0.5 A_1 \), then \( v_2 \) must be \( 2 v_1 \) to keep the volume flow rate constant. Thus, the velocity doubles."
+            },
+            {
+                type: "Multiple Choice",
+                question: "In the scenario from the previous question (horizontal pipe, velocity doubles), what happens to the fluid pressure in the narrower section according to Bernoulli's principle?",
+                options: ["The pressure increases.", "The pressure decreases.", "The pressure remains constant.", "The pressure drops to zero."],
+                answer: "The pressure decreases.",
+                explanation: "Bernoulli's equation for horizontal flow is \( P + \\frac{1}{2}\\rho v^2 = \\text{constant} \). If velocity (\( v \)) increases, the kinetic energy term increases. To keep the sum constant, the pressure (\( P \)) must decrease."
+            },
+            {
+                type: "Multiple Choice",
+                question: "Which of the following correctly represents Bernoulli's Equation for steady, incompressible, non-viscous flow?",
+                options: [
+                    "\\( P_1 V_1 = P_2 V_2 \\)",
+                    "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{constant} \\)",
+                    "\\( F = PA \\)",
+                    "\\( \\rho_1 A_1 = \\rho_2 A_2 \\)"
+                ],
+                answer: "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{constant} \\)",
+                explanation: "This is the standard form of Bernoulli's equation. \( P \) is absolute pressure, \( \\frac{1}{2}\\rho v^2 \) is dynamic pressure (kinetic energy per unit volume), and \( \\rho gh \) is hydrostatic pressure (potential energy per unit volume)."
+            },
+            {
+                type: "Multiple Choice",
+                question: "A large tank of water has a small hole at a depth \( h \) below the surface. According to Torricelli's Law (derived from Bernoulli's), what is the velocity \( v \) of the water flowing out?",
+                options: [
+                    "\\( v = \\rho gh \\)",
+                    "\\( v = \\frac{1}{2}gh^2 \\)",
+                    "\\( v = \\sqrt{2gh} \\)",
+                    "\\( v = 2gh \\)"
+                ],
+                answer: "\\( v = \\sqrt{2gh} \\)",
+                explanation: "Applying Bernoulli's equation between the top surface and the hole, assuming pressure at both is atmospheric and surface velocity is negligible, simplifies to \( \\rho gh = \\frac{1}{2}\\rho v^2 \), which gives \( v = \\sqrt{2gh} \)."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                type: "True / False",
+                question: "The continuity equation for fluids is based on the principle of conservation of mass.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "The continuity equation states that mass entering a system must equal mass exiting (for steady flow). For incompressible fluids, this simplifies to constant volume flow rate: \( A_1 v_1 = A_2 v_2 \)."
+            },
+            {
+                type: "True / False",
+                question: "Bernoulli's equation can be applied perfectly to highly viscous fluids like thick syrup.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Bernoulli's equation assumes an *ideal* fluid, which is non-viscous (no internal friction). Viscous fluids lose mechanical energy to thermal energy due to friction, so the sum is not constant."
+            },
+            {
+                type: "True / False",
+                question: "The dynamic lift on an airplane wing is partly explained by the air traveling faster over the curved top surface, creating a lower pressure compared to the bottom surface.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "According to Bernoulli's principle, higher velocity means lower pressure. The higher pressure underneath the wing pushes it upwards, contributing to lift."
+            },
+            {
+                type: "True / False",
+                question: "In Bernoulli's equation, the term \( \\rho gh \) represents the kinetic energy of the fluid.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "The term \( \\rho gh \) represents the *potential energy* per unit volume (dependent on height/elevation \( h \)). The kinetic energy term is \( \\frac{1}{2}\\rho v^2 \)."
+            },
+            {
+                type: "True / False",
+                question: "A Venturi meter uses Bernoulli's principle to measure the speed of a flowing fluid by observing the pressure difference between a wide and narrow section of a pipe.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Correct! The fluid speeds up in the narrow section (Continuity eq), causing a pressure drop (Bernoulli's eq). Measuring this pressure drop allows calculation of the fluid velocity."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                type: "Fill in the Blanks",
+                question: "A fluid whose density remains constant regardless of pressure is called <span id='blank-1' class='blank-space'>___</span>.",
+                options: ["Viscous", "Incompressible", "Turbulent", "Static"],
+                answer: "Incompressible",
+                explanation: "Liquids like water are generally considered incompressible because their density \( \\rho \) barely changes under pressure, a key assumption for the standard Bernoulli's equation."
+            },
+            {
+                type: "Fill in the Blanks",
+                question: "In fluid mechanics, the path taken by a fluid particle under steady flow is called a <span id='blank-1' class='blank-space'>___</span>.",
+                options: ["Streamline", "Vortex", "Vacuum", "Trajectory"],
+                answer: "Streamline",
+                explanation: "A streamline is a curve whose tangent at any point gives the velocity vector of the fluid at that point. Bernoulli's equation is applied along a streamline."
+            },
+            {
+                type: "Fill in the Blanks",
+                question: "According to the Equation of Continuity, the Volume <span id='blank-1' class='blank-space'>___</span> Rate is constant for an incompressible fluid.",
+                options: ["Mass", "Flow", "Pressure", "Energy"],
+                answer: "Flow",
+                explanation: "Volume Flow Rate (often denoted as \( Q \) or \( R_v \)) is the volume of fluid passing per unit time, calculated as Area × Velocity (\( A \cdot v \))."
+            },
+            {
+                type: "Fill in the Blanks",
+                question: "If a fluid is at rest, its velocity \( v = 0 \), and Bernoulli's equation simplifies to the law of fluid <span id='blank-1' class='blank-space'>___</span>.",
+                options: ["Dynamics", "Statics", "Kinematics", "Motion"],
+                answer: "Statics",
+                explanation: "When \( v = 0 \), Bernoulli's becomes \( P_1 + \\rho gh_1 = P_2 + \\rho gh_2 \), which is the standard equation for hydrostatic pressure in fluid statics."
+            },
+            {
+                type: "Fill in the Blanks",
+                question: "The term \( \\frac{1}{2}\\rho v^2 \) is often referred to as the <span id='blank-1' class='blank-space'>___</span> pressure.",
+                options: ["Absolute", "Atmospheric", "Dynamic", "Hydrostatic"],
+                answer: "Dynamic",
+                explanation: "Dynamic pressure is the kinetic energy per unit volume of a fluid particle. It represents the pressure the fluid would exert if it were brought to rest isentropically."
+            },
+
+            // --- MATCHING (Presented as identifying the correct pair) ---
+            {
+                type: "Matching",
+                question: "Match the formula to the correct physical concept: <b>Volume Flow Rate</b>",
+                options: [
+                    "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const} \\)",
+                    "\\( A_1 v_1 = A_2 v_2 \\)",
+                    "\\( Q = A \\cdot v \\)",
+                    "\\( v = \\sqrt{2gh} \\)"
+                ],
+                answer: "\\( Q = A \\cdot v \\)",
+                explanation: "Volume Flow Rate (\( Q \)) is the product of the cross-sectional area (\( A \)) and the fluid velocity (\( v \)). Its SI unit is \( \\text{m}^3/\\text{s} \)."
+            },
+            {
+                type: "Matching",
+                question: "Match the formula to the correct physical concept: <b>Equation of Continuity</b>",
+                options: [
+                    "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const} \\)",
+                    "\\( A_1 v_1 = A_2 v_2 \\)",
+                    "\\( Q = A \\cdot v \\)",
+                    "\\( v = \\sqrt{2gh} \\)"
+                ],
+                answer: "\\( A_1 v_1 = A_2 v_2 \\)",
+                explanation: "This equation shows that for an incompressible fluid, if the area decreases, the velocity must increase proportionally to maintain a constant flow rate."
+            },
+            {
+                type: "Matching",
+                question: "Match the formula to the correct physical concept: <b>Torricelli's Law</b>",
+                options: [
+                    "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const} \\)",
+                    "\\( A_1 v_1 = A_2 v_2 \\)",
+                    "\\( Q = A \\cdot v \\)",
+                    "\\( v = \\sqrt{2gh} \\)"
+                ],
+                answer: "\\( v = \\sqrt{2gh} \\)",
+                explanation: "Torricelli's Law gives the speed of fluid exiting a spigot at depth \( h \). Notice it is identical to the speed of an object dropped from height \( h \) in free fall!"
+            },
+            {
+                type: "Matching",
+                question: "Match the formula to the correct physical concept: <b>Bernoulli's Equation</b>",
+                options: [
+                    "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const} \\)",
+                    "\\( A_1 v_1 = A_2 v_2 \\)",
+                    "\\( Q = A \\cdot v \\)",
+                    "\\( v = \\sqrt{2gh} \\)"
+                ],
+                answer: "\\( P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const} \\)",
+                explanation: "This is the full Bernoulli equation. It dictates that pressure, kinetic energy density, and potential energy density remain constant along a streamline."
+            },
+            {
+                type: "Matching",
+                question: "Match the description to the correct component of Bernoulli's Equation: <b>Hydrostatic Pressure Term</b>",
+                options: [
+                    "\\( P \\)",
+                    "\\( \\frac{1}{2}\\rho v^2 \\)",
+                    "\\( \\rho gh \\)",
+                    "\\( \\text{constant} \\)"
+                ],
+                answer: "\\( \\rho gh \\)",
+                explanation: "The term \( \\rho gh \) accounts for the potential energy of the fluid due to its elevation or depth in a gravitational field."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // DOM Elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const questionCounter = document.getElementById('question-counter');
+        const questionType = document.getElementById('question-type');
+        const progressBar = document.getElementById('progress-bar');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+
+        // Shuffle options for MCQ/Fill/Matching (except T/F)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuestion() {
+            // Reset state
+            optionsContainer.innerHTML = '';
+            feedbackContainer.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            
+            const q = quizData[currentQuestionIndex];
+            
+            // Update Headers
+            questionCounter.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            questionType.innerText = q.type;
+            
+            // Update Progress Bar
+            const progress = ((currentQuestionIndex) / quizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Set Question Text
+            questionText.innerHTML = q.question;
+
+            // Prepare Options
+            let displayOptions = [...q.options];
+            if (q.type !== "True / False") {
+                displayOptions = shuffleArray(displayOptions);
+            }
+
+            // Create Option Buttons
+            displayOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                
+                if (q.type === "True / False") {
+                    btn.className = 'option-btn w-full text-left bg-white border-2 border-gray-200 text-gray-800 font-bold py-4 px-6 rounded-xl text-lg flex items-center justify-between';
+                } else if (q.type === "Fill in the Blanks") {
+                    btn.className = 'option-btn inline-block bg-white border-2 border-blue-200 text-blue-700 font-semibold py-2 px-4 rounded-full m-1 text-sm md:text-base cursor-pointer hover:bg-blue-50';
+                } else {
+                    btn.className = 'option-btn w-full text-left bg-white border-2 border-gray-200 text-gray-700 font-medium py-3 px-5 rounded-xl text-base flex items-center';
+                }
+
+                btn.innerHTML = opt;
+                btn.onclick = () => selectOption(opt, q.answer, btn, q.explanation, q.type);
+                
+                // For fill in the blanks, display as a word bank
+                if (q.type === "Fill in the Blanks") {
+                    if (optionsContainer.childElementCount === 0) {
+                        const wordBankLabel = document.createElement('p');
+                        wordBankLabel.className = "text-sm text-gray-500 mb-2 mt-4 font-bold uppercase";
+                        wordBankLabel.innerText = "Word Bank:";
+                        optionsContainer.appendChild(wordBankLabel);
+                        
+                        const bankDiv = document.createElement('div');
+                        bankDiv.id = "word-bank-div";
+                        bankDiv.className = "flex flex-wrap gap-2";
+                        optionsContainer.appendChild(bankDiv);
+                    }
+                    document.getElementById('word-bank-div').appendChild(btn);
+                } else {
+                    optionsContainer.appendChild(btn);
+                }
+            });
+
+            // Trigger MathJax to render equations
+            if(window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function selectOption(selected, correct, btnElement, explanation, type) {
+            // Disable all buttons
+            const allBtns = optionsContainer.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-70', 'cursor-not-allowed');
+            });
+
+            const isCorrect = selected === correct;
+            
+            // Visual feedback on button
+            btnElement.classList.remove('opacity-70');
+            if (isCorrect) {
+                btnElement.classList.add('correct', 'border-green-500');
+                if(type !== "Fill in the Blanks") btnElement.innerHTML += ' <i class="fa-solid fa-check-circle ml-auto text-green-600 text-xl"></i>';
+                score++;
+            } else {
+                btnElement.classList.add('wrong', 'border-red-500');
+                if(type !== "Fill in the Blanks") btnElement.innerHTML += ' <i class="fa-solid fa-times-circle ml-auto text-red-600 text-xl"></i>';
+                
+                // Highlight correct answer
+                allBtns.forEach(b => {
+                    if (b.innerHTML.includes(correct) || b.innerText === correct) {
+                        b.classList.remove('opacity-70');
+                        b.classList.add('correct');
+                    }
+                });
+            }
+
+            // UI specific for Fill in the Blanks
+            if (type === "Fill in the Blanks") {
+                const blankSpan = document.getElementById('blank-1');
+                if(blankSpan) {
+                    blankSpan.innerText = selected;
+                    blankSpan.style.color = isCorrect ? '#166534' : '#991b1b';
+                    blankSpan.style.borderColor = isCorrect ? '#166534' : '#991b1b';
+                }
+            }
+
+            // Show Feedback Div
+            feedbackContainer.classList.remove('hidden', 'bg-green-50', 'bg-red-50', 'border-green-400', 'border-red-400');
+            
+            if (isCorrect) {
+                feedbackContainer.classList.add('bg-green-50', 'border-green-400');
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-check-circle text-green-500"></i>';
+                feedbackTitle.innerText = "Correct!";
+                feedbackTitle.className = "font-bold text-lg mb-1 text-green-700";
+            } else {
+                feedbackContainer.classList.add('bg-red-50', 'border-red-400');
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+                feedbackTitle.innerText = "Incorrect";
+                feedbackTitle.className = "font-bold text-lg mb-1 text-red-700";
+            }
+            
+            // Format explanation logic
+            let prefix = isCorrect ? "<strong>Great job!</strong> " : `<strong>Correct Answer was:</strong> ${correct} <br><br>`;
+            // If answer contains Mathjax, format slightly different to prevent double rendering issues
+            if(correct.includes('\\(')) {
+               prefix = isCorrect ? "<strong>Great job!</strong> " : `<strong>Correct Answer was:</strong> the highlighted formula. <br><br>`; 
+            }
+            
+            feedbackText.innerHTML = prefix + explanation;
+
+            // Trigger MathJax inside feedback if needed
+            if(window.MathJax) {
+                MathJax.typesetPromise([feedbackText]);
+            }
+
+            // Show Next Button
+            nextBtn.classList.remove('hidden');
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            progressBar.style.width = `100%`;
+            
+            document.getElementById('final-score').innerText = score;
+            
+            const msgElement = document.getElementById('performance-msg');
+            const percentage = (score / quizData.length) * 100;
+            
+            if (percentage === 100) {
+                msgElement.innerText = "Outstanding! You have a perfect grasp of Fluid Dynamics and Bernoulli's equation.";
+            } else if (percentage >= 80) {
+                msgElement.innerText = "Great work! You have a solid understanding of the concepts.";
+            } else if (percentage >= 60) {
+                msgElement.innerText = "Good effort. Reviewing the relationships between pressure, velocity, and height will help you improve.";
+            } else {
+                msgElement.innerText = "Keep practicing! Review the continuity equation and energy conservation in fluids.";
+            }
+        }
+
+        // Initialize Quiz
+        loadQuestion();
+
+    </script>
+</body>
+</html>

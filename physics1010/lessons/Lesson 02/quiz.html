@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elasticity Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+        }
+        .english-text {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-left: 3rem;
+        }
+        .math-expr {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div class="glass-card rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden relative fade-in" id="quiz-container">
+        
+        <!-- Header -->
+        <div class="bg-indigo-700 text-white p-8 relative overflow-hidden">
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">اختبار الفيزياء التفاعلي</h1>
+                    <p class="text-indigo-200 text-xl english-text font-semibold">Chapter: Elasticity (Pages 27-43)</p>
+                </div>
+                <div class="bg-white/20 px-6 py-3 rounded-2xl text-center">
+                    <p class="text-sm text-indigo-100 mb-1">التقدم</p>
+                    <p class="text-2xl font-bold" id="score-display">0 / 20</p>
+                </div>
+            </div>
+            
+            <div class="w-full bg-indigo-900/50 rounded-full h-3 mt-6">
+                <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <p class="text-sm mt-3 font-semibold text-indigo-100">السؤال <span id="current-q-num" class="text-white text-lg">1</span> من 20</p>
+        </div>
+
+        <!-- Question Area -->
+        <div class="p-6 md:p-10 bg-white/50">
+            <div class="mb-5 inline-flex items-center gap-2 bg-indigo-100 text-indigo-800 text-sm font-bold px-4 py-1.5 rounded-full" id="question-type-badge">
+                <i class="fas fa-list-ul"></i>
+                <span id="question-type">Multiple Choice</span>
+            </div>
+
+            <div class="mb-8">
+                <h2 id="question-text" class="text-2xl font-bold text-gray-800 english-text leading-relaxed tracking-wide"></h2>
+            </div>
+
+            <div id="interaction-area" class="space-y-4 mb-8 english-text"></div>
+
+            <div id="feedback-area" class="hidden rounded-2xl p-6 mb-8 border-2 fade-in shadow-inner relative">
+                <div class="flex items-start gap-5">
+                    <div id="feedback-icon" class="text-4xl mt-1 drop-shadow-md"></div>
+                    <div class="flex-1">
+                        <h3 id="feedback-title" class="text-2xl font-bold mb-3"></h3>
+                        <div id="correct-answer-display" class="mb-4 text-lg font-semibold english-text text-gray-800 hidden"></div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="font-bold text-gray-700 flex items-center gap-2 mb-2 border-b pb-2">
+                                <i class="fas fa-lightbulb text-yellow-500"></i> Explanation:
+                            </div>
+                            <p id="feedback-explanation" class="text-gray-800 english-text leading-relaxed text-[1.05rem]"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end border-t border-gray-200 pt-6 mt-4">
+                <button id="next-btn" disabled class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all text-lg flex items-center gap-3">
+                    السؤال التالي <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden glass-card rounded-3xl shadow-2xl w-full max-w-2xl p-12 text-center fade-in mx-auto">
+        <i class="fas fa-trophy text-8xl text-yellow-400 mb-6 drop-shadow-xl"></i>
+        <h2 class="text-4xl font-extrabold text-gray-800 mb-4">اكتمل الاختبار!</h2>
+        <p class="text-xl text-gray-600 mb-8">لقد قمت باختبار معلوماتك في خصائص المرونة بنجاح.</p>
+        
+        <div class="bg-indigo-50 rounded-2xl p-8 border-2 border-indigo-100 mb-10">
+            <span class="block text-xl font-semibold text-gray-600 mb-3">النتيجة النهائية:</span>
+            <div class="text-6xl font-black text-indigo-700" id="final-score-text">0 / 20</div>
+        </div>
+        
+        <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-2xl text-xl mx-auto flex items-center gap-3">
+            إعادة الاختبار <i class="fas fa-redo-alt"></i>
+        </button>
+    </div>
+
+    <script>
+        const quizData = [
+            // MCQ (1-5)
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'A solid sphere is subjected to a uniform pressure of <span class="math-expr">10<sup>6</sup> Pa</span>. If its volume decreases by <span class="math-expr">0.01%</span>, what is the Bulk Modulus?',
+                options: ['10<sup>10</sup> Pa', '10<sup>9</sup> Pa', '10<sup>11</sup> Pa', '10<sup>12</sup> Pa'],
+                correct: '10<sup>10</sup> Pa',
+                explanation: 'Bulk Modulus B = ΔP / (ΔV/V). <br>ΔP = 10<sup>6</sup> Pa.<br>Volume strain = 0.01% = 10<sup>-4</sup>.<br>B = 10<sup>6</sup> / 10<sup>-4</sup> = 10<sup>10</sup> Pa.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'A force of <span class="math-expr">500 N</span> is applied tangentially to a surface area of <span class="math-expr">0.02 m<sup>2</sup></span>. What is the value of the shear stress?',
+                options: ['2.5 × 10<sup>4</sup> N/m<sup>2</sup>', '2.5 × 10<sup>3</sup> N/m<sup>2</sup>', '1.0 × 10<sup>4</sup> N/m<sup>2</sup>', '5.0 × 10<sup>4</sup> N/m<sup>2</sup>'],
+                correct: '2.5 × 10<sup>4</sup> N/m<sup>2</sup>',
+                explanation: 'Shear stress = Tangential Force / Area.<br>Stress = 500 N / 0.02 m<sup>2</sup> = 25,000 N/m<sup>2</sup> = 2.5 × 10<sup>4</sup> N/m<sup>2</sup>.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'Wire A has double the length and double the radius of Wire B. Both are made of copper. What is the ratio of Young\'s modulus of Wire A to Wire B?',
+                options: ['1 : 1', '1 : 2', '2 : 1', '4 : 1'],
+                correct: '1 : 1',
+                explanation: 'Young\'s Modulus is a property of the material itself. It does not depend on length or radius. Since both are copper, the ratio is 1:1.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'A steel wire of length <span class="math-expr">2 m</span> is stretched by <span class="math-expr">2 mm</span>. What is the tensile strain?',
+                options: ['0.001', '0.01', '0.002', '1.0'],
+                correct: '0.001',
+                explanation: 'Strain = ΔL / L<sub>0</sub>.<br>2 mm = 2 × 10<sup>-3</sup> m.<br>Strain = (2 × 10<sup>-3</sup>) / 2 = 0.001.'
+            },
+            {
+                type: 'Multiple Choice', qTypeCode: 'mcq', icon: 'fa-list-ul',
+                question: 'Compressibility (k) of a substance is defined mathematically as the reciprocal of:',
+                options: ['Young\'s Modulus', 'Shear Modulus', 'Bulk Modulus', 'Elastic Limit'],
+                correct: 'Bulk Modulus',
+                explanation: 'Compressibility (k = 1/B) measures how easily a substance can be compressed, which is the inverse of the Bulk Modulus (B).'
+            },
+
+            // T/F (6-10)
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'In the plastic deformation region, a material will return perfectly to its original shape once the applied stress is removed.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: 'False. Plastic deformation is permanent. The material only returns to its original shape in the elastic region.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'Liquids and gases have a Bulk Modulus but they do not have a Young\'s Modulus or a Shear Modulus.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: 'True. Fluids can be compressed (volume change), but they cannot support tension or resist shape changes from tangential forces.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'The Ultimate Tensile Strength is defined as the maximum stress a material can withstand before it breaks or fractures.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: 'True. Ultimate strength is the highest peak on the stress-strain curve representing the maximum stress endured.'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'Hooke\'s Law is valid for all regions of the stress-strain curve until the material breaks.',
+                options: ['True', 'False'],
+                correct: 'False',
+                explanation: 'False. Hooke\'s Law only applies strictly in the linear portion of the elastic region (up to the Proportional Limit).'
+            },
+            {
+                type: 'True / False', qTypeCode: 'tf', icon: 'fa-check-circle',
+                question: 'A material with a very large Young\'s Modulus is generally stiffer.',
+                options: ['True', 'False'],
+                correct: 'True',
+                explanation: 'True. A higher Young\'s Modulus means less strain (deformation) for a given stress (force), making it stiffer.'
+            },
+
+            // FIB (11-15)
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'The ratio of shear stress to shear strain is called the [BLANK].',
+                wordBank: ['Shear Modulus', 'Young\'s Modulus', 'Bulk Modulus', 'Yield Strength'],
+                correct: 'Shear Modulus',
+                explanation: 'The Shear Modulus (S) measures the resistance of a solid to sliding planes.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'The SI unit for Strain is [BLANK] because it is a ratio of two identical units.',
+                wordBank: ['Dimensionless', 'N/m²', 'Joules', 'Pascal'],
+                correct: 'Dimensionless',
+                explanation: 'Strain has no units (Dimensionless). For example, tensile strain is Length divided by Length.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: '[BLANK] is defined physically as the internal restoring force per unit area acting on a deformed body.',
+                wordBank: ['Stress', 'Strain', 'Elasticity', 'Pressure'],
+                correct: 'Stress',
+                explanation: 'Stress is the force per unit area (F/A) that causes deformation.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'The point on the stress-strain curve beyond which permanent deformation begins is known as the [BLANK].',
+                wordBank: ['Elastic Limit', 'Proportional Limit', 'Fracture Point', 'Ultimate Strength'],
+                correct: 'Elastic Limit',
+                explanation: 'The Elastic Limit marks the boundary between elastic (reversible) and plastic (irreversible) behavior.'
+            },
+            {
+                type: 'Fill in the Blank', qTypeCode: 'fib', icon: 'fa-pen-to-square',
+                question: 'If a material breaks shortly after exceeding its elastic limit, it is considered [BLANK] (e.g., Glass).',
+                wordBank: ['Brittle', 'Ductile', 'Elastic', 'Malleable'],
+                correct: 'Brittle',
+                explanation: 'Brittle materials fail suddenly with very little plastic strain.'
+            },
+
+            // Matching (16-20)
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the mathematical expression to its physical meaning:',
+                listA: '<span class="math-expr">ΔL / L<sub>0</sub></span> (Change in length / Original length)',
+                wordBank: ['Tensile Strain', 'Tensile Stress', 'Shear Strain', 'Volume Strain'],
+                correct: 'Tensile Strain',
+                explanation: 'This expression defines Tensile (or Longitudinal) Strain.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the physical description to the correct Modulus:',
+                listA: 'Measures a solid\'s resistance to changes in its shape (while volume remains constant).',
+                wordBank: ['Shear Modulus', 'Young\'s Modulus', 'Bulk Modulus', 'Yield Strength'],
+                correct: 'Shear Modulus',
+                explanation: 'Shear Modulus (S) deals with shape deformation caused by tangential forces.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the formula to the correct concept:',
+                listA: '<span class="math-expr">F<sub>⊥</sub> / A</span> (Force acting perpendicularly to the cross-sectional area)',
+                wordBank: ['Tensile Stress', 'Shear Stress', 'Volume Strain', 'Compressibility'],
+                correct: 'Tensile Stress',
+                explanation: 'Tensile Stress is caused by normal forces (perpendicular to the surface).'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the mathematical relationship to its term:',
+                listA: 'The reciprocal of Bulk Modulus (<span class="math-expr">1 / B</span>)',
+                wordBank: ['Compressibility', 'Elasticity', 'Plasticity', 'Ductility'],
+                correct: 'Compressibility',
+                explanation: 'Compressibility (k) indicates how easily a material shrinks in volume. It is the exact inverse of the Bulk Modulus.'
+            },
+            {
+                type: 'Matching', qTypeCode: 'match', icon: 'fa-exchange-alt',
+                question: 'Match the definition to the point on the stress-strain curve:',
+                listA: 'Represents the specific region where Stress is strictly and directly proportional to Strain.',
+                wordBank: ['Proportional Limit', 'Elastic Limit', 'Yield Point', 'Fracture Point'],
+                correct: 'Proportional Limit',
+                explanation: 'The Proportional Limit is the end of the straight-line portion of the curve where Hooke\'s Law applies perfectly.'
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionTypeBadgeEl = document.getElementById('question-type-badge');
+        const questionTypeEl = document.getElementById('question-type');
+        const questionTextEl = document.getElementById('question-text');
+        const interactionAreaEl = document.getElementById('interaction-area');
+        const feedbackAreaEl = document.getElementById('feedback-area');
+        const feedbackIconEl = document.getElementById('feedback-icon');
+        const feedbackTitleEl = document.getElementById('feedback-title');
+        const feedbackExplanationEl = document.getElementById('feedback-explanation');
+        const correctAnswerDisplayEl = document.getElementById('correct-answer-display');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const currentQNum = document.getElementById('current-q-num');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        loadQuestion();
+
+        function loadQuestion() {
+            const currentQ = quizData[currentIndex];
+            answered = false;
+            
+            questionTypeEl.textContent = currentQ.type;
+            questionTypeBadgeEl.querySelector('i').className = `fas ${currentQ.icon}`;
+            currentQNum.textContent = currentIndex + 1;
+            progressBar.style.width = `${((currentIndex) / quizData.length) * 100}%`;
+            scoreDisplay.textContent = `${score} / 20`;
+            
+            interactionAreaEl.innerHTML = '';
+            feedbackAreaEl.classList.add('hidden');
+            feedbackAreaEl.classList.remove('bg-green-50', 'border-green-300', 'bg-red-50', 'border-red-300');
+            correctAnswerDisplayEl.classList.add('hidden');
+            nextBtn.disabled = true;
+
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                const gridClass = currentQ.qTypeCode === 'tf' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1';
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = `grid ${gridClass} gap-4`;
+                
+                currentQ.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.innerHTML = `<span class="flex-1 text-left">${opt}</span> <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center icon-container transition-colors"><i class="fas fa-check text-transparent text-sm"></i></div>`;
+                    btn.className = 'option-btn flex items-center justify-between w-full bg-white border-2 border-gray-200 text-gray-800 text-lg font-medium py-4 px-6 rounded-2xl hover:bg-indigo-50 focus:outline-none';
+                    
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    optionsContainer.appendChild(btn);
+                });
+                interactionAreaEl.appendChild(optionsContainer);
+            } 
+            else if (currentQ.qTypeCode === 'fib') {
+                let parts = currentQ.question.split('[BLANK]');
+                questionTextEl.innerHTML = `${parts[0]} <span class="inline-block min-w-[120px] border-b-4 border-indigo-600 pb-1 text-center text-indigo-700 font-bold mx-2" id="blank-space">?</span> ${parts[1]}`;
+
+                const selectWrapper = document.createElement('div');
+                selectWrapper.className = 'flex flex-col sm:flex-row gap-4 items-center bg-white p-6 rounded-2xl border-2 border-indigo-100 shadow-sm mt-6';
+                
+                const label = document.createElement('span');
+                label.className = 'font-bold text-indigo-900 text-lg whitespace-nowrap';
+                label.innerHTML = '<i class="fas fa-hand-pointer mr-2 text-indigo-500"></i> Select Word:';
+                
+                const select = document.createElement('select');
+                select.className = 'flex-1 appearance-none bg-indigo-50 border-2 border-indigo-200 text-gray-800 py-3 px-4 rounded-xl focus:outline-none text-lg font-semibold w-full cursor-pointer';
+                select.innerHTML = `<option value="" disabled selected>-- Choose from word bank --</option>`;
+                
+                let shuffledWords = [...currentQ.wordBank].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach(word => {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.innerHTML = 'تأكيد الإجابة <i class="fas fa-check ml-1"></i>';
+                submitBtn.className = 'bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 w-full sm:w-auto transition-all duration-300';
+                
+                select.addEventListener('change', (e) => {
+                    document.getElementById('blank-space').textContent = e.target.value;
+                });
+
+                selectWrapper.appendChild(label);
+                selectWrapper.appendChild(select);
+                selectWrapper.appendChild(submitBtn);
+                interactionAreaEl.appendChild(selectWrapper);
+
+                submitBtn.onclick = () => {
+                    if(!select.value) {
+                        submitBtn.innerHTML = 'اختر إجابة أولاً ⚠️';
+                        submitBtn.classList.add('bg-red-500');
+                        setTimeout(() => {
+                            submitBtn.innerHTML = 'تأكيد الإجابة <i class="fas fa-check ml-1"></i>';
+                            submitBtn.classList.remove('bg-red-500');
+                        }, 2000);
+                        return;
+                    }
+                    handleAnswer(select.value, selectWrapper);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+            else if (currentQ.qTypeCode === 'match') {
+                questionTextEl.innerHTML = currentQ.question;
+                
+                const matchContainer = document.createElement('div');
+                matchContainer.className = 'bg-white p-8 rounded-3xl border-2 border-indigo-100 shadow-md flex flex-col gap-6 mt-4';
+                
+                const listA = document.createElement('div');
+                listA.className = 'bg-indigo-50 p-6 rounded-2xl border border-indigo-200 font-bold text-2xl text-center text-indigo-900';
+                listA.innerHTML = currentQ.listA;
+
+                const mobileIcon = document.createElement('div');
+                mobileIcon.className = 'text-center text-indigo-300 text-3xl';
+                mobileIcon.innerHTML = '<i class="fas fa-arrow-down"></i>';
+
+                const selectBox = document.createElement('div');
+                selectBox.className = 'relative w-full';
+
+                const select = document.createElement('select');
+                select.className = 'appearance-none bg-green-50 border-2 border-green-200 text-green-900 py-5 px-6 rounded-2xl focus:outline-none text-xl font-bold w-full text-center cursor-pointer';
+                select.innerHTML = `<option value="" disabled selected>-- اختر المصطلح المطابق من هنا --</option>`;
+                
+                let shuffledWords = [...currentQ.wordBank].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach(word => {
+                    const option = document.createElement('option');
+                    option.value = word;
+                    option.innerHTML = word;
+                    select.appendChild(option);
+                });
+
+                selectBox.appendChild(select);
+
+                const submitBtn = document.createElement('button');
+                submitBtn.innerHTML = 'تحقق من المطابقة <i class="fas fa-shield-check ml-2"></i>';
+                submitBtn.className = 'bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-indigo-700 w-full md:w-1/2 mx-auto text-lg transition-all duration-300';
+
+                matchContainer.appendChild(listA);
+                matchContainer.appendChild(mobileIcon);
+                matchContainer.appendChild(selectBox);
+                matchContainer.appendChild(submitBtn);
+                
+                interactionAreaEl.appendChild(matchContainer);
+
+                submitBtn.onclick = () => {
+                    if(!select.value) {
+                        submitBtn.innerHTML = 'اختر إجابة أولاً ⚠️';
+                        submitBtn.classList.add('bg-red-500');
+                        setTimeout(() => {
+                            submitBtn.innerHTML = 'تحقق من المطابقة <i class="fas fa-shield-check ml-2"></i>';
+                            submitBtn.classList.remove('bg-red-500');
+                        }, 2000);
+                        return;
+                    }
+                    handleAnswer(select.value, matchContainer);
+                    select.disabled = true;
+                    submitBtn.disabled = true;
+                };
+            }
+        }
+
+        function handleAnswer(userAnswer, element) {
+            if (answered) return;
+            answered = true;
+
+            const currentQ = quizData[currentIndex];
+            const isCorrect = userAnswer === currentQ.correct;
+
+            if (currentQ.qTypeCode === 'mcq' || currentQ.qTypeCode === 'tf') {
+                const buttons = interactionAreaEl.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    const optText = btn.querySelector('span').innerHTML;
+                    const iconContainer = btn.querySelector('.icon-container');
+                    const icon = iconContainer.querySelector('i');
+                    
+                    if (optText === currentQ.correct) {
+                        btn.classList.add('bg-green-50', 'border-green-500', 'text-green-900');
+                        iconContainer.classList.add('bg-green-500', 'border-green-500');
+                        icon.classList.remove('text-transparent');
+                        icon.classList.add('text-white', 'fa-check');
+                    } else if (btn === element && !isCorrect) {
+                        btn.classList.add('bg-red-50', 'border-red-500', 'text-red-900');
+                        iconContainer.classList.add('bg-red-500', 'border-red-500');
+                        icon.classList.remove('text-transparent', 'fa-check');
+                        icon.classList.add('text-white', 'fa-times');
+                    } else {
+                        btn.classList.add('opacity-40');
+                    }
+                });
+            } else {
+                if (isCorrect) {
+                    element.classList.add('border-green-500', 'ring-4', 'ring-green-100');
+                } else {
+                    element.classList.add('border-red-500', 'ring-4', 'ring-red-100');
+                    if(currentQ.qTypeCode === 'fib') {
+                        document.getElementById('blank-space').classList.add('text-red-600', 'line-through');
+                    }
+                }
+            }
+
+            feedbackAreaEl.classList.remove('hidden');
+            
+            if (isCorrect) {
+                score++;
+                scoreDisplay.textContent = `${score} / 20`;
+                feedbackAreaEl.classList.add('bg-green-50', 'border-green-300', 'text-green-900');
+                feedbackIconEl.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة صحيحة! أحسنت 👏';
+                feedbackTitleEl.className = 'text-2xl font-black mb-2 text-green-800 text-right';
+            } else {
+                feedbackAreaEl.classList.add('bg-red-50', 'border-red-300', 'text-red-900');
+                feedbackIconEl.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+                feedbackTitleEl.innerHTML = 'إجابة خاطئة! ❌';
+                feedbackTitleEl.className = 'text-2xl font-black mb-2 text-red-800 text-right';
+                
+                correctAnswerDisplayEl.classList.remove('hidden');
+                correctAnswerDisplayEl.innerHTML = `Correct Answer: <strong class="text-green-700">${currentQ.correct}</strong>`;
+            }
+
+            feedbackExplanationEl.innerHTML = currentQ.explanation;
+            
+            nextBtn.disabled = false;
+            if (currentIndex === quizData.length - 1) {
+                nextBtn.innerHTML = 'عرض النتيجة النهائية <i class="fas fa-flag-checkered ml-2"></i>';
+                nextBtn.className = "bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl text-lg flex items-center gap-2";
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+                document.getElementById('final-score-text').innerText = `${score} / 20`;
+            }
+        });
+    </script>
+</body>
+</html>
