@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة المقررات الدراسية</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="courses.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 
@@ -91,14 +90,16 @@
             const container = document.getElementById('courses-container');
             container.innerHTML = "";
 
-            if (typeof COURSES_CONFIG === 'undefined') {
-                container.innerHTML = "<p class='text-red-600 text-center col-span-2'>خطأ: ملف courses.js غير موجود أو به خطأ.</p>";
+            const coursesConfig = student.coursesMetadata || (typeof COURSES_CONFIG !== 'undefined' ? COURSES_CONFIG : null);
+
+            if (!coursesConfig) {
+                container.innerHTML = "<p class='text-red-600 text-center col-span-2'>خطأ: لم يتم العثور على إعدادات المقررات. تأكد من تحديث Apps Script وتسجيل الدخول مجدداً.</p>";
                 return;
             }
 
             let hasCourses = false;
 
-            Object.values(COURSES_CONFIG).forEach(course => {
+            Object.values(coursesConfig).forEach(course => {
                 // عرض المقرر فقط إذا كان ضمن قائمة مقررات الطالب المسموحة (مع تجاهل حالة الأحرف)
                 const normalizedStudentCourses = student.courses.map(c => c.toLowerCase());
                 if (normalizedStudentCourses.includes(course.id.toLowerCase())) {
@@ -156,6 +157,7 @@
                     localStorage.setItem('studentAuth', JSON.stringify({
                         name: result.name,
                         courses: result.courses,
+                        coursesMetadata: result.coursesMetadata,
                         phone: phone
                     }));
                     checkAuth();

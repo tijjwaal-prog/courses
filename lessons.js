@@ -15,11 +15,27 @@ function getCourseConfig() {
     const courseId = urlParams.get('courseId');
     currentCourseId = courseId;
     
-    if (!courseId || typeof COURSES_CONFIG === 'undefined' || !COURSES_CONFIG[courseId]) {
-        return null; // مسار غير صالح
+    if (!courseId) return null;
+
+    const authData = localStorage.getItem('studentAuth');
+    if (authData) {
+        const student = JSON.parse(authData);
+        if (student.coursesMetadata) {
+            // Find course in metadata (case insensitive matching)
+            for (let key in student.coursesMetadata) {
+                if (key.toLowerCase() === courseId.toLowerCase()) {
+                    return student.coursesMetadata[key];
+                }
+            }
+        }
+    }
+
+    // Fallback to COURSES_CONFIG if it exists
+    if (typeof COURSES_CONFIG !== 'undefined' && COURSES_CONFIG[courseId]) {
+        return COURSES_CONFIG[courseId];
     }
     
-    return COURSES_CONFIG[courseId];
+    return null; // مسار غير صالح
 }
 
 // دالة لجلب الدروس من Google Drive
@@ -29,7 +45,7 @@ async function fetchLessonsFromDrive(driveFolderId, coursePathId) {
             throw new Error("لم تقم بإضافة رابط السكربت (API)");
         }
 
-        const response = await fetch(`${GOOGLE_APP_SCRIPT_URL}?folderId=${driveFolderId}`);
+        const response = await fetch(`${GOOGLE_APP_SCRIPT_URL}?folderId=${driveFolderId || ""}&courseId=${coursePathId}`);
 
         if (!response.ok) {
             throw new Error("حدث خطأ أثناء الاتصال بالخادم");
