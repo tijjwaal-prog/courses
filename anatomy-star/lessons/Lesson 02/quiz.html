@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Embryology Interactive Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .correct-anim {
+            animation: pulse-green 0.5s ease-in-out;
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+        }
+        .wrong-anim {
+            animation: shake-red 0.5s ease-in-out;
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake-red {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-left: 2.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-indigo-600">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3" dir="ltr">General Embryology Quiz</h1>
+            <p class="text-gray-500 text-lg">اختبار تفاعلي لقياس فهمك لأساسيات علم الأجنة العام</p>
+            <div class="mt-4 inline-block bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full font-semibold text-sm">
+                إجمالي الأسئلة: 20 سؤال
+            </div>
+        </header>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- الأسئلة سيتم توليدها هنا عبر الجافاسكربت -->
+        </div>
+
+        <div class="text-center mt-12 mb-8">
+            <button id="show-results-btn" onclick="showFinalScore()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-1">
+                عرض النتيجة النهائية
+            </button>
+            <div id="final-score-display" class="hidden mt-6 p-6 bg-white rounded-2xl shadow-lg text-2xl font-bold text-center border-2 border-indigo-200">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات الاختبار مستخرجة من ملف General Embryology
+        const quizData = {
+            mcq: [
+                {
+                    id: "mcq1",
+                    question: "When does the Embryonic Period occur?",
+                    options: ["1st to 3rd week", "4th to 8th week", "9th week to birth", "After birth"],
+                    correct: 1, 
+                    explanation: "الفترة الجنينية المبكرة (Embryonic period) تمتد من الأسبوع الرابع حتى الثامن، وفيها تبدأ أنظمة الأعضاء الرئيسية في التطور (Organogenesis)."
+                },
+                {
+                    id: "mcq2",
+                    question: "During implantation, the Trophoblast differentiates into which two layers?",
+                    options: ["Epiblast and Hypoblast", "Ectoderm and Endoderm", "Cytotrophoblast and Syncytiotrophoblast", "Somatic and Splanchnic mesoderm"],
+                    correct: 2,
+                    explanation: "أثناء الانغراس (Implantation)، تنقسم طبقة الأرومة الغاذية (Trophoblast) إلى طبقتين: داخلية خلوية (Cytotrophoblast) وخارجية مدمجة (Syncytiotrophoblast)."
+                },
+                {
+                    id: "mcq3",
+                    question: "Which germ layer is responsible for forming the nervous tissue and skin?",
+                    options: ["Ectoderm", "Mesoderm", "Endoderm", "Hypoblast"],
+                    correct: 0,
+                    explanation: "الطبقة الخارجية (Ectoderm) هي المسؤولة عن تكوين الأنسجة العصبية (Nervous tissue) والجلد وملحقاته."
+                },
+                {
+                    id: "mcq4",
+                    question: "The Placenta is formed by the combination of:",
+                    options: ["Amnion and Yolk sac", "Epiblast and Hypoblast", "Decidua parietalis and Smooth chorion", "Decidua basalis and Villous chorion"],
+                    correct: 3,
+                    explanation: "تتكون المشيمة (Placenta) من جزء أمومي يسمى الغشاء الساقط القاعدي (Decidua basalis) وجزء جنيني يسمى الكوريون الزغبي (Villous chorion)."
+                },
+                {
+                    id: "mcq5",
+                    question: "Which stage of labor is known as the Expulsion stage?",
+                    options: ["First stage", "Second stage", "Third stage", "Placental stage"],
+                    correct: 1,
+                    explanation: "مرحلة الولادة مقسمة إلى 3 مراحل: الأولى للتوسع (Dilatation)، الثانية لطرد الجنين (Expulsion)، والثالثة لخروج المشيمة (Placental)."
+                }
+            ],
+            tf: [
+                {
+                    id: "tf1",
+                    question: "Spermatogenesis and Oogenesis both result in mature cells containing 46 chromosomes.",
+                    correct: false,
+                    explanation: "خطأ. كلا العمليتين هما انقسام منصف (Meiosis) وينتجان خلايا جنسية (أمشاج) تحتوي على نصف العدد من الكروموسومات (23 كروموسوم)."
+                },
+                {
+                    id: "tf2",
+                    question: "Fertilization represents Day 0 of embryological development.",
+                    correct: true,
+                    explanation: "صحيح. الإخصاب (Fertilization) يمثل بداية التطور الجنيني الفعلي ويُعتبر اليوم صفر (Day 0)."
+                },
+                {
+                    id: "tf3",
+                    question: "The Germinal Period lasts from the 9th week until birth.",
+                    correct: false,
+                    explanation: "خطأ. الفترة من الأسبوع التاسع حتى الولادة هي الفترة الجنينية المتأخرة (Fetal period)، أما الفترة المنتشة (Germinal period) فهي الأسابيع الثلاثة الأولى."
+                },
+                {
+                    id: "tf4",
+                    question: "The Bilaminar embryonic disc consists of the epiblast and the hypoblast.",
+                    correct: true,
+                    explanation: "صحيح. في الأسبوع الثاني، تتشكل الأسطوانة ثنائية الطبقات (Bilaminar disc) وتتكون من الطبقة العلوية (Epiblast) والطبقة السفلية (Hypoblast)."
+                },
+                {
+                    id: "tf5",
+                    question: "Rubella virus (German measles) is considered an environmental factor (infection) that can affect fetal development.",
+                    correct: true,
+                    explanation: "صحيح. فيروس الحصبة الألمانية (Rubella) يُعد من العوامل البيئية (العدوى/Infections) التي يمكن أن تسبب تشوهات خلقية للجنين."
+                }
+            ],
+            blanks: {
+                wordBank: ["Ectoderm", "Folding", "Fetal", "Nondisjunction", "Basalis"],
+                questions: [
+                    {
+                        id: "blk1",
+                        sentence: "The ______ is the germ layer that forms the nervous tissue, skin, and its appendages.",
+                        correct: "Ectoderm",
+                        explanation: "الطبقة الخارجية (Ectoderm) مسؤولة بشكل أساسي عن تطور الجهاز العصبي والجلد."
+                    },
+                    {
+                        id: "blk2",
+                        sentence: "The process of converting the flat trilaminar embryonic disc into a cylindrical embryo is called ______.",
+                        correct: "Folding",
+                        explanation: "عملية الطي (Folding) في الأسبوعين الثالث والرابع تحول القرص الجنيني المسطح إلى شكل أسطواني ثلاثي الأبعاد."
+                    },
+                    {
+                        id: "blk3",
+                        sentence: "The ______ period is concerned with rapid body growth and differentiation of tissues and organs.",
+                        correct: "Fetal",
+                        explanation: "المرحلة الجنينية المتأخرة (Fetal period) تبدأ من الأسبوع التاسع وتتميز بالنمو السريع والتمايز."
+                    },
+                    {
+                        id: "blk4",
+                        sentence: "Failure of a chromosomal pair to disjoin during cell division is known as ______.",
+                        correct: "Nondisjunction",
+                        explanation: "عدم الانفصال (Nondisjunction) أثناء الانقسام الخلوي يؤدي إلى اختلالات كروموسومية مثل التثلث الصبغي (Trisomy) أو الأحادية (Monosomy)."
+                    },
+                    {
+                        id: "blk5",
+                        sentence: "The maternal surface of the placenta is formed mainly by the decidua ______.",
+                        correct: "Basalis",
+                        explanation: "الغشاء الساقط القاعدي (Decidua basalis) هو الجزء الأمومي الداعم لتكوين المشيمة."
+                    }
+                ]
+            },
+            matching: {
+                listA: [
+                    "First stage of labor",
+                    "Mesoderm",
+                    "Endoderm",
+                    "Deletion",
+                    "Zygote"
+                ],
+                listB: [
+                    "A part of a chromosome is lost", // 0
+                    "The cell formed by fertilization on Day 0", // 1
+                    "Dilatation of cervix", // 2
+                    "Mucous membrane of GIT & Respiratory tracts", // 3
+                    "Connective tissue, muscle, bone, urogenital organs" // 4
+                ],
+                correctPairs: {
+                    0: 2, // First stage -> Dilatation
+                    1: 4, // Mesoderm -> Connective tissue...
+                    2: 3, // Endoderm -> Mucous membrane...
+                    3: 0, // Deletion -> part is lost
+                    4: 1  // Zygote -> cell formed by fertilization
+                },
+                explanations: [
+                    "المرحلة الأولى من المخاض تتميز بتوسع عنق الرحم (Dilatation of cervix).",
+                    "الطبقة الوسطى (Mesoderm) تُكون الأنسجة الضامة، العضلات، العظام، والأعضاء التناسلية والبولية.",
+                    "الطبقة الداخلية (Endoderm) تبطن الجهاز الهضمي والتنفسي والمثانة.",
+                    "الحذف (Deletion) هو طفرة جينية يتم فيها فقدان جزء من الكروموسوم.",
+                    "الزيجوت (Zygote) هي البويضة المخصبة الناتجة عن عملية الإخصاب وتمثل اليوم صفر (Day 0)."
+                ]
+            }
+        };
+
+        let score = 0;
+        let answeredQuestions = 0;
+        const totalQuestions = 20;
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            
+            // 1. Multiple Choice Section
+            let html = createSectionHeader("القسم الأول: الاختيار من متعدد (Multiple Choice)", "اختر الإجابة الصحيحة لكل مما يلي:");
+            quizData.mcq.forEach((q, index) => {
+                html += `
+                <div id="card-${q.id}" class="question-card bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6" dir="ltr">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4"><span class="text-indigo-600 mr-2">${index + 1}.</span>${q.question}</h3>
+                    <div class="space-y-3 pl-6">
+                        ${q.options.map((opt, i) => `
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                                <input type="radio" name="${q.id}" value="${i}" class="w-5 h-5 text-indigo-600 focus:ring-indigo-500">
+                                <span class="ml-3 text-gray-700">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="mt-5 flex justify-between items-center" dir="rtl">
+                        <button onclick="checkMCQ('${q.id}', ${q.correct})" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-2 px-5 rounded-lg transition text-sm">
+                            تحقق من الإجابة
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-lg text-right" dir="rtl"></div>
+                </div>`;
+            });
+
+            // 2. True / False Section
+            html += createSectionHeader("القسم الثاني: صح أم خطأ (True / False)", "حدد ما إذا كانت العبارة صحيحة أم خاطئة:");
+            quizData.tf.forEach((q, index) => {
+                html += `
+                <div id="card-${q.id}" class="question-card bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6" dir="ltr">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4"><span class="text-indigo-600 mr-2">${index + 6}.</span>${q.question}</h3>
+                    <div class="flex space-x-4 pl-6">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition w-32">
+                            <input type="radio" name="${q.id}" value="true" class="w-5 h-5 text-indigo-600">
+                            <span class="ml-3 font-semibold text-gray-700">True</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition w-32">
+                            <input type="radio" name="${q.id}" value="false" class="w-5 h-5 text-indigo-600">
+                            <span class="ml-3 font-semibold text-gray-700">False</span>
+                        </label>
+                    </div>
+                    <div class="mt-5 flex justify-between items-center" dir="rtl">
+                        <button onclick="checkTF('${q.id}', ${q.correct})" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-2 px-5 rounded-lg transition text-sm">
+                            تحقق من الإجابة
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-lg text-right" dir="rtl"></div>
+                </div>`;
+            });
+
+            // 3. Fill in the Blanks
+            html += createSectionHeader("القسم الثالث: املأ الفراغات (Fill in the Blanks)", "اختر الكلمة المناسبة من القائمة لكل فراغ:");
+            
+            // Word Bank Display
+            html += `
+            <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 mb-6 text-center" dir="ltr">
+                <p class="text-sm text-purple-800 font-bold mb-2">Word Bank:</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    ${quizData.blanks.wordBank.map(w => `<span class="bg-white px-3 py-1 rounded-md text-purple-700 border border-purple-200 shadow-sm">${w}</span>`).join('')}
+                </div>
+            </div>`;
+
+            quizData.blanks.questions.forEach((q, index) => {
+                let parts = q.sentence.split('______');
+                html += `
+                <div id="card-${q.id}" class="question-card bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6" dir="ltr">
+                    <h3 class="text-lg text-gray-800 mb-4 leading-relaxed font-medium">
+                        <span class="text-indigo-600 font-bold mr-2">${index + 11}.</span>
+                        ${parts[0]}
+                        <select id="select-${q.id}" class="mx-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2 font-bold text-purple-700 outline-none">
+                            <option value="">-- Select --</option>
+                            ${quizData.blanks.wordBank.map(w => `<option value="${w}">${w}</option>`).join('')}
+                        </select>
+                        ${parts[1]}
+                    </h3>
+                    <div class="mt-4" dir="rtl">
+                        <button onclick="checkBlank('${q.id}', '${q.correct}')" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-2 px-5 rounded-lg transition text-sm">
+                            تحقق
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-lg text-right" dir="rtl"></div>
+                </div>`;
+            });
+
+            // 4. Matching
+            html += createSectionHeader("القسم الرابع: المزاوجة (Matching)", "طابق كل مصطلح في القائمة (A) مع الوصف المناسب في القائمة (B):");
+            
+            html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6" dir="ltr">`;
+            quizData.matching.listA.forEach((itemA, index) => {
+                let qId = `match${index}`;
+                html += `
+                <div id="card-${qId}" class="flex flex-col md:flex-row justify-between items-center mb-6 pb-6 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0">
+                    <div class="w-full md:w-5/12 font-bold text-gray-800 text-lg mb-3 md:mb-0">
+                        <span class="text-indigo-600 mr-2">${index + 16}.</span> ${itemA}
+                    </div>
+                    <div class="w-full md:w-2/12 text-center text-gray-400 hidden md:block">
+                        <svg class="inline w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                    <div class="w-full md:w-5/12">
+                        <select id="select-${qId}" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none">
+                            <option value="">-- Choose matching description --</option>
+                            ${quizData.matching.listB.map((itemB, i) => `<option value="${i}">${itemB}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="w-full mt-3 flex justify-between items-center" dir="rtl">
+                        <button id="btn-${qId}" onclick="checkMatch(${index}, '${qId}')" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-1.5 px-4 rounded-lg transition text-sm">
+                            تحقق
+                        </button>
+                    </div>
+                    <div id="feedback-${qId}" class="hidden w-full mt-3 p-3 rounded-lg text-right text-sm" dir="rtl"></div>
+                </div>`;
+            });
+            html += `</div>`;
+
+            container.innerHTML = html;
+        }
+
+        function createSectionHeader(title, subtitle) {
+            return `
+                <div class="mt-12 mb-6 border-b-2 border-gray-200 pb-2">
+                    <h2 class="text-2xl font-bold text-gray-800">${title}</h2>
+                    <p class="text-gray-500 mt-1">${subtitle}</p>
+                </div>
+            `;
+        }
+
+        // دوال التحقق والتصحيح (نفس المنطق القوي في الاختبار السابق)
+        function showFeedback(id, isCorrect, explanation, correctAnswerText = "") {
+            const feedbackDiv = document.getElementById(`feedback-${id}`);
+            const cardDiv = document.getElementById(`card-${id}`);
+            
+            feedbackDiv.classList.remove('hidden');
+            cardDiv.classList.remove('correct-anim', 'wrong-anim');
+            
+            // Force reflow for animation
+            void cardDiv.offsetWidth;
+
+            if (isCorrect) {
+                cardDiv.classList.add('correct-anim');
+                feedbackDiv.className = "mt-4 p-4 rounded-lg text-right bg-green-50 border border-green-200 text-green-800";
+                feedbackDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <span class="text-xl ml-2">✅</span>
+                        <div>
+                            <strong class="block mb-1">إجابة صحيحة!</strong>
+                            <p class="text-sm leading-relaxed">${explanation}</p>
+                        </div>
+                    </div>`;
+                score++;
+            } else {
+                cardDiv.classList.add('wrong-anim');
+                feedbackDiv.className = "mt-4 p-4 rounded-lg text-right bg-red-50 border border-red-200 text-red-800";
+                let correctInfo = correctAnswerText ? `<p class="text-sm font-bold text-red-900 mb-2">الخيار الصحيح هو: <span dir="ltr" class="inline-block px-2 py-0.5 bg-red-100 rounded">${correctAnswerText}</span></p>` : '';
+                feedbackDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <span class="text-xl ml-2">❌</span>
+                        <div>
+                            <strong class="block mb-1 text-red-700">إجابة خاطئة!</strong>
+                            ${correctInfo}
+                            <p class="text-sm text-gray-700 mt-2 border-t border-red-200 pt-2 leading-relaxed"><span class="font-bold text-red-800">التوضيح:</span> ${explanation}</p>
+                        </div>
+                    </div>`;
+            }
+
+            // Disable inputs in this card
+            const inputs = cardDiv.querySelectorAll('input, select, button');
+            inputs.forEach(input => {
+                if(input.tagName === 'BUTTON') {
+                    input.style.display = 'none'; 
+                } else {
+                    input.disabled = true;
+                    input.classList.add('opacity-60', 'cursor-not-allowed');
+                }
+            });
+
+            answeredQuestions++;
+            checkCompletion();
+        }
+
+        function checkMCQ(id, correctIndex) {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("الرجاء اختيار إجابة أولاً!");
+                return;
+            }
+            const qData = quizData.mcq.find(q => q.id === id);
+            const isCorrect = parseInt(selected.value) === correctIndex;
+            showFeedback(id, isCorrect, qData.explanation, qData.options[correctIndex]);
+        }
+
+        function checkTF(id, correctVal) {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("الرجاء اختيار True أو False!");
+                return;
+            }
+            const qData = quizData.tf.find(q => q.id === id);
+            const userVal = selected.value === 'true';
+            const isCorrect = userVal === correctVal;
+            showFeedback(id, isCorrect, qData.explanation, correctVal ? "True" : "False");
+        }
+
+        function checkBlank(id, correctWord) {
+            const selected = document.getElementById(`select-${id}`).value;
+            if (!selected) {
+                alert("الرجاء اختيار كلمة من القائمة!");
+                return;
+            }
+            const qData = quizData.blanks.questions.find(q => q.id === id);
+            const isCorrect = selected === correctWord;
+            showFeedback(id, isCorrect, qData.explanation, correctWord);
+        }
+
+        function checkMatch(index, id) {
+            const selectedVal = document.getElementById(`select-${id}`).value;
+            if (selectedVal === "") {
+                alert("الرجاء اختيار وصف للمطابقة!");
+                return;
+            }
+            const correctIndex = quizData.matching.correctPairs[index];
+            const isCorrect = parseInt(selectedVal) === correctIndex;
+            const explanation = quizData.matching.explanations[index];
+            const correctAnswerText = quizData.matching.listB[correctIndex];
+
+            showFeedback(id, isCorrect, explanation, correctAnswerText);
+        }
+
+        function checkCompletion() {
+            if (answeredQuestions === totalQuestions) {
+                document.getElementById('show-results-btn').classList.remove('hidden');
+                document.getElementById('show-results-btn').classList.add('inline-block');
+            }
+        }
+
+        function showFinalScore() {
+            const display = document.getElementById('final-score-display');
+            display.classList.remove('hidden');
+            document.getElementById('show-results-btn').classList.add('hidden');
+            
+            let percentage = (score / totalQuestions) * 100;
+            let message = "";
+            let colorClass = "";
+
+            if (percentage >= 90) {
+                message = "ممتاز! فهمك لعلم الأجنة رائع جداً. 🌟";
+                colorClass = "text-green-600";
+                display.classList.add('bg-green-50', 'border-green-300');
+            } else if (percentage >= 70) {
+                message = "جيد جداً! لديك أساس قوي في مراحل التطور الجنيني. 👍";
+                colorClass = "text-indigo-600";
+                display.classList.add('bg-indigo-50', 'border-indigo-300');
+            } else if (percentage >= 50) {
+                message = "مقبول. تحتاج إلى مراجعة بعض التواريخ والمصطلحات. 📚";
+                colorClass = "text-yellow-600";
+                display.classList.add('bg-yellow-50', 'border-yellow-300');
+            } else {
+                message = "حاول مرة أخرى. يرجى مراجعة عرض الأجنة بعناية والمحاولة من جديد. 🔄";
+                colorClass = "text-red-600";
+                display.classList.add('bg-red-50', 'border-red-300');
+            }
+
+            display.innerHTML = `
+                <div class="text-5xl mb-4 font-black ${colorClass}">${score} / ${totalQuestions}</div>
+                <div class="text-xl text-gray-700">${message}</div>
+                <button onclick="location.reload()" class="mt-6 bg-gray-800 text-white px-6 py-2 rounded-lg text-sm hover:bg-gray-700 transition">إعادة الاختبار</button>
+            `;
+            
+            // النزول التلقائي لأسفل الشاشة لرؤية النتيجة
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // تهيئة الصفحة
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>

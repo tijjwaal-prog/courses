@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Vision Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        .en-text {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .quiz-container {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateX(5px);
+            background-color: #faf5ff;
+        }
+
+        .option-btn.selected {
+            border-color: #9333ea;
+            background-color: #f3e8ff;
+        }
+
+        .option-btn.correct {
+            background-color: #d1fae5;
+            border-color: #059669;
+            color: #064e3b;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #9333ea;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body class="py-8 px-4 flex flex-col items-center">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-purple-900 mb-2">
+            <i class="fas fa-eye text-purple-600 mr-2"></i> Computer Vision
+        </h1>
+        <p class="text-purple-800 font-semibold">Interactive Quiz: Computer Vision & Azure AI</p>
+    </div>
+
+    <!-- Main Quiz App Container -->
+    <div id="app" class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden en-text" dir="ltr">
+        
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="p-8 text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/3261/3261308.png" alt="Computer Vision Eye" class="w-32 h-32 mx-auto mb-6 opacity-90">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Computer Vision Concepts Quiz</h2>
+            <div class="text-left bg-purple-50 border border-purple-200 p-5 rounded-lg mb-6 inline-block">
+                <ul class="list-disc pl-5 text-gray-700 space-y-2 text-sm">
+                    <li><strong>Total Questions:</strong> 20</li>
+                    <li><strong>Types:</strong> Multiple Choice, True/False, Fill in the Blanks, Matching.</li>
+                    <li><strong>Coverage:</strong> IP vs CV, Tasks (Detection, Segmentation...), Applications, AR, Azure Vision Studio.</li>
+                    <li><strong>Feedback:</strong> Detailed explanations provided for every answer to ensure active learning.</li>
+                </ul>
+            </div>
+            <br>
+            <button onclick="startQuiz()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+                Start Quiz <i class="fas fa-play ml-2"></i>
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <!-- Progress Bar -->
+            <div class="bg-gray-100 h-2 w-full">
+                <div id="progress-bar" class="bg-purple-500 h-2 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-counter" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1 / 20</span>
+                    <span id="question-type-badge" class="text-xs font-bold px-3 py-1 bg-purple-100 text-purple-800 rounded-full">Multiple Choice</span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-relaxed">
+                    Question text goes here?
+                </h3>
+
+                <!-- Word Bank -->
+                <div id="word-bank" class="hidden mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                    <p class="text-xs font-bold text-indigo-800 uppercase mb-2"><i class="fas fa-tags mr-1"></i> Word Bank</p>
+                    <div id="word-bank-items" class="flex flex-wrap gap-2 text-sm font-medium text-gray-700"></div>
+                </div>
+
+                <!-- Input Area -->
+                <div id="input-area" class="space-y-3 mb-6">
+                    <!-- Options injected here via JS -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="feedback-area" class="hidden rounded-xl p-5 mb-6 animation-slideIn">
+                    <div class="flex items-start">
+                        <div id="feedback-icon" class="text-2xl mr-4 mt-1"></div>
+                        <div>
+                            <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
+                            <p id="feedback-text" class="text-gray-700 text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end border-t border-gray-100 pt-6">
+                    <button id="submit-btn" onclick="checkAnswer()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-lg transition">
+                        Submit Answer
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded-lg transition w-full md:w-auto">
+                        Next Question <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden p-8 text-center">
+            <div class="w-24 h-24 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-trophy text-5xl text-purple-500"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
+            <p class="text-gray-600 mb-6">Here is your final performance summary:</p>
+            
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 inline-block mx-auto mb-8 min-w-[250px]">
+                <div class="text-5xl font-extrabold text-purple-600 mb-2">
+                    <span id="final-score">0</span><span class="text-2xl text-gray-400">/20</span>
+                </div>
+                <p id="score-message" class="font-medium text-gray-700"></p>
+            </div>
+
+            <br>
+            <button onclick="location.reload()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-full transition">
+                <i class="fas fa-redo mr-2"></i> Try Again
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const quizData = [
+            // --- MULTIPLE CHOICE (1-5) ---
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "According to the lecture, what is the core difference between 'Image Processing' and 'Computer Vision'?",
+                options: [
+                    "Image Processing only works on videos, while Computer Vision works on static images.",
+                    "Computer Vision modifies images to remove noise, while Image Processing makes decisions.",
+                    "Image Processing modifies images (e.g., enhancing quality) without understanding them, whereas Computer Vision interprets the scene to make decisions.",
+                    "There is no difference; they are two names for the exact same technology."
+                ],
+                correctAnswer: 2,
+                explanation: "Image Processing alters the image itself (like applying filters or removing noise) without grasping its 'meaning'. Computer Vision goes further by interpreting visual data to understand the scene and act on it."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "Which core Computer Vision task goes beyond simple classification by identifying 'what' the object is and exactly 'where' it is using bounding boxes?",
+                options: [
+                    "Recognition",
+                    "Segmentation",
+                    "Detection",
+                    "Pose Estimation"
+                ],
+                correctAnswer: 2,
+                explanation: "Object Detection (الكشف والتحديد) not only identifies the class of an object but also locates it within the image by drawing bounding boxes around it."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "In Human Vision, the eye acts as the sensor and the brain processes the image. What are the equivalent components in Computer Vision?",
+                options: [
+                    "A camera (sensor) captures the scene, and CV algorithms process it.",
+                    "The keyboard captures the scene, and the screen processes it.",
+                    "A microphone captures the scene, and deep learning processes it.",
+                    "A scanner captures the scene, and the human brain processes it."
+                ],
+                correctAnswer: 0,
+                explanation: "In CV systems, cameras or sensor arrays capture the visual data, which is then processed by computer vision algorithms acting as the 'brain' to interpret the scene."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "Which feature in Azure Vision Studio is used to monitor the movement of people within a specific area for security and safety applications?",
+                options: [
+                    "Optical Character Recognition (OCR)",
+                    "Image Captioning",
+                    "Dense Captioning",
+                    "Spatial Analysis"
+                ],
+                correctAnswer: 3,
+                explanation: "Spatial Analysis (التحليل المكاني) is specifically designed to track the movement of individuals within a physical space, which is highly useful for security and monitoring social distancing."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "What does the 'Dense Captioning' feature in Azure Vision Studio allow users to do?",
+                options: [
+                    "Remove the background of a complex image instantly.",
+                    "Hover over specific tags to see detailed descriptions of different parts within the image.",
+                    "Convert handwritten letters into digital text documents.",
+                    "Identify the exact age and emotion of a face."
+                ],
+                correctAnswer: 1,
+                explanation: "Dense Captioning generates multiple captions for various regions of an image. Hovering over a tag highlights the specific part of the image it describes."
+            },
+
+            // --- TRUE / FALSE (6-10) ---
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Computer Vision is strictly limited to processing standard RGB color images and cannot process thermal or satellite imagery.",
+                options: ["True", "False"],
+                correctAnswer: 1, // False
+                explanation: "False. Computer Vision works on a wide spectrum of visual data, including thermal images, high-resolution satellite maps, medical scans (MRI/X-ray), and grayscale images."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "The 'Segmentation' task involves dividing an image into meaningful parts by grouping pixels with similar characteristics, such as color or texture.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. Segmentation (التقسيم) groups similar pixels to isolate specific regions, heavily used in medical imaging to isolate tumors or in editing to remove backgrounds."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Augmented Reality (AR) heavily relies on Computer Vision to recognize and track physical objects so it can seamlessly superimpose digital elements onto them.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. AR needs CV to 'understand' the physical environment (like recognizing a city skyline) so it knows exactly where to place digital information overlays."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Azure Vision Studio requires users to have advanced programming skills and write complex code to test any of its AI features.",
+                options: ["True", "False"],
+                correctAnswer: 1, // False
+                explanation: "False. Vision Studio provides a UI-based (Graphical User Interface) environment that allows users to explore and test AI capabilities directly in the browser without writing any code."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "'Pose Estimation' is a CV task used in Virtual Reality (VR) and physical therapy to track the positions, joints, and movements of the human body.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. Pose Estimation (تقدير الوضع) maps keypoints and joints on a body, making it essential for VR immersion, gesture recognition, and sports training."
+            },
+
+            // --- FILL IN THE BLANKS (11-15) ---
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Recognition", "Captioning", "Automation", "Tracking", "OCR"],
+                textChunks: ["Determining whether an image contains a cat, a dog, or a face is a fundamental CV task known as ", "."],
+                correctAnswer: "Recognition",
+                explanation: "Recognition (التعرف) is the process of categorizing an image or identifying specific predefined classes, like Face Recognition."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Tracking", "Recognition", "Automation", "Captioning", "OCR"],
+                textChunks: ["A major benefit of Computer Vision is the ", " of tasks that previously required intense human effort, such as monitoring traffic cameras."],
+                correctAnswer: "Automation",
+                explanation: "Automation (الأتمتة) improves efficiency by allowing machines to perform repetitive visual monitoring tasks continuously without fatigue."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["OCR", "Automation", "Tracking", "Recognition", "Captioning"],
+                textChunks: ["Converting handwritten notes or printed documents into editable digital text is achieved using ", " technology."],
+                correctAnswer: "OCR",
+                explanation: "OCR (Optical Character Recognition) is a specialized application of CV that recognizes letters and numbers from images."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Captioning", "Tracking", "Automation", "OCR", "Recognition"],
+                textChunks: ["Following the movement of a specific player or a ball across a sequence of video frames is an example of the ", " task."],
+                correctAnswer: "Tracking",
+                explanation: "Tracking (التتبع) is crucial in video analysis, sports, and autonomous driving to follow objects as they move over time."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Automation", "Captioning", "Tracking", "Recognition", "OCR"],
+                textChunks: ["In the Azure Lab, the Image ", " feature successfully generates a single, readable English sentence that describes the overall content of the image."],
+                correctAnswer: "Captioning",
+                explanation: "Image Captioning uses AI to synthesize visual data into natural language, producing a descriptive sentence of the scene."
+            },
+
+            // --- MATCHING (16-20) ---
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the Computer Vision application to its field: \n\n'Scenario: Analyzing MRI, CT scans, and X-rays to detect tumors and abnormalities.'",
+                options: [
+                    "Agriculture",
+                    "Medical Diagnosis and Healthcare",
+                    "Retail and E-commerce",
+                    "Automotive Industry"
+                ],
+                correctAnswer: 1,
+                explanation: "In Healthcare, CV algorithms act as a 'second pair of eyes' for doctors, analyzing complex medical imagery to find anomalies."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the Computer Vision application to its field: \n\n'Scenario: Using drones to monitor crop health, manage resources, and practice precision farming.'",
+                options: [
+                    "Accessibility",
+                    "Retail and E-commerce",
+                    "Agriculture",
+                    "Security"
+                ],
+                correctAnswer: 2,
+                explanation: "Precision Agriculture relies on CV to process drone and satellite imagery, helping farmers detect diseases and optimize watering."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the Computer Vision application to its field: \n\n'Scenario: Enabling autonomous driving by detecting pedestrians, reading road signs, and maintaining lane position.'",
+                options: [
+                    "Automotive Industry",
+                    "Medical Diagnosis and Healthcare",
+                    "Agriculture",
+                    "Retail and E-commerce"
+                ],
+                correctAnswer: 0,
+                explanation: "The Automotive industry uses CV extensively for Self-Driving cars and Advanced Driver Assistance Systems (ADAS)."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the Computer Vision application to its field: \n\n'Scenario: Managing shelf inventory automatically and enabling visual search engines for shoppers.'",
+                options: [
+                    "Security",
+                    "Agriculture",
+                    "Accessibility",
+                    "Retail and E-commerce"
+                ],
+                correctAnswer: 3,
+                explanation: "Retailers use CV to track products on shelves and allow users to search for items by uploading a picture instead of text."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the Computer Vision application to its field: \n\n'Scenario: Assisting visually impaired users by converting visual text to speech and providing navigational aids.'",
+                options: [
+                    "Automotive Industry",
+                    "Accessibility",
+                    "Security",
+                    "Environmental Monitoring"
+                ],
+                correctAnswer: 1,
+                explanation: "Accessibility tools use CV to describe surroundings or read texts aloud, dramatically empowering people with disabilities."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let isAnswered = false;
+
+        const screens = {
+            welcome: document.getElementById('welcome-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            result: document.getElementById('result-screen')
+        };
+        const elements = {
+            progressBar: document.getElementById('progress-bar'),
+            questionCounter: document.getElementById('question-counter'),
+            badge: document.getElementById('question-type-badge'),
+            questionText: document.getElementById('question-text'),
+            inputArea: document.getElementById('input-area'),
+            wordBank: document.getElementById('word-bank'),
+            wordBankItems: document.getElementById('word-bank-items'),
+            feedbackArea: document.getElementById('feedback-area'),
+            feedbackIcon: document.getElementById('feedback-icon'),
+            feedbackTitle: document.getElementById('feedback-title'),
+            feedbackText: document.getElementById('feedback-text'),
+            submitBtn: document.getElementById('submit-btn'),
+            nextBtn: document.getElementById('next-btn'),
+            finalScore: document.getElementById('final-score'),
+            scoreMessage: document.getElementById('score-message')
+        };
+
+        function startQuiz() {
+            screens.welcome.classList.add('hidden');
+            screens.quiz.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentQuestion];
+            
+            // Reset UI
+            elements.feedbackArea.classList.add('hidden');
+            elements.feedbackArea.className = 'hidden rounded-xl p-5 mb-6 animation-slideIn'; 
+            elements.submitBtn.classList.remove('hidden');
+            elements.nextBtn.classList.add('hidden');
+            elements.wordBank.classList.add('hidden');
+            elements.inputArea.innerHTML = '';
+
+            // Update Header & Progress
+            elements.questionCounter.textContent = `Question ${currentQuestion + 1} / ${quizData.length}`;
+            elements.progressBar.style.width = `${((currentQuestion) / quizData.length) * 100}%`;
+            elements.badge.textContent = q.badge;
+
+            // Render based on type
+            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
+                elements.questionText.innerText = q.question;
+                
+                if(q.type === 'match'){
+                    const helper = document.createElement('p');
+                    helper.className = "text-sm text-purple-600 font-semibold mb-4";
+                    helper.innerHTML = "<i class='fas fa-th-large mr-1'></i> Select the correct match below:";
+                    elements.inputArea.appendChild(helper);
+                }
+
+                q.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 font-medium text-gray-700 bg-white shadow-sm';
+                    
+                    let prefix = "";
+                    if (q.type === 'mcq' || q.type === 'match') {
+                        prefix = `<span class="inline-block w-8 h-8 bg-gray-100 rounded text-center leading-8 mr-3 font-bold text-gray-600">${String.fromCharCode(65 + index)}</span>`;
+                    }
+                    
+                    btn.innerHTML = `${prefix} ${opt}`;
+                    btn.onclick = () => selectOption(index, btn);
+                    elements.inputArea.appendChild(btn);
+                });
+            } else if (q.type === 'fill') {
+                elements.wordBank.classList.remove('hidden');
+                elements.wordBankItems.innerHTML = q.wordBank.map(w => `<span class="bg-white border border-indigo-300 text-indigo-700 px-3 py-1 rounded shadow-sm">${w}</span>`).join('');
+                
+                elements.questionText.innerHTML = ''; 
+                
+                const sentence = document.createElement('div');
+                sentence.className = "text-xl md:text-2xl font-semibold text-gray-800 leading-relaxed";
+                
+                const select = document.createElement('select');
+                select.id = "fill-select";
+                select.className = "mx-2 bg-gray-50 border-2 border-indigo-400 text-indigo-700 rounded-lg px-4 py-1 text-lg font-bold focus:outline-none focus:border-indigo-600 cursor-pointer shadow-sm transition";
+                select.innerHTML = `<option value="" disabled selected>Select Word</option>` + 
+                                   q.wordBank.map(w => `<option value="${w}">${w}</option>`).join('');
+
+                sentence.innerHTML = q.textChunks[0];
+                sentence.appendChild(select);
+                sentence.appendChild(document.createTextNode(q.textChunks[1]));
+                
+                elements.inputArea.appendChild(sentence);
+            }
+        }
+
+        let selectedIndex = null;
+
+        function selectOption(index, btnElement) {
+            if (isAnswered) return;
+            selectedIndex = index;
+            
+            const buttons = elements.inputArea.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        function checkAnswer() {
+            if (isAnswered) return;
+            const q = quizData[currentQuestion];
+            let isCorrect = false;
+            let userDisplayValue = "";
+            let correctDisplayValue = "";
+
+            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
+                if (selectedIndex === null) {
+                    alert("Please select an option first!");
+                    return;
+                }
+                isCorrect = selectedIndex === q.correctAnswer;
+                userDisplayValue = q.options[selectedIndex];
+                correctDisplayValue = q.options[q.correctAnswer];
+                
+                const buttons = elements.inputArea.querySelectorAll('button');
+                buttons.forEach((btn, idx) => {
+                    btn.disabled = true;
+                    btn.classList.remove('selected');
+                    if (idx === q.correctAnswer) {
+                        btn.classList.add('correct');
+                        btn.innerHTML += ' <i class="fas fa-check-circle float-right mt-1 text-xl"></i>';
+                    } else if (idx === selectedIndex && !isCorrect) {
+                        btn.classList.add('wrong');
+                        btn.innerHTML += ' <i class="fas fa-times-circle float-right mt-1 text-xl"></i>';
+                    } else {
+                        btn.style.opacity = '0.4';
+                    }
+                });
+
+            } else if (q.type === 'fill') {
+                const select = document.getElementById('fill-select');
+                if (!select.value) {
+                    alert("Please select a word from the dropdown!");
+                    return;
+                }
+                isCorrect = select.value === q.correctAnswer;
+                userDisplayValue = select.value;
+                correctDisplayValue = q.correctAnswer;
+                
+                select.disabled = true;
+                if (isCorrect) {
+                    select.classList.replace('border-indigo-400', 'border-green-500');
+                    select.classList.replace('text-indigo-700', 'text-green-700');
+                    select.classList.add('bg-green-50');
+                } else {
+                    select.classList.replace('border-indigo-400', 'border-red-500');
+                    select.classList.replace('text-indigo-700', 'text-red-700');
+                    select.classList.add('bg-red-50');
+                    
+                    const corrSpan = document.createElement('span');
+                    corrSpan.className = "text-green-600 font-bold ml-2 text-lg inline-block";
+                    corrSpan.innerHTML = `(Correct: ${correctDisplayValue})`;
+                    select.parentNode.insertBefore(corrSpan, select.nextSibling);
+                }
+            }
+
+            if (isCorrect) score++;
+            isAnswered = true;
+
+            showFeedback(isCorrect, userDisplayValue, correctDisplayValue, q.explanation);
+        }
+
+        function showFeedback(isCorrect, userVal, correctVal, explanationText) {
+            elements.feedbackArea.classList.remove('hidden');
+            elements.submitBtn.classList.add('hidden');
+            elements.nextBtn.classList.remove('hidden');
+
+            if (isCorrect) {
+                elements.feedbackArea.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-900');
+                elements.feedbackIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+                elements.feedbackTitle.textContent = "✔️ Correct!";
+                elements.feedbackText.innerHTML = `<strong>Explanation:</strong> ${explanationText}`;
+            } else {
+                elements.feedbackArea.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-900');
+                elements.feedbackIcon.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+                elements.feedbackTitle.textContent = "❌ Incorrect";
+                elements.feedbackText.innerHTML = `
+                    <span class="block mb-2 text-red-700">You chose: <span class="line-through">${userVal}</span></span>
+                    <span class="block mb-3 text-green-700 font-semibold">Correct Option: ${correctVal}</span>
+                    <strong class="text-gray-800">Why?</strong> <span class="text-gray-700">${explanationText}</span>
+                `;
+            }
+            
+            elements.nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            selectedIndex = null;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            screens.quiz.classList.add('hidden');
+            screens.result.classList.remove('hidden');
+            elements.progressBar.style.width = '100%';
+            
+            elements.finalScore.textContent = score;
+            
+            let message = "";
+            let colorClass = "";
+            if (score === 20) {
+                message = "Exceptional! You have mastered Computer Vision! 🌟";
+                colorClass = "text-purple-600";
+                triggerConfetti();
+            } else if (score >= 15) {
+                message = "Great job! You have a solid grasp of the concepts. 👍";
+                colorClass = "text-purple-500";
+                triggerConfetti();
+            } else if (score >= 10) {
+                message = "Good effort! Review the lecture slides to master the details. 📚";
+                colorClass = "text-yellow-600";
+            } else {
+                message = "Keep learning! Watch the lecture again and give it another try. 💪";
+                colorClass = "text-red-600";
+            }
+            
+            elements.scoreMessage.textContent = message;
+            elements.scoreMessage.className = `font-bold text-xl mt-3 ${colorClass}`;
+        }
+
+        function triggerConfetti() {
+            for (let i = 0; i < 60; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.backgroundColor = ['#9333ea', '#a855f7', '#c084fc', '#3b82f6', '#10b981'][Math.floor(Math.random() * 5)];
+                document.body.appendChild(conf);
+                
+                setTimeout(() => conf.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
