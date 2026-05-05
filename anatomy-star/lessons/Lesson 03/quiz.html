@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مقدمة في مفاهيم الذكاء الاصطناعي</title>
+    <title>Skeletal Architecture - Interactive Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
-        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Cairo', sans-serif;
             background-color: #f3f4f6;
         }
-        .arabic-text {
-            font-family: 'Cairo', sans-serif;
+        .en-text {
+            font-family: 'Inter', sans-serif;
+            direction: ltr;
         }
         .fade-in {
             animation: fadeIn 0.4s ease-in-out;
@@ -22,450 +22,487 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .option-btn {
+        .option-card {
+            transition: all 0.2s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        .fib-blank {
+            display: inline-block;
+            min-width: 120px;
+            height: 32px;
+            border-bottom: 2px solid #3b82f6;
+            margin: 0 8px;
+            text-align: center;
+            color: #2563eb;
+            font-weight: bold;
+            cursor: pointer;
             transition: all 0.2s;
         }
-        .option-btn:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .option-btn:disabled {
-            cursor: not-allowed;
+        .fib-blank:empty::before {
+            content: "Select a word";
+            color: #9ca3af;
+            font-weight: normal;
+            font-size: 0.875rem;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="text-gray-800 min-h-screen flex flex-col">
 
-    <!-- Main Container -->
-    <div id="app" class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden fade-in">
-        
-        <!-- Header -->
-        <div class="bg-indigo-600 p-6 text-center text-white relative">
-            <h1 class="text-3xl font-bold arabic-text mb-2" dir="rtl">مقدمة في مفاهيم الذكاء الاصطناعي</h1>
-            <p class="text-indigo-100 text-sm font-medium">Interactive AI Concepts Quiz</p>
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold en-text">Skeletal Architecture Quiz</h1>
+            <div class="text-sm bg-indigo-800 px-3 py-1 rounded-full">
+                السؤال: <span id="q-counter">1</span> / 20
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow flex justify-center items-start">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden fade-in" id="quiz-container">
             
             <!-- Progress Bar -->
-            <div id="progress-container" class="hidden absolute bottom-0 left-0 w-full h-1.5 bg-indigo-800">
-                <div id="progress-bar" class="h-full bg-green-400 transition-all duration-300 w-0"></div>
-            </div>
-        </div>
-
-        <!-- Start Screen -->
-        <div id="start-screen" class="p-8 text-center fade-in">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to the AI Problem Solving Quiz!</h2>
-            <p class="text-gray-600 mb-6 max-w-lg mx-auto">
-                Test your knowledge based on the lecture <strong>"How AI Solves Problems"</strong>. 
-                This quiz contains 20 questions divided into 4 sections: Multiple Choice, True/False, Fill in the Blanks, and Matching.
-            </p>
-            <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8 text-left text-sm text-gray-600">
-                <div class="bg-gray-50 p-3 rounded border border-gray-200">✨ 5 Multiple Choice</div>
-                <div class="bg-gray-50 p-3 rounded border border-gray-200">⚖️ 5 True / False</div>
-                <div class="bg-gray-50 p-3 rounded border border-gray-200">📝 5 Fill in the Blanks</div>
-                <div class="bg-gray-50 p-3 rounded border border-gray-200">🔗 5 Matching</div>
-            </div>
-            <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105">
-                Start Quiz Now 🚀
-            </button>
-        </div>
-
-        <!-- Quiz Screen -->
-        <div id="quiz-screen" class="hidden p-6 md:p-8">
-            <div class="flex justify-between items-center mb-6 border-b pb-4">
-                <span id="question-category" class="text-sm font-bold text-indigo-600 uppercase tracking-wider">Category</span>
-                <span id="question-counter" class="text-sm font-semibold text-gray-500 bg-gray-100 py-1 px-3 rounded-full">Question 1 of 20</span>
+            <div class="h-2 bg-gray-200 w-full">
+                <div id="progress-bar" class="h-2 bg-indigo-500 transition-all duration-300" style="width: 5%;"></div>
             </div>
 
-            <!-- Context / Word Bank (Hidden by default) -->
-            <div id="word-bank" class="hidden mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                <strong>Word Bank / Options:</strong> <span id="word-bank-text"></span>
-            </div>
+            <div class="p-6 md:p-8">
+                <!-- Question Header -->
+                <div class="mb-6 flex justify-between items-center border-b pb-4">
+                    <span id="question-type" class="text-sm font-semibold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full en-text">Multiple Choice</span>
+                    <span class="text-gray-500 font-bold">Points: <span id="score">0</span></span>
+                </div>
 
-            <h3 id="question-text" class="text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-relaxed">
-                Question text goes here?
-            </h3>
+                <!-- Question Text -->
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 en-text text-gray-800"></h2>
 
-            <!-- Options Grid -->
-            <div id="options-container" class="grid grid-cols-1 gap-3 mb-8">
-                <!-- Buttons injected via JS -->
-            </div>
+                <!-- Options Container -->
+                <div id="options-container" class="space-y-3 en-text">
+                    <!-- Options injected here via JS -->
+                </div>
 
-            <!-- Feedback Area -->
-            <div id="feedback-container" class="hidden mb-6 fade-in">
-                <!-- Feedback injected via JS -->
-            </div>
+                <!-- Fill in the Blanks Word Bank (Hidden by default) -->
+                <div id="word-bank-container" class="hidden mt-6 en-text border border-dashed border-gray-300 p-4 rounded-lg bg-gray-50">
+                    <p class="text-sm text-gray-500 mb-2 font-semibold">Word Bank (Click to fill the blank):</p>
+                    <div id="word-bank" class="flex flex-wrap gap-2"></div>
+                </div>
 
-            <!-- Action Area -->
-            <div class="flex justify-end mt-4">
-                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                    Next Question ➡️
-                </button>
-            </div>
-        </div>
+                <!-- Feedback Section -->
+                <div id="feedback-section" class="hidden mt-6 p-4 rounded-lg en-text fade-in">
+                    <div class="flex items-start gap-3">
+                        <div id="feedback-icon" class="mt-1 flex-shrink-0"></div>
+                        <div>
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-desc" class="text-gray-700 text-sm md:text-base"></p>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Result Screen -->
-        <div id="result-screen" class="hidden p-8 text-center fade-in">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
-            <p class="text-gray-600 mb-6">Here is your final score</p>
-            
-            <div class="inline-block bg-indigo-50 border-2 border-indigo-200 rounded-full w-40 h-40 flex items-center justify-center mb-8">
-                <div class="text-center">
-                    <span id="score-text" class="text-4xl font-bold text-indigo-600">15</span>
-                    <span class="text-xl text-gray-500">/ 20</span>
+                <!-- Action Buttons -->
+                <div class="mt-8 flex justify-end gap-3 border-t pt-4">
+                    <button id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        إرسال الإجابة (Submit)
+                    </button>
+                    <button id="next-btn" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                        السؤال التالي (Next)
+                    </button>
                 </div>
             </div>
-
-            <p id="result-message" class="text-lg font-medium text-gray-700 mb-8 arabic-text" dir="rtl"></p>
-
-            <button onclick="restartQuiz()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-colors">
-                🔄 Restart Quiz
-            </button>
         </div>
 
-    </div>
+        <!-- Results Container -->
+        <div id="results-container" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 text-center fade-in">
+            <svg class="w-20 h-20 text-indigo-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+            <h2 class="text-3xl font-bold mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6">لقد أتممت اختبار Skeletal Architecture بنجاح.</p>
+            <div class="bg-indigo-50 rounded-lg p-6 mb-6">
+                <span class="block text-sm text-indigo-600 font-bold mb-1">النتيجة النهائية</span>
+                <span class="text-4xl font-black text-indigo-800" id="final-score">0 / 20</span>
+            </div>
+            <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg w-full transition-colors">
+                إعادة الاختبار (Retake Quiz)
+            </button>
+        </div>
+    </main>
 
     <script>
-        // Quiz Data based strictly on the provided PDF
+        // Quiz Data generated strictly from the "1.1-Skeletal_Architecture.pptx" slides
         const quizData = [
-            // --- SECTION 1: Multiple Choice (1-5) ---
+            // --- Multiple Choice (1-5) ---
             {
-                category: "Multiple Choice",
-                question: "What is the primary purpose of 'Search' in AI problem-solving?",
-                options: [
-                    "To completely guess the solution until one randomly works.",
-                    "To explore the problem space systematically to find the best possible solution.",
-                    "To permanently store all user data in the cloud.",
-                    "To ignore constraints and jump straight to the final goal."
-                ],
-                correct: 1,
-                explanation: "Search in AI involves systematically exploring the 'Problem Space' to evaluate possible actions and find the optimal path to a goal, such as planning a travel route."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "What is the biological process of converting embryonic tissues to solid bone called?",
+                options: ["Hematopoiesis", "Ossification", "Trabeculation", "Articulation"],
+                answer: 1,
+                explanation: "Ossification is the biological process of converting other embryonic tissues (like membrane or cartilage) into solid bone. It typically begins around week 6 to 8 of embryological development."
             },
             {
-                category: "Multiple Choice",
-                question: "In AI, what are 'Heuristics' primarily used for?",
-                options: [
-                    "Finding the absolute perfect solution regardless of how much time it takes.",
-                    "Generating random numbers for gaming.",
-                    "Acting as smart shortcuts ('Rules of Thumb') to make faster decisions.",
-                    "Stopping the AI from making any predictions."
-                ],
-                correct: 2,
-                explanation: "Heuristics act as 'Rules of Thumb'. They prioritize the most promising options to drastically speed up decision-making, even if they don't guarantee the absolute optimal solution."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which component of the skeletal system primarily acts as an energy reserve?",
+                options: ["Red marrow", "Compact bone", "Yellow marrow", "Spongy bone"],
+                answer: 2,
+                explanation: "Yellow marrow, housed within the long bones, acts as an energy reserve because it consists primarily of adipose (fat) tissue, whereas red marrow produces blood cells."
             },
             {
-                category: "Multiple Choice",
-                question: "In the Minimax algorithm used for games, what is the main goal of the 'Max' player?",
-                options: [
-                    "To minimize the opponent's score unconditionally.",
-                    "To maximize their own chances of winning or payoff.",
-                    "To reach a draw as quickly as possible.",
-                    "To evaluate the fewest number of moves possible."
-                ],
-                correct: 1,
-                explanation: "The Max player seeks to maximize their own utility (winning chances), while anticipating that the Min player (opponent) will try to minimize it."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "According to morphological shapes, how is the patella (kneecap) classified?",
+                options: ["Flat bone", "Short bone", "Sesamoid bone", "Irregular bone"],
+                answer: 2,
+                explanation: "The patella is classified as a Sesamoid bone. These are small bones typically embedded within tendons to protect them and improve joint mechanics."
             },
             {
-                category: "Multiple Choice",
-                question: "Which of the following is a classic example of a Constraint Satisfaction Problem (CSP)?",
-                options: [
-                    "Siri voice recognition.",
-                    "Tic-Tac-Toe game strategies.",
-                    "Estimating travel distance on Google Maps.",
-                    "Solving a Sudoku puzzle or Timetabling."
-                ],
-                correct: 3,
-                explanation: "Sudoku and Timetabling are classic CSPs because the goal is to find a solution that strictly obeys predefined rules and constraints (like no overlapping classes or no repeating numbers)."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "How many vertebrae make up the Thoracic region, and what is its primary characteristic?",
+                options: ["7 (highly movable)", "12 (rib cage attachment, limited movement)", "5 (movable, load-bearing)", "4 (terminal end)"],
+                answer: 1,
+                explanation: "The Thoracic spine consists of 12 vertebrae (T1-T12). It serves as the attachment point for the rib cage and offers limited movement to protect internal organs."
             },
             {
-                category: "Multiple Choice",
-                question: "How does 'Utility-Driven Decision Making' evaluate and choose the best option?",
-                options: [
-                    "By blindly picking the first available option.",
-                    "By assigning a numerical value (desirability/utility) to outcomes and picking the highest.",
-                    "By avoiding any option that has even a minimal amount of risk.",
-                    "By relying entirely on random chance."
-                ],
-                correct: 1,
-                explanation: "Utility gives a numerical score of 'desirability' to each outcome (balancing factors like speed, cost, and safety) so the AI can objectively select the overall best option."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which layer forms the dense, solid outer shell of bones to provide primary load-bearing strength?",
+                options: ["Spongy Bone", "Periosteum", "Compact Bone", "Endosteum"],
+                answer: 2,
+                explanation: "Compact Bone forms the rigid, dense outer layer of bones, providing the primary structural support and load-bearing strength, while spongy bone reduces weight."
             },
 
-            // --- SECTION 2: True / False (6-10) ---
+            // --- True / False (6-10) ---
             {
-                category: "True or False",
-                question: "Heuristics always guarantee finding the most optimal and perfect solution to a complex problem.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "The adult human skeleton consists of exactly 206 bones divided into the Axial and Appendicular skeletons.",
                 options: ["True", "False"],
-                correct: 1,
-                explanation: "Heuristics trade perfection for speed. They find a 'good enough' solution quickly, which is crucial for complex real-time problems (like self-driving cars) where an exhaustive search is too slow."
+                answer: 0, // True
+                explanation: "True. The adult skeleton contains 206 bones, which are separated into the Axial skeleton (central axis) and the Appendicular skeleton (extremities and girdles)."
             },
             {
-                category: "True or False",
-                question: "In a Constraint Satisfaction Problem (CSP), 'Domains' refer to the possible values that can be assigned to a variable (e.g., the available colors in Map Coloring).",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Intramembranous ossification is derived from cartilage tissue.",
                 options: ["True", "False"],
-                correct: 0,
-                explanation: "In CSPs, Variables are the items to be decided, Domains are the list of possible choices for those items, and Constraints are the strict rules connecting them."
+                answer: 1, // False
+                explanation: "False. Intramembranous ossification is derived from membrane tissue, whereas Endochondral ossification is derived from cartilage tissue."
             },
             {
-                category: "True or False",
-                question: "The UPS ORION system is a real-world AI success story that uses search and problem-solving to optimize delivery routes and reduce costs.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Spongy (Cancellous) bone significantly increases the overall weight of the human skeleton.",
                 options: ["True", "False"],
-                correct: 0,
-                explanation: "As mentioned in the success stories, the ORION system optimizes delivery paths to reduce travel time and saves millions of dollars annually using AI problem-solving."
+                answer: 1, // False
+                explanation: "False. Spongy bone has a porous, honeycomb-like internal architecture that significantly *reduces* the overall weight of the skeleton while housing blood-producing red marrow."
             },
             {
-                category: "True or False",
-                question: "In game strategy (like Chess or Tic-Tac-Toe), AI only evaluates its current move and completely ignores the opponent's possible future reactions.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "The vertebral column protects the spinal cord, while the thoracic cage protects the heart and lungs.",
                 options: ["True", "False"],
-                correct: 1,
-                explanation: "AI uses strategic thinking (like Minimax) precisely to look ahead and predict the opponent's reactions, ensuring it stays ahead in dynamic competitive environments."
+                answer: 0, // True
+                explanation: "True. Both structures are vital parts of the axial skeleton's protective central core, shielding the spinal cord and thoracic organs respectively."
             },
             {
-                category: "True or False",
-                question: "Utility-Driven Decision Making is used in hospital emergency rooms to prioritize critical patients and maximize the overall benefit.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Osteons and Lamellae are part of the macroscopic (visible to naked eye) divisions of the Appendicular skeleton.",
                 options: ["True", "False"],
-                correct: 0,
-                explanation: "Hospitals allocate resources efficiently by assigning high utility to treating critical cases first, ensuring the best overall outcome and saving the most lives."
+                answer: 1, // False
+                explanation: "False. Osteons and Lamellae are microscopic structural units found within the internal complex network of bones, not macroscopic divisions."
             },
 
-            // --- SECTION 3: Fill in the Blanks (11-15) ---
+            // --- Fill in the Blanks (11-15) ---
             {
-                category: "Fill in the Blanks",
-                wordBank: "Search, Constraints, Variables, Minimax, Heuristics",
-                question: "Fill in the blank: _________ are rules of thumb that help AI make faster decisions without exploring every single possibility.",
-                options: ["Search", "Constraints", "Variables", "Minimax", "Heuristics"],
-                correct: 4,
-                explanation: "Heuristics narrow down choices to the most promising ones, such as estimating distance in navigation instead of mathematically checking every single minor road."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The [BLANK] girdle connects the bones of the upper limbs to the axial skeleton, facilitating locomotion and interaction.",
+                options: ["Pectoral", "Pelvic", "Cranial", "Costal", "Vertebral"],
+                answer: "Pectoral",
+                explanation: "The Pectoral (shoulder) girdle is part of the appendicular skeleton and connects the upper limbs to the body's central axis."
             },
             {
-                category: "Fill in the Blanks",
-                wordBank: "Search, Constraints, Variables, Minimax, Heuristics",
-                question: "Fill in the blank: In scheduling university exams, the rule 'a student cannot take two exams at the exact same time' is an example of _________.",
-                options: ["Search", "Constraints", "Variables", "Minimax", "Heuristics"],
-                correct: 1,
-                explanation: "Constraints are the strict rules that must be respected and satisfied when finding a valid solution in a Constraint Satisfaction Problem."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "Blood cell production occurs in the [BLANK], which is housed within the porous spongy bone tissue.",
+                options: ["Red marrow", "Yellow marrow", "Endosteum", "Periosteum", "Osteons"],
+                answer: "Red marrow",
+                explanation: "Red marrow manufactures circulating blood cells. It is located inside the honeycomb-like architecture of spongy (cancellous) bone."
             },
             {
-                category: "Fill in the Blanks",
-                wordBank: "Search, Constraints, Variables, Minimax, Heuristics",
-                question: "Fill in the blank: In the Map Coloring problem, the specific regions of the map that need to receive a color are known as the _________.",
-                options: ["Search", "Constraints", "Variables", "Minimax", "Heuristics"],
-                correct: 2,
-                explanation: "Variables are the entities that require an assignment. The colors available to assign to them are called the Domains."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The protective central core of the body is called the [BLANK] Skeleton, which includes the skull, thoracic cage, and spine.",
+                options: ["Axial", "Appendicular", "Sesamoid", "Sutural", "Costal"],
+                answer: "Axial",
+                explanation: "The Axial skeleton forms the central axis of the body, providing a protective core for the brain, spinal cord, and vital thoracic organs."
             },
             {
-                category: "Fill in the Blanks",
-                wordBank: "Search, Constraints, Variables, Minimax, Heuristics",
-                question: "Fill in the blank: The __________ algorithm creates a game tree to help AI decide the best move against an opponent in competitive games.",
-                options: ["Search", "Constraints", "Variables", "Minimax", "Heuristics"],
-                correct: 3,
-                explanation: "Minimax builds a complete or partial game tree alternating turns between the AI and the opponent to calculate the move that maximizes winning chances."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "In the microscopic landscape of bone, the [BLANK] canal houses the complex network of blood vessels (arteries and veins).",
+                options: ["Central", "Perforating", "Endosteal", "Cancellous", "Synovial"],
+                answer: "Central",
+                explanation: "The Central canal (along with perforating canals) forms the internal network that houses arteries, veins, and capillaries for bone circulation."
             },
             {
-                category: "Fill in the Blanks",
-                wordBank: "Search, Constraints, Variables, Minimax, Heuristics",
-                question: "Fill in the blank: AI uses _________ to explore the possible solution space systematically, step-by-step, until it reaches the goal state.",
-                options: ["Search", "Constraints", "Variables", "Minimax", "Heuristics"],
-                correct: 0,
-                explanation: "Search is the fundamental mechanism AI uses to navigate through multiple alternatives, such as figuring out the safest and most efficient way to load boxes into a moving truck."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The bone matrix acts as a storage facility for essential minerals, primarily storing calcium and [BLANK].",
+                options: ["Phosphorous", "Iron", "Potassium", "Sodium", "Magnesium"],
+                answer: "Phosphorous",
+                explanation: "One of the 5 critical biological functions of the skeleton is Storage. The bone matrix stores essential minerals like calcium and phosphorous."
             },
 
-            // --- SECTION 4: Matching (16-20) ---
+            // --- Matching Concepts to Definitions (16-20) ---
             {
-                category: "Matching",
-                wordBank: "Select the correct description that matches the concept below.",
-                question: "Match the Concept: 'Healthcare Diagnostics (using Heuristics)'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Cervical Vertebrae</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Prioritizing likely diseases based on symptom patterns instead of checking every possible illness.",
-                    "Selecting an option that maximizes overall satisfaction and numerical value.",
-                    "Using smart shortcuts to move pieces closer to their correct target layout.",
-                    "Evaluating future moves to anticipate an opponent and avoid losing.",
-                    "The available options or values that can be assigned in a problem."
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correct: 0,
-                explanation: "In healthcare, AI uses heuristics to narrow down potential diagnoses based on common symptom patterns rather than blindly testing for every known disease, saving time."
+                answer: 0,
+                explanation: "The cervical spine (C1-C7) forms the neck region and is highly movable compared to the thoracic or sacral regions."
             },
             {
-                category: "Matching",
-                wordBank: "Select the correct description that matches the concept below.",
-                question: "Match the Concept: 'Utility-Driven Decision Making'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Lumbar Vertebrae</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Prioritizing likely diseases based on symptom patterns instead of checking every possible illness.",
-                    "Selecting an option that maximizes overall satisfaction and numerical value.",
-                    "Using smart shortcuts to move pieces closer to their correct target layout.",
-                    "Evaluating future moves to anticipate an opponent and avoid losing.",
-                    "The available options or values that can be assigned in a problem."
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correct: 1,
-                explanation: "Utility-driven systems (like Netflix recommendations or self-driving cars) assign 'values' to outcomes to maximize the user's satisfaction or the overall benefit."
+                answer: 1,
+                explanation: "The lumbar spine consists of 5 large vertebrae (L1-L5) that are movable and provide major load-bearing support for the lower back."
             },
             {
-                category: "Matching",
-                wordBank: "Select the correct description that matches the concept below.",
-                question: "Match the Concept: '8-Puzzle Problem Strategy'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Sacral Region</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Prioritizing likely diseases based on symptom patterns instead of checking every possible illness.",
-                    "Selecting an option that maximizes overall satisfaction and numerical value.",
-                    "Using smart shortcuts to move pieces closer to their correct target layout.",
-                    "Evaluating future moves to anticipate an opponent and avoid losing.",
-                    "The available options or values that can be assigned in a problem."
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correct: 2,
-                explanation: "The 8-puzzle uses heuristics to prioritize moves that specifically reduce the number of misplaced tiles, solving the puzzle much faster than exploring moves randomly."
+                answer: 2,
+                explanation: "The sacrum is made of 5 fused vertebrae that firmly join the flexible spine to the rigid pelvic girdle."
             },
             {
-                category: "Matching",
-                wordBank: "Select the correct description that matches the concept below.",
-                question: "Match the Concept: 'Minimax Strategy in Tic-Tac-Toe'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Flat bones</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Prioritizing likely diseases based on symptom patterns instead of checking every possible illness.",
-                    "Selecting an option that maximizes overall satisfaction and numerical value.",
-                    "Using smart shortcuts to move pieces closer to their correct target layout.",
-                    "Evaluating future moves to anticipate an opponent and avoid losing.",
-                    "The available options or values that can be assigned in a problem."
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correct: 3,
-                explanation: "AI uses Minimax in Tic-Tac-Toe to look ahead at all possible opponent responses, ensuring that the AI makes a move that guarantees at least a draw (if not a win)."
+                answer: 3,
+                explanation: "Flat bones, like the Parietal bone of the cranial vault, primarily provide broad surfaces for muscle attachment and structural protection for internal organs like the brain."
             },
             {
-                category: "Matching",
-                wordBank: "Select the correct description that matches the concept below.",
-                question: "Match the Concept: 'Domains (in CSPs)'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Sutural bones</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Prioritizing likely diseases based on symptom patterns instead of checking every possible illness.",
-                    "Selecting an option that maximizes overall satisfaction and numerical value.",
-                    "Using smart shortcuts to move pieces closer to their correct target layout.",
-                    "Evaluating future moves to anticipate an opponent and avoid losing.",
-                    "The available options or values that can be assigned in a problem."
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correct: 4,
-                explanation: "In a CSP (like Sudoku or Map Coloring), the Domains refer to the actual list of available options (like numbers 1-9, or colors) that can be assigned to the Variables."
+                answer: 4,
+                explanation: "Sutural bones (also known as Wormian bones) are small, extra bone pieces that occur within the suture joints of the skull."
             }
         ];
 
-        let currentQuestionIndex = 0;
+        // App State
+        let currentQuestion = 0;
         let score = 0;
+        let selectedAnswer = null; // Can be index (MCQ/TF/Match) or string (FIB)
+        let isAnswerSubmitted = false;
 
-        // Elements
-        const startScreen = document.getElementById('start-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const resultScreen = document.getElementById('result-screen');
-        const progressContainer = document.getElementById('progress-container');
+        // DOM Elements
+        const qCounter = document.getElementById('q-counter');
         const progressBar = document.getElementById('progress-bar');
-        
-        const questionCategory = document.getElementById('question-category');
-        const questionCounter = document.getElementById('question-counter');
-        const wordBank = document.getElementById('word-bank');
-        const wordBankText = document.getElementById('word-bank-text');
+        const scoreDisplay = document.getElementById('score');
+        const questionType = document.getElementById('question-type');
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
-        const feedbackContainer = document.getElementById('feedback-container');
+        const wordBankContainer = document.getElementById('word-bank-container');
+        const wordBank = document.getElementById('word-bank');
+        const feedbackSection = document.getElementById('feedback-section');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+        const submitBtn = document.getElementById('submit-btn');
         const nextBtn = document.getElementById('next-btn');
-        
-        function startQuiz() {
-            startScreen.classList.add('hidden');
-            quizScreen.classList.remove('hidden');
-            progressContainer.classList.remove('hidden');
+
+        const icons = {
+            success: `<svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            error: `<svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+        };
+
+        function initQuiz() {
             loadQuestion();
+            submitBtn.addEventListener('click', checkAnswer);
+            nextBtn.addEventListener('click', nextQuestion);
         }
 
         function loadQuestion() {
-            // Reset UI for new question
-            feedbackContainer.classList.add('hidden');
-            feedbackContainer.innerHTML = '';
+            const qData = quizData[currentQuestion];
+            isAnswerSubmitted = false;
+            selectedAnswer = null;
+
+            // Reset UI
+            feedbackSection.classList.add('hidden');
+            feedbackSection.className = 'hidden mt-6 p-4 rounded-lg en-text fade-in'; // Reset classes
             nextBtn.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+            submitBtn.disabled = true;
             optionsContainer.innerHTML = '';
-            
-            const q = quizData[currentQuestionIndex];
-            
-            // Update Headers & Progress
-            questionCategory.textContent = q.category;
-            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
-            progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
-            
-            // Handle Word Bank visibility
-            if (q.wordBank) {
-                wordBankText.textContent = q.wordBank;
-                wordBank.classList.remove('hidden');
+            wordBank.innerHTML = '';
+            wordBankContainer.classList.add('hidden');
+
+            // Update Header info
+            qCounter.innerText = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+            questionType.innerText = qData.typeLabel;
+
+            // Render based on type
+            if (qData.type === 'fib') {
+                // Render Fill in the blank
+                const parts = qData.q.split('[BLANK]');
+                questionText.innerHTML = `${parts[0]}<span id="fib-spot" class="fib-blank" onclick="clearFib()"></span>${parts[1]}`;
+                
+                // Render Word Bank
+                wordBankContainer.classList.remove('hidden');
+                qData.options.forEach(word => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600 font-medium transition-colors shadow-sm';
+                    btn.innerText = word;
+                    btn.onclick = () => selectFibWord(word);
+                    wordBank.appendChild(btn);
+                });
             } else {
-                wordBank.classList.add('hidden');
+                // Render MCQ, TF, Match
+                questionText.innerHTML = qData.q;
+                qData.options.forEach((opt, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-400 bg-white flex items-center gap-3';
+                    optionDiv.onclick = () => selectOption(index, optionDiv);
+                    
+                    const radioCircle = document.createElement('div');
+                    radioCircle.className = 'w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center';
+                    
+                    const innerDot = document.createElement('div');
+                    innerDot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-600 hidden';
+                    radioCircle.appendChild(innerDot);
+
+                    const optText = document.createElement('span');
+                    optText.className = 'text-gray-700 font-medium';
+                    optText.innerText = opt;
+
+                    optionDiv.appendChild(radioCircle);
+                    optionDiv.appendChild(optText);
+                    optionsContainer.appendChild(optionDiv);
+                });
             }
-
-            // Set Question Text
-            questionText.innerHTML = q.question;
-
-            // Generate Options
-            q.options.forEach((option, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn w-full text-left p-4 rounded-lg border-2 border-gray-200 bg-white text-gray-700 font-medium hover:border-indigo-400 focus:outline-none';
-                btn.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center mr-3 font-bold text-sm">
-                            ${String.fromCharCode(65 + index)}
-                        </div>
-                        <span>${option}</span>
-                    </div>
-                `;
-                btn.onclick = () => selectOption(index, btn);
-                optionsContainer.appendChild(btn);
-            });
         }
 
-        function selectOption(selectedIndex, selectedBtn) {
-            const q = quizData[currentQuestionIndex];
-            const isCorrect = selectedIndex === q.correct;
-            const allBtns = optionsContainer.querySelectorAll('button');
-            
-            // Disable all buttons
-            allBtns.forEach((btn, idx) => {
-                btn.disabled = true;
-                btn.classList.remove('hover:border-indigo-400');
-                
-                // Highlight correct and incorrect
-                if (idx === q.correct) {
-                    btn.classList.add('border-green-500', 'bg-green-50');
-                    btn.querySelector('div').classList.add('bg-green-500', 'text-white');
-                    btn.querySelector('div').classList.remove('bg-gray-100', 'text-gray-500');
-                } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.add('border-red-500', 'bg-red-50');
-                    btn.querySelector('div').classList.add('bg-red-500', 'text-white');
-                    btn.querySelector('div').classList.remove('bg-gray-100', 'text-gray-500');
-                } else {
-                    btn.classList.add('opacity-50');
-                }
+        function selectOption(index, element) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = index;
+            submitBtn.disabled = false;
+
+            // Visual update
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('border-indigo-500', 'bg-indigo-50');
+                card.classList.add('border-gray-200');
+                card.querySelector('.w-2\\.5').classList.add('hidden');
+                card.querySelector('.w-5').classList.remove('border-indigo-500');
             });
 
-            // Format Feedback exactly as requested
-            if (isCorrect) {
-                score++;
-                feedbackContainer.innerHTML = `
-                    <div class="p-5 bg-green-100 text-green-900 rounded-xl border border-green-300">
-                        <div class="flex items-center mb-2">
-                            <span class="text-2xl mr-2">✔️</span>
-                            <h4 class="font-bold text-lg">إجابة صحيحة! (Correct)</h4>
-                        </div>
-                        <p class="text-sm md:text-base leading-relaxed"><strong>Explanation:</strong> ${q.explanation}</p>
-                    </div>
-                `;
+            element.classList.remove('border-gray-200');
+            element.classList.add('border-indigo-500', 'bg-indigo-50');
+            element.querySelector('.w-5').classList.add('border-indigo-500');
+            element.querySelector('.w-2\\.5').classList.remove('hidden');
+        }
+
+        function selectFibWord(word) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = word;
+            const spot = document.getElementById('fib-spot');
+            spot.innerText = word;
+            submitBtn.disabled = false;
+        }
+
+        function clearFib() {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = null;
+            document.getElementById('fib-spot').innerText = "";
+            submitBtn.disabled = true;
+        }
+
+        function checkAnswer() {
+            isAnswerSubmitted = true;
+            submitBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            
+            const qData = quizData[currentQuestion];
+            let isCorrect = false;
+
+            if (qData.type === 'fib') {
+                // Disable word bank
+                Array.from(wordBank.children).forEach(btn => btn.disabled = true);
+                const spot = document.getElementById('fib-spot');
+                
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    spot.classList.add('text-green-600', 'border-green-600');
+                } else {
+                    spot.classList.add('text-red-600', 'border-red-600', 'line-through');
+                    // Show correct answer inline
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = "text-green-600 font-bold ml-2";
+                    correctSpan.innerText = `(${qData.answer})`;
+                    spot.parentNode.insertBefore(correctSpan, spot.nextSibling);
+                }
             } else {
-                feedbackContainer.innerHTML = `
-                    <div class="p-5 bg-red-50 text-red-900 rounded-xl border border-red-300">
-                        <div class="flex items-center mb-2">
-                            <span class="text-2xl mr-2">❌</span>
-                            <h4 class="font-bold text-lg">إجابة خاطئة (Incorrect)</h4>
-                        </div>
-                        <p class="mb-2 text-sm md:text-base"><strong>Correction:</strong> The correct answer is option <strong>${String.fromCharCode(65 + q.correct)}</strong>.</p>
-                        <hr class="border-red-200 my-2">
-                        <p class="text-sm md:text-base leading-relaxed"><strong>Why is it the best option?</strong><br> ${q.explanation}</p>
-                    </div>
-                `;
+                const options = document.querySelectorAll('.option-card');
+                // Disable options
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    options[selectedAnswer].classList.add('bg-green-100', 'border-green-500');
+                } else {
+                    options[selectedAnswer].classList.add('bg-red-100', 'border-red-500');
+                    options[qData.answer].classList.add('bg-green-100', 'border-green-500');
+                }
             }
 
-            feedbackContainer.classList.remove('hidden');
-            nextBtn.classList.remove('hidden');
+            if (isCorrect) {
+                score++;
+                scoreDisplay.innerText = score;
+                showFeedback(true, "Correct Answer!", qData.explanation);
+            } else {
+                showFeedback(false, "Incorrect", qData.explanation);
+            }
+        }
+
+        function showFeedback(isCorrect, title, explanation) {
+            feedbackSection.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackSection.classList.add('bg-green-50', 'border', 'border-green-200');
+                feedbackIcon.innerHTML = icons.success;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-green-800';
+            } else {
+                feedbackSection.classList.add('bg-red-50', 'border', 'border-red-200');
+                feedbackIcon.innerHTML = icons.error;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-red-800';
+            }
+            feedbackTitle.innerText = title;
+            feedbackDesc.innerHTML = `<strong>Explanation:</strong> ${explanation}`;
         }
 
         function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
                 loadQuestion();
             } else {
                 showResults();
@@ -473,29 +510,15 @@
         }
 
         function showResults() {
-            quizScreen.classList.add('hidden');
-            progressContainer.classList.add('hidden');
-            resultScreen.classList.remove('hidden');
-            
-            document.getElementById('score-text').textContent = score;
-            
-            let message = '';
-            if(score >= 17) {
-                message = "ممتاز! لقد استوعبت مفاهيم الذكاء الاصطناعي وحل المشكلات ببراعة. 🌟";
-            } else if (score >= 10) {
-                message = "عمل جيد! لديك أساس جيد ولكن يمكنك مراجعة بعض المفاهيم لتحسين نتيجتك. 👍";
-            } else {
-                message = "لا بأس! هذه فرصة رائعة للعودة للمحاضرة ومراجعة الاستراتيجيات والقيود مرة أخرى. 📚";
-            }
-            document.getElementById('result-message').textContent = message;
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('results-container');
+            results.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+            document.getElementById('q-counter').innerText = 20; // Max out
         }
 
-        function restartQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            resultScreen.classList.add('hidden');
-            startScreen.classList.remove('hidden');
-        }
+        // Start Quiz
+        window.onload = initQuiz;
     </script>
 </body>
 </html>

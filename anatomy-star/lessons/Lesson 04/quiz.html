@@ -3,614 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مقدمة في مفاهيم الذكاء الاصطناعي</title>
+    <title>Skeletal Architecture - Interactive Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@400;500;600;700&display=swap');
-        
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            min-height: 100vh;
-        }
-
-        .en-text {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .quiz-container {
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .option-btn {
-            transition: all 0.3s ease;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            transform: translateX(5px);
             background-color: #f3f4f6;
         }
-
-        .option-btn.selected {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
+        .en-text {
+            font-family: 'Inter', sans-serif;
+            direction: ltr;
         }
-
-        .option-btn.correct {
-            background-color: #d1fae5;
-            border-color: #10b981;
-            color: #065f46;
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
         }
-
-        .option-btn.wrong {
-            background-color: #fee2e2;
-            border-color: #ef4444;
-            color: #991b1b;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1em;
+        .option-card {
+            transition: all 0.2s ease;
         }
-
-        /* Confetti animation */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            animation: fall linear forwards;
+        .option-card:hover {
+            transform: translateY(-2px);
         }
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(720deg); }
+        .fib-blank {
+            display: inline-block;
+            min-width: 120px;
+            height: 32px;
+            border-bottom: 2px solid #3b82f6;
+            margin: 0 8px;
+            text-align: center;
+            color: #2563eb;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .fib-blank:empty::before {
+            content: "Select a word";
+            color: #9ca3af;
+            font-weight: normal;
+            font-size: 0.875rem;
         }
     </style>
 </head>
-<body class="py-8 px-4 flex flex-col items-center">
+<body class="text-gray-800 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <div class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-2">
-            <i class="fas fa-brain text-blue-600 mr-2"></i> مقدمة في مفاهيم الذكاء الاصطناعي
-        </h1>
-        <p class="text-gray-600">اختبار تفاعلي: عدم اليقين (Uncertainty in AI)</p>
-    </div>
-
-    <!-- Main Quiz App Container (LTR for English content) -->
-    <div id="app" class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden en-text" dir="ltr">
-        
-        <!-- Welcome Screen -->
-        <div id="welcome-screen" class="p-8 text-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/2082/2082886.png" alt="AI Robot" class="w-32 h-32 mx-auto mb-6 opacity-80">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Uncertainty in AI - Practice Quiz</h2>
-            <div class="text-left bg-blue-50 p-4 rounded-lg mb-6 inline-block">
-                <ul class="list-disc pl-5 text-gray-700 space-y-2 text-sm">
-                    <li><strong>Total Questions:</strong> 20</li>
-                    <li><strong>Types:</strong> Multiple Choice, True/False, Fill in the Blanks, Matching.</li>
-                    <li><strong>Content:</strong> Based entirely on the provided lecture slides.</li>
-                    <li><strong>Feedback:</strong> Immediate explanations provided after each answer.</li>
-                </ul>
+    <header class="bg-indigo-700 text-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold en-text">Skeletal Architecture Quiz</h1>
+            <div class="text-sm bg-indigo-800 px-3 py-1 rounded-full">
+                السؤال: <span id="q-counter">1</span> / 20
             </div>
-            <br>
-            <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
-                Start Quiz <i class="fas fa-arrow-right ml-2"></i>
-            </button>
         </div>
+    </header>
 
-        <!-- Quiz Screen -->
-        <div id="quiz-screen" class="hidden">
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow flex justify-center items-start">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden fade-in" id="quiz-container">
+            
             <!-- Progress Bar -->
-            <div class="bg-gray-200 h-2 w-full">
-                <div id="progress-bar" class="bg-blue-600 h-2 transition-all duration-300" style="width: 0%"></div>
+            <div class="h-2 bg-gray-200 w-full">
+                <div id="progress-bar" class="h-2 bg-indigo-500 transition-all duration-300" style="width: 5%;"></div>
             </div>
 
             <div class="p-6 md:p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <span id="question-counter" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1 / 20</span>
-                    <span id="question-type-badge" class="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">Multiple Choice</span>
+                <!-- Question Header -->
+                <div class="mb-6 flex justify-between items-center border-b pb-4">
+                    <span id="question-type" class="text-sm font-semibold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full en-text">Multiple Choice</span>
+                    <span class="text-gray-500 font-bold">Points: <span id="score">0</span></span>
                 </div>
 
                 <!-- Question Text -->
-                <h3 id="question-text" class="text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-relaxed">
-                    Question text goes here?
-                </h3>
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 en-text text-gray-800"></h2>
 
-                <!-- Word Bank (Only for Fill in the blanks) -->
-                <div id="word-bank" class="hidden mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p class="text-xs font-bold text-yellow-800 uppercase mb-2"><i class="fas fa-key mr-1"></i> Word Bank</p>
-                    <div id="word-bank-items" class="flex flex-wrap gap-2 text-sm font-medium text-gray-700">
-                        <!-- Words injected here -->
-                    </div>
-                </div>
-
-                <!-- Input Area (Dynamically changes based on question type) -->
-                <div id="input-area" class="space-y-3 mb-6">
+                <!-- Options Container -->
+                <div id="options-container" class="space-y-3 en-text">
                     <!-- Options injected here via JS -->
                 </div>
 
-                <!-- Feedback Area -->
-                <div id="feedback-area" class="hidden rounded-xl p-5 mb-6 animation-slideIn">
-                    <div class="flex items-start">
-                        <div id="feedback-icon" class="text-2xl mr-4 mt-1"></div>
+                <!-- Fill in the Blanks Word Bank (Hidden by default) -->
+                <div id="word-bank-container" class="hidden mt-6 en-text border border-dashed border-gray-300 p-4 rounded-lg bg-gray-50">
+                    <p class="text-sm text-gray-500 mb-2 font-semibold">Word Bank (Click to fill the blank):</p>
+                    <div id="word-bank" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div id="feedback-section" class="hidden mt-6 p-4 rounded-lg en-text fade-in">
+                    <div class="flex items-start gap-3">
+                        <div id="feedback-icon" class="mt-1 flex-shrink-0"></div>
                         <div>
-                            <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
-                            <p id="feedback-text" class="text-gray-700 text-sm leading-relaxed"></p>
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-desc" class="text-gray-700 text-sm md:text-base"></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex justify-end border-t pt-6">
-                    <button id="submit-btn" onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
-                        Submit Answer
+                <div class="mt-8 flex justify-end gap-3 border-t pt-4">
+                    <button id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        إرسال الإجابة (Submit)
                     </button>
-                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg transition w-full md:w-auto text-center">
-                        Next Question <i class="fas fa-arrow-right ml-2"></i>
+                    <button id="next-btn" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                        السؤال التالي (Next)
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Result Screen -->
-        <div id="result-screen" class="hidden p-8 text-center">
-            <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                <i class="fas fa-trophy text-5xl text-blue-500"></i>
+        <!-- Results Container -->
+        <div id="results-container" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 text-center fade-in">
+            <svg class="w-20 h-20 text-indigo-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+            <h2 class="text-3xl font-bold mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6">لقد أتممت اختبار Skeletal Architecture بنجاح.</p>
+            <div class="bg-indigo-50 rounded-lg p-6 mb-6">
+                <span class="block text-sm text-indigo-600 font-bold mb-1">النتيجة النهائية</span>
+                <span class="text-4xl font-black text-indigo-800" id="final-score">0 / 20</span>
             </div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
-            <p class="text-gray-600 mb-6">Here is your performance summary:</p>
-            
-            <div class="bg-gray-50 rounded-xl p-6 inline-block mx-auto mb-8 min-w-[250px]">
-                <div class="text-5xl font-extrabold text-blue-600 mb-2">
-                    <span id="final-score">0</span><span class="text-2xl text-gray-400">/20</span>
-                </div>
-                <p id="score-message" class="font-medium text-gray-700"></p>
-            </div>
-
-            <br>
-            <button onclick="location.reload()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-full transition">
-                <i class="fas fa-redo mr-2"></i> Try Again
+            <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg w-full transition-colors">
+                إعادة الاختبار (Retake Quiz)
             </button>
         </div>
-
-    </div>
+    </main>
 
     <script>
+        // Quiz Data generated strictly from the "1.1-Skeletal_Architecture.pptx" slides
         const quizData = [
-            // --- MULTIPLE CHOICE (1-5) ---
+            // --- Multiple Choice (1-5) ---
             {
-                type: "mcq",
-                badge: "Multiple Choice",
-                question: "Which of the following is an example of 'Ambiguity' as a source of uncertainty in AI?",
-                options: [
-                    "A camera sensor failing in foggy weather.",
-                    "The word 'bank' meaning either a financial institution or a river edge.",
-                    "Missing temperature data for tomorrow's weather prediction.",
-                    "Changing user preferences in movie recommendations."
-                ],
-                correctAnswer: 1,
-                explanation: "Ambiguity (الغموض) occurs when the same input can have more than one interpretation. For example, 'bank' requires context to determine its exact meaning. Sensor failure is 'Sensor Error', missing data is 'Incomplete Data', and changing preferences is a 'Changing Environment'."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "What is the biological process of converting embryonic tissues to solid bone called?",
+                options: ["Hematopoiesis", "Ossification", "Trabeculation", "Articulation"],
+                answer: 1,
+                explanation: "Ossification is the biological process of converting other embryonic tissues (like membrane or cartilage) into solid bone. It typically begins around week 6 to 8 of embryological development."
             },
             {
-                type: "mcq",
-                badge: "Multiple Choice",
-                question: "How do AI systems primarily handle uncertainty to make better decisions?",
-                options: [
-                    "By guessing randomly to save processing time.",
-                    "By refusing to output an answer until 100% certain.",
-                    "By using probabilities to estimate the most likely outcome.",
-                    "By relying solely on human intervention for every decision."
-                ],
-                correctAnswer: 2,
-                explanation: "In uncertain environments, AI systems do not give absolute 'categorical' answers. Instead, they give probabilistic answers (e.g., 90% chance this is spam) and choose the most logical or safest option based on highest probability."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which component of the skeletal system primarily acts as an energy reserve?",
+                options: ["Red marrow", "Compact bone", "Yellow marrow", "Spongy bone"],
+                answer: 2,
+                explanation: "Yellow marrow, housed within the long bones, acts as an energy reserve because it consists primarily of adipose (fat) tissue, whereas red marrow produces blood cells."
             },
             {
-                type: "mcq",
-                badge: "Multiple Choice",
-                question: "If a weather AI model predicts a 70% chance of rain and a 20% chance of clouds, what is the probability of sunshine (assuming these are the only three possibilities)?",
-                options: ["0%", "10%", "20%", "30%"],
-                correctAnswer: 1,
-                explanation: "A basic rule of probability is that the sum of all probabilities for all possible outcomes must equal 1 (or 100%). Since 70% + 20% = 90%, the remaining probability for sunshine must be 10%."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "According to morphological shapes, how is the patella (kneecap) classified?",
+                options: ["Flat bone", "Short bone", "Sesamoid bone", "Irregular bone"],
+                answer: 2,
+                explanation: "The patella is classified as a Sesamoid bone. These are small bones typically embedded within tendons to protect them and improve joint mechanics."
             },
             {
-                type: "mcq",
-                badge: "Multiple Choice",
-                question: "In Bayesian Inference, what happens when the AI system receives new evidence (like a new symptom in a medical diagnosis)?",
-                options: [
-                    "It ignores its previous knowledge completely.",
-                    "It updates its 'Prior Probability' to form a more accurate 'Posterior Probability'.",
-                    "It waits for a human doctor to confirm the symptom.",
-                    "It randomly distributes probabilities equally among all diseases."
-                ],
-                correctAnswer: 1,
-                explanation: "Bayesian Inference helps AI dynamically update its beliefs. It starts with an initial belief (Prior), and when new evidence appears, it calculates a new, updated probability (Posterior)."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "How many vertebrae make up the Thoracic region, and what is its primary characteristic?",
+                options: ["7 (highly movable)", "12 (rib cage attachment, limited movement)", "5 (movable, load-bearing)", "4 (terminal end)"],
+                answer: 1,
+                explanation: "The Thoracic spine consists of 12 vertebrae (T1-T12). It serves as the attachment point for the rib cage and offers limited movement to protect internal organs."
             },
             {
-                type: "mcq",
-                badge: "Multiple Choice",
-                question: "Besides probabilities, which of the following is another technique AI uses to handle uncertainty?",
-                options: [
-                    "Fuzzy Logic",
-                    "Static Hardcoding",
-                    "Absolute Determinism",
-                    "Random Number Generation only"
-                ],
-                correctAnswer: 0,
-                explanation: "According to the summary slide, alongside probabilities, AI also uses techniques like Fuzzy Logic (المنطق الضبابي), Neural Networks, and Rule-based systems to confront uncertainty."
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which layer forms the dense, solid outer shell of bones to provide primary load-bearing strength?",
+                options: ["Spongy Bone", "Periosteum", "Compact Bone", "Endosteum"],
+                answer: 2,
+                explanation: "Compact Bone forms the rigid, dense outer layer of bones, providing the primary structural support and load-bearing strength, while spongy bone reduces weight."
             },
 
-            // --- TRUE / FALSE (6-10) ---
+            // --- True / False (6-10) ---
             {
-                type: "tf",
-                badge: "True / False",
-                question: "Incomplete Data is a source of uncertainty that happens when an AI system lacks all the necessary information, such as a weather system missing recent wind speed data.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "The adult human skeleton consists of exactly 206 bones divided into the Axial and Appendicular skeletons.",
                 options: ["True", "False"],
-                correctAnswer: 0,
-                explanation: "True. When data is missing or incomplete, the AI doesn't have the full picture, forcing it to make predictions based on partial information."
+                answer: 0, // True
+                explanation: "True. The adult skeleton contains 206 bones, which are separated into the Axial skeleton (central axis) and the Appendicular skeleton (extremities and girdles)."
             },
             {
-                type: "tf",
-                badge: "True / False",
-                question: "If an autonomous car's AI evaluates an object ahead as a 'pedestrian' with 95% probability and a 'shadow' with 5% probability, it will ignore the 95% and keep driving because it isn't 100% sure.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Intramembranous ossification is derived from cartilage tissue.",
                 options: ["True", "False"],
-                correctAnswer: 1,
-                explanation: "False. The AI will act on the highest probability (95% pedestrian) and stop to ensure safety. It does not wait for 100% certainty, as achieving perfect certainty in the real world is almost impossible."
+                answer: 1, // False
+                explanation: "False. Intramembranous ossification is derived from membrane tissue, whereas Endochondral ossification is derived from cartilage tissue."
             },
             {
-                type: "tf",
-                badge: "True / False",
-                question: "AI models trained on old data never face uncertainty because human behavior and environments remain completely constant over time.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Spongy (Cancellous) bone significantly increases the overall weight of the human skeleton.",
                 options: ["True", "False"],
-                correctAnswer: 1,
-                explanation: "False. 'Changing Environments' is a major source of uncertainty. Reality constantly changes (like new movie trends appearing), so an AI trained on old data faces uncertainty when encountering novel situations."
+                answer: 1, // False
+                explanation: "False. Spongy bone has a porous, honeycomb-like internal architecture that significantly *reduces* the overall weight of the skeleton while housing blood-producing red marrow."
             },
             {
-                type: "tf",
-                badge: "True / False",
-                question: "A probability distribution can map out how likely different outcomes are, such as estimating that highway traffic is 'heavy' 25% of the time, 'light' 50% of the time, and 'clear' 25% of the time.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "The vertebral column protects the spinal cord, while the thoracic cage protects the heart and lungs.",
                 options: ["True", "False"],
-                correctAnswer: 0,
-                explanation: "True. Probability distributions are widely used by apps like Google Maps to predict travel times and Uber to adjust dynamic pricing based on expected traffic states."
+                answer: 0, // True
+                explanation: "True. Both structures are vital parts of the axial skeleton's protective central core, shielding the spinal cord and thoracic organs respectively."
             },
             {
-                type: "tf",
-                badge: "True / False",
-                question: "Language models like ChatGPT primarily deal with 'Vision Uncertainty' when trying to guess the missing word in a sentence.",
+                type: 'tf', typeLabel: 'True / False',
+                q: "Osteons and Lamellae are part of the macroscopic (visible to naked eye) divisions of the Appendicular skeleton.",
                 options: ["True", "False"],
-                correctAnswer: 1,
-                explanation: "False. ChatGPT and Google Translate deal with Linguistic/Semantic uncertainty. Vision Uncertainty applies to computer vision tasks, like trying to identify an object in a blurry image."
+                answer: 1, // False
+                explanation: "False. Osteons and Lamellae are microscopic structural units found within the internal complex network of bones, not macroscopic divisions."
             },
 
-            // --- FILL IN THE BLANKS (11-15) ---
+            // --- Fill in the Blanks (11-15) ---
             {
-                type: "fill",
-                badge: "Fill in the Blank",
-                wordBank: ["Sensor", "Evidence", "Posterior", "Prior", "Distribution"],
-                textChunks: ["A camera malfunctioning in foggy weather, making it hard for an autonomous car to detect obstacles, is a classic example of a(n) ", " error."],
-                correctAnswer: "Sensor",
-                explanation: "When physical hardware (like cameras or radars) is affected by weather or noise, it's called a Sensor Error. This limits the quality of data the AI receives."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The [BLANK] girdle connects the bones of the upper limbs to the axial skeleton, facilitating locomotion and interaction.",
+                options: ["Pectoral", "Pelvic", "Cranial", "Costal", "Vertebral"],
+                answer: "Pectoral",
+                explanation: "The Pectoral (shoulder) girdle is part of the appendicular skeleton and connects the upper limbs to the body's central axis."
             },
             {
-                type: "fill",
-                badge: "Fill in the Blank",
-                wordBank: ["Distribution", "Posterior", "Evidence", "Sensor", "Prior"],
-                textChunks: ["A probability ", " shows how likely each possible outcome is to occur across different scenarios, such as varying levels of traffic."],
-                correctAnswer: "Distribution",
-                explanation: "A Probability Distribution lists all possible outcomes and the probability associated with each, helping systems like Uber and Google Maps make real-world forecasts."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "Blood cell production occurs in the [BLANK], which is housed within the porous spongy bone tissue.",
+                options: ["Red marrow", "Yellow marrow", "Endosteum", "Periosteum", "Osteons"],
+                answer: "Red marrow",
+                explanation: "Red marrow manufactures circulating blood cells. It is located inside the honeycomb-like architecture of spongy (cancellous) bone."
             },
             {
-                type: "fill",
-                badge: "Fill in the Blank",
-                wordBank: ["Posterior", "Prior", "Distribution", "Evidence", "Sensor"],
-                textChunks: ["In Bayesian Inference, the AI always starts with an initial assumption or belief about the situation, known as the ", " Probability."],
-                correctAnswer: "Prior",
-                explanation: "The 'Prior' probability is what the AI believes *before* seeing any new data. For example, initially assuming a 60% chance an email is spam based on its subject line."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The protective central core of the body is called the [BLANK] Skeleton, which includes the skull, thoracic cage, and spine.",
+                options: ["Axial", "Appendicular", "Sesamoid", "Sutural", "Costal"],
+                answer: "Axial",
+                explanation: "The Axial skeleton forms the central axis of the body, providing a protective core for the brain, spinal cord, and vital thoracic organs."
             },
             {
-                type: "fill",
-                badge: "Fill in the Blank",
-                wordBank: ["Prior", "Posterior", "Evidence", "Sensor", "Distribution"],
-                textChunks: ["Once the AI analyzes new data, it updates its initial belief to formulate a new, more accurate ", " Probability."],
-                correctAnswer: "Posterior",
-                explanation: "The 'Posterior' is the updated probability *after* new evidence is calculated. It represents the AI's current, refined belief."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "In the microscopic landscape of bone, the [BLANK] canal houses the complex network of blood vessels (arteries and veins).",
+                options: ["Central", "Perforating", "Endosteal", "Cancellous", "Synovial"],
+                answer: "Central",
+                explanation: "The Central canal (along with perforating canals) forms the internal network that houses arteries, veins, and capillaries for bone circulation."
             },
             {
-                type: "fill",
-                badge: "Fill in the Blank",
-                wordBank: ["Evidence", "Posterior", "Prior", "Sensor", "Distribution"],
-                textChunks: ["In a medical AI system, the patient suddenly reporting a 'loss of taste' acts as new ", " that forces the system to recalculate disease probabilities."],
-                correctAnswer: "Evidence",
-                explanation: "Evidence is the new observation or data that triggers the Bayesian update process, shifting probabilities (like increasing the likelihood of COVID-19)."
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "The bone matrix acts as a storage facility for essential minerals, primarily storing calcium and [BLANK].",
+                options: ["Phosphorous", "Iron", "Potassium", "Sodium", "Magnesium"],
+                answer: "Phosphorous",
+                explanation: "One of the 5 critical biological functions of the skeleton is Storage. The bone matrix stores essential minerals like calcium and phosphorous."
             },
 
-            // --- MATCHING (16-20) Simulated via Dropdown Selection ---
+            // --- Matching Concepts to Definitions (16-20) ---
             {
-                type: "match",
-                badge: "Matching (List A to List B)",
-                question: "Match Scenario from List A to the concept in List B: \n\n'List A Scenario: Identifying the meaning of the incomplete sentence: The man entered the ___ and ordered coffee.'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Cervical Vertebrae</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Vision Uncertainty (Computer Vision)",
-                    "Linguistic / Semantic Uncertainty (Language Models)",
-                    "Updating probabilities with new medical symptoms",
-                    "Updating probabilities using trigger words and blacklists",
-                    "Using Probability Distributions to set ride prices"
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correctAnswer: 1,
-                explanation: "Predicting missing text or understanding ambiguous phrases relies on linguistic/semantic patterns, heavily used by Chatbots and Translation AIs."
+                answer: 0,
+                explanation: "The cervical spine (C1-C7) forms the neck region and is highly movable compared to the thoracic or sacral regions."
             },
             {
-                type: "match",
-                badge: "Matching (List A to List B)",
-                question: "Match Scenario from List A to the concept in List B: \n\n'List A Scenario: An AI trying to guess what animal is shown in a very low-quality, blurry image.'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Lumbar Vertebrae</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Linguistic / Semantic Uncertainty (Language Models)",
-                    "Updating probabilities using trigger words and blacklists",
-                    "Vision Uncertainty (Computer Vision)",
-                    "Using Probability Distributions to set ride prices",
-                    "Updating probabilities with new medical symptoms"
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correctAnswer: 2,
-                explanation: "When visual details are obscured (like fog or low resolution), the AI faces Vision Uncertainty and must rely on partial cues (shapes/colors) to make its best guess."
+                answer: 1,
+                explanation: "The lumbar spine consists of 5 large vertebrae (L1-L5) that are movable and provide major load-bearing support for the lower back."
             },
             {
-                type: "match",
-                badge: "Matching (List A to List B)",
-                question: "Match Scenario from List A to the concept in List B: \n\n'List A Scenario: An email filter increasing the spam likelihood from 85% to 95% after realizing the sender is on a known blocklist.'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Sacral Region</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Vision Uncertainty (Computer Vision)",
-                    "Updating probabilities using trigger words and blacklists",
-                    "Linguistic / Semantic Uncertainty (Language Models)",
-                    "Using Probability Distributions to set ride prices",
-                    "Updating probabilities with new medical symptoms"
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correctAnswer: 1,
-                explanation: "Spam detection is a classic example of Bayesian inference applied to text filtering, updating probabilities step-by-step as new evidence (words, sender ID) is found."
+                answer: 2,
+                explanation: "The sacrum is made of 5 fused vertebrae that firmly join the flexible spine to the rigid pelvic girdle."
             },
             {
-                type: "match",
-                badge: "Matching (List A to List B)",
-                question: "Match Scenario from List A to the concept in List B: \n\n'List A Scenario: Uber adjusting the cost of a trip dynamically based on the historical likelihood of heavy traffic at 8:00 AM.'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Flat bones</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Updating probabilities using trigger words and blacklists",
-                    "Linguistic / Semantic Uncertainty (Language Models)",
-                    "Vision Uncertainty (Computer Vision)",
-                    "Updating probabilities with new medical symptoms",
-                    "Using Probability Distributions to set ride prices"
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correctAnswer: 4,
-                explanation: "Ride-hailing apps apply probability distributions of traffic states to predict demand and travel time, which directly influences dynamic surge pricing."
+                answer: 3,
+                explanation: "Flat bones, like the Parietal bone of the cranial vault, primarily provide broad surfaces for muscle attachment and structural protection for internal organs like the brain."
             },
             {
-                type: "match",
-                badge: "Matching (List A to List B)",
-                question: "Match Scenario from List A to the concept in List B: \n\n'List A Scenario: A diagnostic system shifting its highest probability from the Flu to COVID-19.'",
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Sutural bones</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct description from List B below:</span>",
                 options: [
-                    "Updating probabilities with new medical symptoms",
-                    "Using Probability Distributions to set ride prices",
-                    "Vision Uncertainty (Computer Vision)",
-                    "Updating probabilities using trigger words and blacklists",
-                    "Linguistic / Semantic Uncertainty (Language Models)"
+                    "Highly movable neck region (C1-C7).",
+                    "Movable, load-bearing lower back region (L1-L5).",
+                    "5 fused vertebrae joining the spine to the pelvis.",
+                    "Flat bones protecting the brain (e.g., Parietal bone).",
+                    "Small bones found within the sutures of the skull."
                 ],
-                correctAnswer: 0,
-                explanation: "Medical AI uses Bayesian logic to re-evaluate the Posterior probability of specific diseases every time a new piece of evidence (symptom) is presented."
+                answer: 4,
+                explanation: "Sutural bones (also known as Wormian bones) are small, extra bone pieces that occur within the suture joints of the skull."
             }
         ];
 
+        // App State
         let currentQuestion = 0;
         let score = 0;
-        let isAnswered = false;
+        let selectedAnswer = null; // Can be index (MCQ/TF/Match) or string (FIB)
+        let isAnswerSubmitted = false;
 
-        // Elements
-        const screens = {
-            welcome: document.getElementById('welcome-screen'),
-            quiz: document.getElementById('quiz-screen'),
-            result: document.getElementById('result-screen')
-        };
-        const elements = {
-            progressBar: document.getElementById('progress-bar'),
-            questionCounter: document.getElementById('question-counter'),
-            badge: document.getElementById('question-type-badge'),
-            questionText: document.getElementById('question-text'),
-            inputArea: document.getElementById('input-area'),
-            wordBank: document.getElementById('word-bank'),
-            wordBankItems: document.getElementById('word-bank-items'),
-            feedbackArea: document.getElementById('feedback-area'),
-            feedbackIcon: document.getElementById('feedback-icon'),
-            feedbackTitle: document.getElementById('feedback-title'),
-            feedbackText: document.getElementById('feedback-text'),
-            submitBtn: document.getElementById('submit-btn'),
-            nextBtn: document.getElementById('next-btn'),
-            finalScore: document.getElementById('final-score'),
-            scoreMessage: document.getElementById('score-message')
+        // DOM Elements
+        const qCounter = document.getElementById('q-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreDisplay = document.getElementById('score');
+        const questionType = document.getElementById('question-type');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const wordBankContainer = document.getElementById('word-bank-container');
+        const wordBank = document.getElementById('word-bank');
+        const feedbackSection = document.getElementById('feedback-section');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        const icons = {
+            success: `<svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            error: `<svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
         };
 
-        function startQuiz() {
-            screens.welcome.classList.add('hidden');
-            screens.quiz.classList.remove('hidden');
+        function initQuiz() {
             loadQuestion();
+            submitBtn.addEventListener('click', checkAnswer);
+            nextBtn.addEventListener('click', nextQuestion);
         }
 
         function loadQuestion() {
-            isAnswered = false;
-            const q = quizData[currentQuestion];
-            
-            // Reset UI
-            elements.feedbackArea.classList.add('hidden');
-            elements.feedbackArea.className = 'hidden rounded-xl p-5 mb-6 animation-slideIn'; // reset classes
-            elements.submitBtn.classList.remove('hidden');
-            elements.nextBtn.classList.add('hidden');
-            elements.wordBank.classList.add('hidden');
-            elements.inputArea.innerHTML = '';
+            const qData = quizData[currentQuestion];
+            isAnswerSubmitted = false;
+            selectedAnswer = null;
 
-            // Update Header & Progress
-            elements.questionCounter.textContent = `Question ${currentQuestion + 1} / ${quizData.length}`;
-            elements.progressBar.style.width = `${((currentQuestion) / quizData.length) * 100}%`;
-            elements.badge.textContent = q.badge;
+            // Reset UI
+            feedbackSection.classList.add('hidden');
+            feedbackSection.className = 'hidden mt-6 p-4 rounded-lg en-text fade-in'; // Reset classes
+            nextBtn.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+            submitBtn.disabled = true;
+            optionsContainer.innerHTML = '';
+            wordBank.innerHTML = '';
+            wordBankContainer.classList.add('hidden');
+
+            // Update Header info
+            qCounter.innerText = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+            questionType.innerText = qData.typeLabel;
 
             // Render based on type
-            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
-                elements.questionText.innerText = q.question;
+            if (qData.type === 'fib') {
+                // Render Fill in the blank
+                const parts = qData.q.split('[BLANK]');
+                questionText.innerHTML = `${parts[0]}<span id="fib-spot" class="fib-blank" onclick="clearFib()"></span>${parts[1]}`;
                 
-                // For match type, add a small 'List B' context if needed, but options act as List B.
-                if(q.type === 'match'){
-                    const helper = document.createElement('p');
-                    helper.className = "text-sm text-blue-600 font-semibold mb-4";
-                    helper.innerHTML = "<i class='fas fa-list-ul mr-1'></i> Select the best matching concept from List B below:";
-                    elements.inputArea.appendChild(helper);
-                }
-
-                q.options.forEach((opt, index) => {
+                // Render Word Bank
+                wordBankContainer.classList.remove('hidden');
+                qData.options.forEach(word => {
                     const btn = document.createElement('button');
-                    btn.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 font-medium text-gray-700 bg-white shadow-sm';
-                    
-                    // Add letters for MCQ/Match
-                    let prefix = "";
-                    if (q.type === 'mcq' || q.type === 'match') {
-                        prefix = `<span class="inline-block w-8 h-8 bg-gray-100 rounded text-center leading-8 mr-3 font-bold">${String.fromCharCode(65 + index)}</span>`;
-                    }
-                    
-                    btn.innerHTML = `${prefix} ${opt}`;
-                    btn.onclick = () => selectOption(index, btn);
-                    elements.inputArea.appendChild(btn);
+                    btn.className = 'bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600 font-medium transition-colors shadow-sm';
+                    btn.innerText = word;
+                    btn.onclick = () => selectFibWord(word);
+                    wordBank.appendChild(btn);
                 });
-            } else if (q.type === 'fill') {
-                elements.wordBank.classList.remove('hidden');
-                elements.wordBankItems.innerHTML = q.wordBank.map(w => `<span class="bg-white border border-yellow-300 px-3 py-1 rounded shadow-sm">${w}</span>`).join('');
-                
-                elements.questionText.innerHTML = ''; // Clear main text
-                
-                const sentence = document.createElement('div');
-                sentence.className = "text-xl md:text-2xl font-semibold text-gray-800 leading-relaxed";
-                
-                const select = document.createElement('select');
-                select.id = "fill-select";
-                select.className = "mx-2 bg-gray-50 border-2 border-blue-400 text-blue-700 rounded-lg px-4 py-1 text-lg font-bold focus:outline-none focus:border-blue-600 cursor-pointer shadow-sm";
-                select.innerHTML = `<option value="" disabled selected>Select Word</option>` + 
-                                   q.wordBank.map(w => `<option value="${w}">${w}</option>`).join('');
+            } else {
+                // Render MCQ, TF, Match
+                questionText.innerHTML = qData.q;
+                qData.options.forEach((opt, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-400 bg-white flex items-center gap-3';
+                    optionDiv.onclick = () => selectOption(index, optionDiv);
+                    
+                    const radioCircle = document.createElement('div');
+                    radioCircle.className = 'w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center';
+                    
+                    const innerDot = document.createElement('div');
+                    innerDot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-600 hidden';
+                    radioCircle.appendChild(innerDot);
 
-                sentence.innerHTML = q.textChunks[0];
-                sentence.appendChild(select);
-                sentence.appendChild(document.createTextNode(q.textChunks[1]));
-                
-                elements.inputArea.appendChild(sentence);
+                    const optText = document.createElement('span');
+                    optText.className = 'text-gray-700 font-medium';
+                    optText.innerText = opt;
+
+                    optionDiv.appendChild(radioCircle);
+                    optionDiv.appendChild(optText);
+                    optionsContainer.appendChild(optionDiv);
+                });
             }
         }
 
-        let selectedIndex = null;
+        function selectOption(index, element) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = index;
+            submitBtn.disabled = false;
 
-        function selectOption(index, btnElement) {
-            if (isAnswered) return;
-            selectedIndex = index;
-            
-            // Remove selected class from all
-            const buttons = elements.inputArea.querySelectorAll('button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
-            
-            // Add to clicked
-            btnElement.classList.add('selected');
+            // Visual update
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('border-indigo-500', 'bg-indigo-50');
+                card.classList.add('border-gray-200');
+                card.querySelector('.w-2\\.5').classList.add('hidden');
+                card.querySelector('.w-5').classList.remove('border-indigo-500');
+            });
+
+            element.classList.remove('border-gray-200');
+            element.classList.add('border-indigo-500', 'bg-indigo-50');
+            element.querySelector('.w-5').classList.add('border-indigo-500');
+            element.querySelector('.w-2\\.5').classList.remove('hidden');
+        }
+
+        function selectFibWord(word) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = word;
+            const spot = document.getElementById('fib-spot');
+            spot.innerText = word;
+            submitBtn.disabled = false;
+        }
+
+        function clearFib() {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = null;
+            document.getElementById('fib-spot').innerText = "";
+            submitBtn.disabled = true;
         }
 
         function checkAnswer() {
-            if (isAnswered) return;
-            const q = quizData[currentQuestion];
+            isAnswerSubmitted = true;
+            submitBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            
+            const qData = quizData[currentQuestion];
             let isCorrect = false;
-            let userDisplayValue = "";
-            let correctDisplayValue = "";
 
-            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
-                if (selectedIndex === null) {
-                    alert("Please select an option!");
-                    return;
-                }
-                isCorrect = selectedIndex === q.correctAnswer;
-                userDisplayValue = q.options[selectedIndex];
-                correctDisplayValue = q.options[q.correctAnswer];
+            if (qData.type === 'fib') {
+                // Disable word bank
+                Array.from(wordBank.children).forEach(btn => btn.disabled = true);
+                const spot = document.getElementById('fib-spot');
                 
-                // Colorize buttons
-                const buttons = elements.inputArea.querySelectorAll('button');
-                buttons.forEach((btn, idx) => {
-                    btn.disabled = true;
-                    btn.classList.remove('selected');
-                    if (idx === q.correctAnswer) {
-                        btn.classList.add('correct');
-                        btn.innerHTML += ' <i class="fas fa-check-circle float-right mt-1 text-xl"></i>';
-                    } else if (idx === selectedIndex && !isCorrect) {
-                        btn.classList.add('wrong');
-                        btn.innerHTML += ' <i class="fas fa-times-circle float-right mt-1 text-xl"></i>';
-                    } else {
-                        btn.style.opacity = '0.5';
-                    }
-                });
-
-            } else if (q.type === 'fill') {
-                const select = document.getElementById('fill-select');
-                if (!select.value) {
-                    alert("Please select a word from the dropdown!");
-                    return;
-                }
-                isCorrect = select.value === q.correctAnswer;
-                userDisplayValue = select.value;
-                correctDisplayValue = q.correctAnswer;
-                
-                select.disabled = true;
-                if (isCorrect) {
-                    select.classList.replace('border-blue-400', 'border-green-500');
-                    select.classList.replace('text-blue-700', 'text-green-700');
-                    select.classList.add('bg-green-50');
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    spot.classList.add('text-green-600', 'border-green-600');
                 } else {
-                    select.classList.replace('border-blue-400', 'border-red-500');
-                    select.classList.replace('text-blue-700', 'text-red-700');
-                    select.classList.add('bg-red-50');
-                    // Show correct answer next to it
-                    const corrSpan = document.createElement('span');
-                    corrSpan.className = "text-green-600 font-bold ml-2 text-lg";
-                    corrSpan.innerHTML = `(Correct: ${correctDisplayValue})`;
-                    select.parentNode.insertBefore(corrSpan, select.nextSibling);
+                    spot.classList.add('text-red-600', 'border-red-600', 'line-through');
+                    // Show correct answer inline
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = "text-green-600 font-bold ml-2";
+                    correctSpan.innerText = `(${qData.answer})`;
+                    spot.parentNode.insertBefore(correctSpan, spot.nextSibling);
+                }
+            } else {
+                const options = document.querySelectorAll('.option-card');
+                // Disable options
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    options[selectedAnswer].classList.add('bg-green-100', 'border-green-500');
+                } else {
+                    options[selectedAnswer].classList.add('bg-red-100', 'border-red-500');
+                    options[qData.answer].classList.add('bg-green-100', 'border-green-500');
                 }
             }
-
-            if (isCorrect) score++;
-            isAnswered = true;
-
-            showFeedback(isCorrect, userDisplayValue, correctDisplayValue, q.explanation);
-        }
-
-        function showFeedback(isCorrect, userVal, correctVal, explanationText) {
-            elements.feedbackArea.classList.remove('hidden');
-            elements.submitBtn.classList.add('hidden');
-            elements.nextBtn.classList.remove('hidden');
 
             if (isCorrect) {
-                elements.feedbackArea.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-900');
-                elements.feedbackIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
-                elements.feedbackTitle.textContent = "✔️ Correct!";
-                elements.feedbackText.innerHTML = `<strong>Explanation:</strong> ${explanationText}`;
+                score++;
+                scoreDisplay.innerText = score;
+                showFeedback(true, "Correct Answer!", qData.explanation);
             } else {
-                elements.feedbackArea.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-900');
-                elements.feedbackIcon.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
-                elements.feedbackTitle.textContent = "❌ Incorrect";
-                elements.feedbackText.innerHTML = `
-                    <span class="block mb-2 text-red-700">You chose: <span class="line-through">${userVal}</span></span>
-                    <span class="block mb-3 text-green-700 font-semibold">Correct Best Option: ${correctVal}</span>
-                    <strong class="text-gray-800">Why?</strong> <span class="text-gray-700">${explanationText}</span>
-                `;
+                showFeedback(false, "Incorrect", qData.explanation);
             }
-            
-            // Scroll slightly to make sure Next button is visible on mobile
-            elements.nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function showFeedback(isCorrect, title, explanation) {
+            feedbackSection.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackSection.classList.add('bg-green-50', 'border', 'border-green-200');
+                feedbackIcon.innerHTML = icons.success;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-green-800';
+            } else {
+                feedbackSection.classList.add('bg-red-50', 'border', 'border-red-200');
+                feedbackIcon.innerHTML = icons.error;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-red-800';
+            }
+            feedbackTitle.innerText = title;
+            feedbackDesc.innerHTML = `<strong>Explanation:</strong> ${explanation}`;
         }
 
         function nextQuestion() {
             currentQuestion++;
-            selectedIndex = null;
             if (currentQuestion < quizData.length) {
                 loadQuestion();
             } else {
@@ -619,46 +510,15 @@
         }
 
         function showResults() {
-            screens.quiz.classList.add('hidden');
-            screens.result.classList.remove('hidden');
-            elements.progressBar.style.width = '100%';
-            
-            elements.finalScore.textContent = score;
-            
-            let message = "";
-            let colorClass = "";
-            if (score === 20) {
-                message = "Perfect! You fully understand AI Uncertainty! 🌟";
-                colorClass = "text-green-600";
-                triggerConfetti();
-            } else if (score >= 15) {
-                message = "Great job! You have a solid grasp of the concepts. 👍";
-                colorClass = "text-blue-600";
-                triggerConfetti();
-            } else if (score >= 10) {
-                message = "Good effort! Review the slides to master the details. 📚";
-                colorClass = "text-yellow-600";
-            } else {
-                message = "Keep learning! Watch the lecture again and give it another try. 💪";
-                colorClass = "text-red-600";
-            }
-            
-            elements.scoreMessage.textContent = message;
-            elements.scoreMessage.className = `font-bold text-lg mt-2 ${colorClass}`;
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('results-container');
+            results.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+            document.getElementById('q-counter').innerText = 20; // Max out
         }
 
-        function triggerConfetti() {
-            for (let i = 0; i < 50; i++) {
-                let conf = document.createElement('div');
-                conf.className = 'confetti';
-                conf.style.left = Math.random() * 100 + 'vw';
-                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                conf.style.backgroundColor = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'][Math.floor(Math.random() * 16)];
-                document.body.appendChild(conf);
-                
-                setTimeout(() => conf.remove(), 5000);
-            }
-        }
+        // Start Quiz
+        window.onload = initQuiz;
     </script>
 </body>
 </html>
