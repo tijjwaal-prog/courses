@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعلم الآلة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh;
+        }
+
+        .en-text {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .quiz-container {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateX(5px);
+            background-color: #f3f4f6;
+        }
+
+        .option-btn.selected {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+
+        .option-btn.correct {
+            background-color: #d1fae5;
+            border-color: #059669;
+            color: #064e3b;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body class="py-8 px-4 flex flex-col items-center">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-green-800 mb-2">
+            <i class="fas fa-robot text-green-600 mr-2"></i> تعلم الآلة
+        </h1>
+        <p class="text-green-700 font-semibold">Introduction to Machine Learning (Part 1)</p>
+    </div>
+
+    <!-- Main Quiz App Container -->
+    <div id="app" class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden en-text" dir="ltr">
+        
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="p-8 text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/8618/8618032.png" alt="Machine Learning" class="w-32 h-32 mx-auto mb-6 opacity-90">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Machine Learning Practice Quiz</h2>
+            <div class="text-left bg-green-50 border border-green-200 p-5 rounded-lg mb-6 inline-block">
+                <ul class="list-disc pl-5 text-gray-700 space-y-2 text-sm">
+                    <li><strong>Total Questions:</strong> 20 Questions</li>
+                    <li><strong>Format:</strong> Multiple Choice, True/False, Fill in the Blanks, and Matching.</li>
+                    <li><strong>Source:</strong> Lecture 5.1 (Introduction to Machine Learning).</li>
+                    <li><strong>Features:</strong> Immediate feedback with detailed explanations.</li>
+                </ul>
+            </div>
+            <br>
+            <button onclick="startQuiz()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+                Start Quiz <i class="fas fa-play ml-2"></i>
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <!-- Progress Bar -->
+            <div class="bg-gray-100 h-2 w-full">
+                <div id="progress-bar" class="bg-green-500 h-2 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-counter" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1 / 20</span>
+                    <span id="question-type-badge" class="text-xs font-bold px-3 py-1 bg-green-100 text-green-800 rounded-full">Multiple Choice</span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-relaxed">
+                    Question text goes here?
+                </h3>
+
+                <!-- Word Bank -->
+                <div id="word-bank" class="hidden mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-xs font-bold text-blue-800 uppercase mb-2"><i class="fas fa-list mr-1"></i> Word Bank</p>
+                    <div id="word-bank-items" class="flex flex-wrap gap-2 text-sm font-medium text-gray-700"></div>
+                </div>
+
+                <!-- Input Area -->
+                <div id="input-area" class="space-y-3 mb-6">
+                    <!-- Options injected here via JS -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="feedback-area" class="hidden rounded-xl p-5 mb-6 animation-slideIn">
+                    <div class="flex items-start">
+                        <div id="feedback-icon" class="text-2xl mr-4 mt-1"></div>
+                        <div>
+                            <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
+                            <p id="feedback-text" class="text-gray-700 text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end border-t border-gray-100 pt-6">
+                    <button id="submit-btn" onclick="checkAnswer()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-lg transition">
+                        Submit Answer
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded-lg transition w-full md:w-auto">
+                        Next Question <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden p-8 text-center">
+            <div class="w-24 h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-award text-5xl text-green-500"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
+            <p class="text-gray-600 mb-6">Here is your final performance summary:</p>
+            
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 inline-block mx-auto mb-8 min-w-[250px]">
+                <div class="text-5xl font-extrabold text-green-600 mb-2">
+                    <span id="final-score">0</span><span class="text-2xl text-gray-400">/20</span>
+                </div>
+                <p id="score-message" class="font-medium text-gray-700"></p>
+            </div>
+
+            <br>
+            <button onclick="location.reload()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-full transition">
+                <i class="fas fa-redo mr-2"></i> Try Again
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const quizData = [
+            // --- MULTIPLE CHOICE (1-5) ---
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "According to Tom Mitchell (1997), a computer program learns from experience (E) with respect to a task (T) and what else?",
+                options: [
+                    "A Programming language (L)",
+                    "A Performance measure (P)",
+                    "A Database size (D)",
+                    "Human intervention (H)"
+                ],
+                correctAnswer: 1,
+                explanation: "Tom Mitchell's classic definition states that a program learns if its performance on tasks in T, as measured by a Performance measure (P), improves with experience (E)."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "Which of the following is a primary reason for using Machine Learning instead of traditional rule-based programming?",
+                options: [
+                    "It requires more human intervention at every step.",
+                    "It strictly follows fixed, unchangeable rules.",
+                    "It adapts well to dynamic environments and complex decision-making.",
+                    "It cannot handle large amounts of data."
+                ],
+                correctAnswer: 2,
+                explanation: "Machine Learning is used precisely because it can adapt to changing environments, make complex decisions, and generalize to new data without needing fixed rules for every scenario."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "Images, videos, and free text are examples of which type of data?",
+                options: [
+                    "Structured Data",
+                    "Unstructured Data",
+                    "Semi-Structured Data",
+                    "Categorical Data"
+                ],
+                correctAnswer: 1,
+                explanation: "Unstructured data does not follow a strict tabular format (like rows and columns). Images, audio, and raw text are classic examples."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "In the context of Machine Learning, what is often described as the 'fuel' that feeds the learning process?",
+                options: [
+                    "The Model",
+                    "The Data",
+                    "The Pipeline",
+                    "The CPU"
+                ],
+                correctAnswer: 1,
+                explanation: "Data is considered the 'fuel' because every ML model requires quality, diverse, and abundant data to learn patterns effectively."
+            },
+            {
+                type: "mcq",
+                badge: "Multiple Choice",
+                question: "According to the lecture, how do Banking Services primarily utilize Machine Learning?",
+                options: [
+                    "Proposing movie tags.",
+                    "Discovering the fastest driving route.",
+                    "Detecting fraud in transactions and filtering spam emails.",
+                    "Controlling smart home thermostats."
+                ],
+                correctAnswer: 2,
+                explanation: "Banking services heavily rely on ML to detect unusual patterns that indicate fraud in financial transactions, as well as categorizing spam emails."
+            },
+
+            // --- TRUE / FALSE (6-10) ---
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Machine Learning requires computers to be explicitly programmed (with fixed rules) for every specific task they need to perform.",
+                options: ["True", "False"],
+                correctAnswer: 1, // False
+                explanation: "False. The definition of ML is exactly the opposite: it enables computers to perform tasks by learning from patterns *without* being explicitly programmed for each case."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "A Machine Learning model can perform perfectly even if its training data is heavily biased or highly inaccurate.",
+                options: ["True", "False"],
+                correctAnswer: 1, // False
+                explanation: "False. A model is only as good as the data it learns from. High-quality (accurate, unbiased, relevant) training data is a crucial factor for success."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "One of the benefits of Machine Learning is 'Generalization', which allows a model to apply what it has learned to new, similar situations.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. Generalization and Transfer Learning allow an ML agent to use its acquired experience to solve new, unseen problems of a similar nature."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Readings from smart home thermostats, doorbells, and security cameras are considered 'Internet of Things (IoT)' data sources.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. The Internet of Things (IoT) generates vast amounts of data from interconnected sensors and smart home devices."
+            },
+            {
+                type: "tf",
+                badge: "True / False",
+                question: "Structured data is typically organized in a highly formatted way, such as rows and columns in relational databases.",
+                options: ["True", "False"],
+                correctAnswer: 0, // True
+                explanation: "True. Structured data (بيانات مهيكلة) is highly organized, making it easy to search and analyze, unlike unstructured data."
+            },
+
+            // --- FILL IN THE BLANKS (11-15) ---
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Model", "Quantity", "Semi-Structured", "Real-Time", "Uncertainty"],
+                textChunks: ["The ", " is the core component that embodies the knowledge the system has acquired from the data."],
+                correctAnswer: "Model",
+                explanation: "The Model (النموذج) is the actual mathematical engine that stores the patterns and rules learned during the training phase."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Semi-Structured", "Model", "Real-Time", "Uncertainty", "Quantity"],
+                textChunks: ["A well-trained ML model can make fast decisions in ", ", which is essential for control systems and autonomous driving."],
+                correctAnswer: "Real-Time",
+                explanation: "Real-Time (الزمن الحقيقي) decision making is a major motivation for ML, allowing systems to react instantly to live data without human delays."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Quantity", "Real-Time", "Uncertainty", "Model", "Semi-Structured"],
+                textChunks: ["Data that contains some organizational elements or tags, but is not strictly tabular, is known as ", " data."],
+                correctAnswer: "Semi-Structured",
+                explanation: "Semi-Structured (شبه مهيكلة) data is a mix between structured and unstructured, containing some organizational markers but not strict rows/columns."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Uncertainty", "Quantity", "Model", "Real-Time", "Semi-Structured"],
+                textChunks: ["In training data, ", " refers to having enough examples to help the model understand the complexity of the problem."],
+                correctAnswer: "Quantity",
+                explanation: "Quantity (الكمية) is crucial because more data provides a broader representation of scenarios, allowing the model to make more accurate predictions."
+            },
+            {
+                type: "fill",
+                badge: "Fill in the Blank",
+                wordBank: ["Semi-Structured", "Quantity", "Uncertainty", "Model", "Real-Time"],
+                textChunks: ["Machine learning helps agents handle ", " by estimating probabilities instead of relying on absolute, deterministic decisions."],
+                correctAnswer: "Uncertainty",
+                explanation: "Uncertainty (عدم اليقين) is handled gracefully by ML because it uses statistics to make the 'best guess' when dealing with incomplete or fuzzy data."
+            },
+
+            // --- MATCHING (16-20) ---
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the scenario to its correct ML Application domain: \n\n'Scenario: Suggesting the fastest routes based on live traffic data.'",
+                options: [
+                    "Search Engines",
+                    "Online Shopping",
+                    "Navigation",
+                    "Smart Assistants"
+                ],
+                correctAnswer: 2,
+                explanation: "Navigation applications (like Google Maps) use ML to process GPS data and predict traffic flow to find the fastest route."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the scenario to its correct ML Application domain: \n\n'Scenario: Predicting the relevance of web pages to a user's keywords.'",
+                options: [
+                    "Social Media",
+                    "Search Engines",
+                    "Entertainment",
+                    "Banking Services"
+                ],
+                correctAnswer: 1,
+                explanation: "Search Engines (محركات البحث) use ML to rank billions of web pages and show the most relevant results for your query."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the scenario to its correct ML Application domain: \n\n'Scenario: Recommending products based on a user's browsing and purchase history.'",
+                options: [
+                    "Online Shopping",
+                    "Navigation",
+                    "Banking Services",
+                    "Smart Assistants"
+                ],
+                correctAnswer: 0,
+                explanation: "Online Shopping (التسوق عبر الإنترنت) platforms use recommendation algorithms to suggest items you are likely to buy based on past behavior."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the scenario to its correct ML Application domain: \n\n'Scenario: Understanding user voice commands and executing tasks.'",
+                options: [
+                    "Entertainment",
+                    "Smart Assistants",
+                    "Social Media",
+                    "Search Engines"
+                ],
+                correctAnswer: 1,
+                explanation: "Smart Assistants (المساعدات الذكية) like Siri or Alexa use Natural Language Processing (a branch of ML) to comprehend and execute voice commands."
+            },
+            {
+                type: "match",
+                badge: "Matching (List A to List B)",
+                question: "Match the scenario to its correct ML Application domain: \n\n'Scenario: Proposing friend tags in photos or filtering a user's feed.'",
+                options: [
+                    "Banking Services",
+                    "Navigation",
+                    "Social Media",
+                    "Online Shopping"
+                ],
+                correctAnswer: 2,
+                explanation: "Social Media (وسائل التواصل الاجتماعي) relies on ML for image recognition (to tag faces) and content curation algorithms to keep users engaged."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let isAnswered = false;
+
+        const screens = {
+            welcome: document.getElementById('welcome-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            result: document.getElementById('result-screen')
+        };
+        const elements = {
+            progressBar: document.getElementById('progress-bar'),
+            questionCounter: document.getElementById('question-counter'),
+            badge: document.getElementById('question-type-badge'),
+            questionText: document.getElementById('question-text'),
+            inputArea: document.getElementById('input-area'),
+            wordBank: document.getElementById('word-bank'),
+            wordBankItems: document.getElementById('word-bank-items'),
+            feedbackArea: document.getElementById('feedback-area'),
+            feedbackIcon: document.getElementById('feedback-icon'),
+            feedbackTitle: document.getElementById('feedback-title'),
+            feedbackText: document.getElementById('feedback-text'),
+            submitBtn: document.getElementById('submit-btn'),
+            nextBtn: document.getElementById('next-btn'),
+            finalScore: document.getElementById('final-score'),
+            scoreMessage: document.getElementById('score-message')
+        };
+
+        function startQuiz() {
+            screens.welcome.classList.add('hidden');
+            screens.quiz.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentQuestion];
+            
+            // Reset UI
+            elements.feedbackArea.classList.add('hidden');
+            elements.feedbackArea.className = 'hidden rounded-xl p-5 mb-6 animation-slideIn'; 
+            elements.submitBtn.classList.remove('hidden');
+            elements.nextBtn.classList.add('hidden');
+            elements.wordBank.classList.add('hidden');
+            elements.inputArea.innerHTML = '';
+
+            // Update Header & Progress
+            elements.questionCounter.textContent = `Question ${currentQuestion + 1} / ${quizData.length}`;
+            elements.progressBar.style.width = `${((currentQuestion) / quizData.length) * 100}%`;
+            elements.badge.textContent = q.badge;
+
+            // Render based on type
+            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
+                elements.questionText.innerText = q.question;
+                
+                if(q.type === 'match'){
+                    const helper = document.createElement('p');
+                    helper.className = "text-sm text-green-600 font-semibold mb-4";
+                    helper.innerHTML = "<i class='fas fa-th-list mr-1'></i> Select the correct application domain below:";
+                    elements.inputArea.appendChild(helper);
+                }
+
+                q.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 font-medium text-gray-700 bg-white shadow-sm';
+                    
+                    let prefix = "";
+                    if (q.type === 'mcq' || q.type === 'match') {
+                        prefix = `<span class="inline-block w-8 h-8 bg-gray-100 rounded text-center leading-8 mr-3 font-bold text-gray-600">${String.fromCharCode(65 + index)}</span>`;
+                    }
+                    
+                    btn.innerHTML = `${prefix} ${opt}`;
+                    btn.onclick = () => selectOption(index, btn);
+                    elements.inputArea.appendChild(btn);
+                });
+            } else if (q.type === 'fill') {
+                elements.wordBank.classList.remove('hidden');
+                elements.wordBankItems.innerHTML = q.wordBank.map(w => `<span class="bg-white border border-blue-300 text-blue-700 px-3 py-1 rounded shadow-sm">${w}</span>`).join('');
+                
+                elements.questionText.innerHTML = ''; 
+                
+                const sentence = document.createElement('div');
+                sentence.className = "text-xl md:text-2xl font-semibold text-gray-800 leading-relaxed";
+                
+                const select = document.createElement('select');
+                select.id = "fill-select";
+                select.className = "mx-2 bg-gray-50 border-2 border-blue-400 text-blue-700 rounded-lg px-4 py-1 text-lg font-bold focus:outline-none focus:border-blue-600 cursor-pointer shadow-sm transition";
+                select.innerHTML = `<option value="" disabled selected>Select Word</option>` + 
+                                   q.wordBank.map(w => `<option value="${w}">${w}</option>`).join('');
+
+                sentence.innerHTML = q.textChunks[0];
+                sentence.appendChild(select);
+                sentence.appendChild(document.createTextNode(q.textChunks[1]));
+                
+                elements.inputArea.appendChild(sentence);
+            }
+        }
+
+        let selectedIndex = null;
+
+        function selectOption(index, btnElement) {
+            if (isAnswered) return;
+            selectedIndex = index;
+            
+            const buttons = elements.inputArea.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        function checkAnswer() {
+            if (isAnswered) return;
+            const q = quizData[currentQuestion];
+            let isCorrect = false;
+            let userDisplayValue = "";
+            let correctDisplayValue = "";
+
+            if (q.type === 'mcq' || q.type === 'tf' || q.type === 'match') {
+                if (selectedIndex === null) {
+                    alert("Please select an option first!");
+                    return;
+                }
+                isCorrect = selectedIndex === q.correctAnswer;
+                userDisplayValue = q.options[selectedIndex];
+                correctDisplayValue = q.options[q.correctAnswer];
+                
+                const buttons = elements.inputArea.querySelectorAll('button');
+                buttons.forEach((btn, idx) => {
+                    btn.disabled = true;
+                    btn.classList.remove('selected');
+                    if (idx === q.correctAnswer) {
+                        btn.classList.add('correct');
+                        btn.innerHTML += ' <i class="fas fa-check-circle float-right mt-1 text-xl"></i>';
+                    } else if (idx === selectedIndex && !isCorrect) {
+                        btn.classList.add('wrong');
+                        btn.innerHTML += ' <i class="fas fa-times-circle float-right mt-1 text-xl"></i>';
+                    } else {
+                        btn.style.opacity = '0.4';
+                    }
+                });
+
+            } else if (q.type === 'fill') {
+                const select = document.getElementById('fill-select');
+                if (!select.value) {
+                    alert("Please select a word from the dropdown!");
+                    return;
+                }
+                isCorrect = select.value === q.correctAnswer;
+                userDisplayValue = select.value;
+                correctDisplayValue = q.correctAnswer;
+                
+                select.disabled = true;
+                if (isCorrect) {
+                    select.classList.replace('border-blue-400', 'border-green-500');
+                    select.classList.replace('text-blue-700', 'text-green-700');
+                    select.classList.add('bg-green-50');
+                } else {
+                    select.classList.replace('border-blue-400', 'border-red-500');
+                    select.classList.replace('text-blue-700', 'text-red-700');
+                    select.classList.add('bg-red-50');
+                    
+                    const corrSpan = document.createElement('span');
+                    corrSpan.className = "text-green-600 font-bold ml-2 text-lg inline-block";
+                    corrSpan.innerHTML = `(Correct: ${correctDisplayValue})`;
+                    select.parentNode.insertBefore(corrSpan, select.nextSibling);
+                }
+            }
+
+            if (isCorrect) score++;
+            isAnswered = true;
+
+            showFeedback(isCorrect, userDisplayValue, correctDisplayValue, q.explanation);
+        }
+
+        function showFeedback(isCorrect, userVal, correctVal, explanationText) {
+            elements.feedbackArea.classList.remove('hidden');
+            elements.submitBtn.classList.add('hidden');
+            elements.nextBtn.classList.remove('hidden');
+
+            if (isCorrect) {
+                elements.feedbackArea.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-900');
+                elements.feedbackIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+                elements.feedbackTitle.textContent = "✔️ Correct!";
+                elements.feedbackText.innerHTML = `<strong>Explanation:</strong> ${explanationText}`;
+            } else {
+                elements.feedbackArea.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-900');
+                elements.feedbackIcon.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+                elements.feedbackTitle.textContent = "❌ Incorrect";
+                elements.feedbackText.innerHTML = `
+                    <span class="block mb-2 text-red-700">You chose: <span class="line-through">${userVal}</span></span>
+                    <span class="block mb-3 text-green-700 font-semibold">Correct Option: ${correctVal}</span>
+                    <strong class="text-gray-800">Why?</strong> <span class="text-gray-700">${explanationText}</span>
+                `;
+            }
+            
+            elements.nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            selectedIndex = null;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            screens.quiz.classList.add('hidden');
+            screens.result.classList.remove('hidden');
+            elements.progressBar.style.width = '100%';
+            
+            elements.finalScore.textContent = score;
+            
+            let message = "";
+            let colorClass = "";
+            if (score === 20) {
+                message = "Exceptional! You have mastered the Introduction to ML! 🌟";
+                colorClass = "text-green-600";
+                triggerConfetti();
+            } else if (score >= 15) {
+                message = "Great job! You have a solid grasp of the concepts. 👍";
+                colorClass = "text-blue-600";
+                triggerConfetti();
+            } else if (score >= 10) {
+                message = "Good effort! Review the lecture slides to master the details. 📚";
+                colorClass = "text-yellow-600";
+            } else {
+                message = "Keep learning! Watch the lecture again and give it another try. 💪";
+                colorClass = "text-red-600";
+            }
+            
+            elements.scoreMessage.textContent = message;
+            elements.scoreMessage.className = `font-bold text-xl mt-3 ${colorClass}`;
+        }
+
+        function triggerConfetti() {
+            for (let i = 0; i < 60; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.backgroundColor = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'][Math.floor(Math.random() * 5)];
+                document.body.appendChild(conf);
+                
+                setTimeout(() => conf.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
