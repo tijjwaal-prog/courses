@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Mastery Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            min-height: 100vh;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .shake {
+            animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+        .blank-space {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 2px dashed #6366f1;
+            text-align: center;
+            padding: 0 10px;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center py-10 px-4">
+
+    <div class="max-w-3xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden relative">
+        
+        <!-- Header -->
+        <div class="bg-indigo-600 text-white p-6 text-center relative">
+            <h1 class="text-3xl font-bold mb-2">Generative AI Mastery</h1>
+            <p class="text-indigo-200 text-sm">Interactive Quiz based on Azure AI Foundry & GenAI Principles</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progress-container" class="hidden w-full bg-gray-200 h-2">
+            <div id="progress-bar" class="bg-emerald-500 h-2 transition-all duration-300" style="width: 0%;"></div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="p-8 text-center fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to the Quiz!</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Test your knowledge on Generative Artificial Intelligence. This quiz consists of 20 interactive questions covering definitions, challenges, risks, prompt engineering, and input/output matching.
+            </p>
+            <div class="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-8 max-w-md mx-auto text-left">
+                <div class="flex items-center space-x-2"><span>🎯</span><span>5 Multiple Choice</span></div>
+                <div class="flex items-center space-x-2"><span>⚖️</span><span>5 True / False</span></div>
+                <div class="flex items-center space-x-2"><span>📝</span><span>5 Fill in the Blanks</span></div>
+                <div class="flex items-center space-x-2"><span>🔗</span><span>5 Matching (A to B)</span></div>
+            </div>
+            <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                Start Quiz Now
+            </button>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-screen" class="hidden p-8 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <span id="question-counter" class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Question 1/20</span>
+                <span id="question-type-badge" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Multiple Choice</span>
+            </div>
+
+            <!-- Question Text -->
+            <h2 id="question-text" class="text-xl font-bold text-gray-800 mb-6 leading-relaxed"></h2>
+
+            <!-- Dynamic Options Area -->
+            <div id="options-area" class="space-y-3 mb-6">
+                <!-- Options injected by JS -->
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="feedback-area" class="hidden rounded-xl p-5 mb-6 fade-in">
+                <div class="flex items-start space-x-3">
+                    <div id="feedback-icon" class="text-2xl mt-1"></div>
+                    <div>
+                        <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                        <p id="feedback-text" class="text-gray-700 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <div class="text-right">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition shadow">
+                    Next Question ➔
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden p-10 text-center fade-in">
+            <div class="text-6xl mb-4" id="result-emoji">🏆</div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
+            <p class="text-gray-600 mb-6">You have answered all 20 questions.</p>
+            
+            <div class="bg-indigo-50 rounded-2xl p-6 mb-8 inline-block shadow-inner">
+                <div class="text-sm text-indigo-500 font-bold uppercase tracking-wider mb-1">Your Score</div>
+                <div class="text-5xl font-extrabold text-indigo-700">
+                    <span id="final-score">0</span><span class="text-2xl text-indigo-400">/20</span>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-8 rounded-full transition shadow-lg">
+                    Restart Quiz
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const quizData = [
+            // --- 5 MULTIPLE CHOICE (A-D) ---
+            {
+                type: 'mcq',
+                question: "Which of the following best describes the main function of Generative AI compared to traditional AI?",
+                options: [
+                    "A) It focuses entirely on classifying existing data sets.",
+                    "B) It creates new, original content that goes beyond its training data.",
+                    "C) It requires manual programming for every specific new application.",
+                    "D) It only analyzes data to make numerical predictions."
+                ],
+                correctAnswer: 1, // Index 1 is B
+                explanation: "Generative AI is distinguished by its ability to generate new data (text, images, etc.) rather than just understanding, classifying, or predicting based on existing data."
+            },
+            {
+                type: 'mcq',
+                question: "What is the specific risk called when a Generative AI model produces incorrect outputs but presents them confidently as factual truth?",
+                options: [
+                    "A) System Bias",
+                    "B) Security Vulnerability",
+                    "C) Hallucination",
+                    "D) Data Privacy Violation"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Hallucination (الهلوسة) occurs when the AI generates incorrect outputs and presents them as accurate facts without relying on real data. It requires human review to correct."
+            },
+            {
+                type: 'mcq',
+                question: "In the context of Prompt Engineering, which principle ensures that the AI's response does not stray into irrelevant topics?",
+                options: [
+                    "A) Specificity (التحديد)",
+                    "B) Context (السياق)",
+                    "C) Creativity (الإبداع)",
+                    "D) Formatting (تنسيق المخرجات)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Providing Context ensures the content fits the needs of the user and prevents the AI from bringing up topics that are outside the scope of the conversation."
+            },
+            {
+                type: 'mcq',
+                question: "According to the timeline of major Generative AI text models, which model was launched first in November 2022?",
+                options: [
+                    "A) Google Bard",
+                    "B) Claude",
+                    "C) Perplexity",
+                    "D) ChatGPT"
+                ],
+                correctAnswer: 3, // D
+                explanation: "ChatGPT was launched in November 2022, followed by others like Google Bard and Bing Chat in February 2023."
+            },
+            {
+                type: 'mcq',
+                question: "To address the challenge of 'Interpretability' (القابلية للتفسير) in AI, what solution is recommended?",
+                options: [
+                    "A) Using synthetic data for training.",
+                    "B) Building renewable energy data centers.",
+                    "C) Developing technical tools to make the neural network's processes more transparent.",
+                    "D) Imposing strict copyright laws."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Because models rely on neural networks with billions of parameters (forming a 'black box'), developing transparency and interpretability tools is crucial to understand how they make decisions."
+            },
+
+            // --- 5 TRUE / FALSE ---
+            {
+                type: 'tf',
+                question: "Generative AI models require retraining from scratch for every single new creative task they perform.",
+                correctAnswer: false,
+                explanation: "False. Unlike traditional AI which is specialized, Generative AI is highly flexible and can adapt to various creative tasks WITHOUT the need for retraining."
+            },
+            {
+                type: 'tf',
+                question: "One of the major challenges of Generative AI is the massive requirement for computational resources and energy during training.",
+                correctAnswer: true,
+                explanation: "True. Training large models requires huge computing power and energy, which necessitates investment in tech infrastructure and efficient algorithms."
+            },
+            {
+                type: 'tf',
+                question: "In Prompt Engineering, 'Role-playing' means asking the AI to adopt a specific persona, such as a historian, to guide its response style.",
+                correctAnswer: true,
+                explanation: "True. Role-playing is a powerful technique to direct the AI's reactions and tone, for example, 'Describe the importance of WWII as a historian.'"
+            },
+            {
+                type: 'tf',
+                question: "Providing examples inside your prompt is discouraged because it restricts the AI's intelligence and lowers the quality of the output.",
+                correctAnswer: false,
+                explanation: "False. Providing examples is actually one of the 7 recommended techniques. It highly influences the AI to respond in the desired format and style."
+            },
+            {
+                type: 'tf',
+                question: "In Azure AI Foundry's Chat Playground, you must link the chat to a deployed model (like GPT-4) before you can generate responses.",
+                correctAnswer: true,
+                explanation: "True. According to the lab steps, you must create a deployment (e.g., gpt-4) and use the deployed model in the chat playground."
+            },
+
+            // --- 5 FILL IN THE BLANKS ---
+            {
+                type: 'fib',
+                textBefore: "Generative AI relies on advanced technologies such as Large Language Models (LLMs) and ",
+                textAfter: ".",
+                wordBank: ["Machine Classifiers", "Deep Neural Networks", "Manual Coding", "Data Encryption"],
+                correctAnswer: "Deep Neural Networks",
+                explanation: "Generative AI uses Deep Neural Networks (الشبكات العصبية العميقة) to process vast amounts of data and generate new, unstructured content."
+            },
+            {
+                type: 'fib',
+                textBefore: "Using protected data for model training without permission is considered a violation of ",
+                textAfter: ".",
+                wordBank: ["Privacy", "Security Vulnerabilities", "Interpretability", "Intellectual Property"],
+                correctAnswer: "Intellectual Property",
+                explanation: "Intellectual Property (حقوق الملكية الفكرية) rights are violated when copyrighted data is used without a license or permission to train AI models."
+            },
+            {
+                type: 'fib',
+                textBefore: "In the GenAI workflow, the ",
+                textAfter: " inputs specific instructions to achieve a task and reviews the generated content.",
+                wordBank: ["Application", "User", "Generative Model", "API"],
+                correctAnswer: "User",
+                explanation: "The User (المستخدم) is responsible for providing the prompt/input and reviewing the final output provided by the Application."
+            },
+            {
+                type: 'fib',
+                textBefore: "If a model's outputs skew heavily toward a specific direction due to unrepresentative training data, this risk is known as ",
+                textAfter: ".",
+                wordBank: ["Hallucination", "Bias", "Clarity", "Context"],
+                correctAnswer: "Bias",
+                explanation: "Bias (التحيز) happens when training data is not diverse, leading the model to generate prejudiced or skewed outputs."
+            },
+            {
+                type: 'fib',
+                textBefore: "When engineering a prompt, using specific, unambiguous language to avoid confusion refers to the principle of ",
+                textAfter: ".",
+                wordBank: ["Creativity", "Specificity", "Clarity", "Role-playing"],
+                correctAnswer: "Clarity",
+                explanation: "Clarity (الوضوح) ensures the language used is straightforward and avoids words that might lead to misunderstanding by the AI."
+            },
+
+            // --- 5 MATCHING (List A -> List B conceptually adapted for interactive flow) ---
+            {
+                type: 'match',
+                category: "Match the Input to the expected Generative AI Output",
+                listA: "Input: Articles and Books",
+                options: [
+                    "A) Create 3D models or architectural designs",
+                    "B) Synthesize human-like speech",
+                    "C) Produce short stories or creative texts",
+                    "D) Edit or translate video content"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Text inputs like articles and books are typically used by text-based GenAI to produce creative texts, short stories, or poetry."
+            },
+            {
+                type: 'match',
+                category: "Match the Input to the expected Generative AI Output",
+                listA: "Input: Voice or Speech",
+                options: [
+                    "A) Synthesize artificial human-like speech",
+                    "B) Generate new descriptive text",
+                    "C) Create UI/UX design wireframes",
+                    "D) Write programming code"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Audio inputs like voice or speech are used to generate synthetic, human-like speech or new musical compositions."
+            },
+            {
+                type: 'match',
+                category: "Match the Input to the expected Generative AI Output",
+                listA: "Input: Sketches and Designs",
+                options: [
+                    "A) Summarize large datasets",
+                    "B) Create 3D models and visual concepts",
+                    "C) Translate texts to another language",
+                    "D) Generate environmental sound effects"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Image inputs like sketches and designs are used by AI to generate 3D products, models, and architectural visualizations."
+            },
+            {
+                type: 'match',
+                category: "Match the Input to the expected Generative AI Output",
+                listA: "Input: Short Video Clips",
+                options: [
+                    "A) Generate a new image from scratch",
+                    "B) Edit video content or translate spoken video audio",
+                    "C) Write a marketing email",
+                    "D) Develop a training curriculum"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Video inputs are processed by GenAI for editing content, generating subtitles, or translating video elements."
+            },
+            {
+                type: 'match',
+                category: "Match the Prompting Technique to its Example",
+                listA: "Technique: 'Format the Output'",
+                options: [
+                    "A) 'Act as an expert historian.'",
+                    "B) 'First analyze, second classify, third summarize.'",
+                    "C) 'Write a comparison between Product A and B in a table.'",
+                    "D) 'Use the attached PDF to answer the question.'"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Asking the AI to present the answer 'in a table' is a direct application of the 'Formatting the Output' (تنسيق المخرجات) technique."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsArea = document.getElementById('options-area');
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const questionCounter = document.getElementById('question-counter');
+        const questionTypeBadge = document.getElementById('question-type-badge');
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            progressContainer.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const currentQ = quizData[currentQuestionIndex];
+            hasAnswered = false;
+            
+            // Reset UI
+            optionsArea.innerHTML = '';
+            feedbackArea.classList.add('hidden');
+            feedbackArea.classList.remove('bg-emerald-50', 'bg-rose-50', 'border', 'border-emerald-200', 'border-rose-200');
+            nextBtn.classList.add('hidden');
+            
+            // Update Progress
+            const progressPct = (currentQuestionIndex / quizData.length) * 100;
+            progressBar.style.width = `${progressPct}%`;
+            questionCounter.innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+
+            // Render based on Type
+            if (currentQ.type === 'mcq') {
+                questionTypeBadge.innerText = "Multiple Choice";
+                questionText.innerText = currentQ.question;
+                
+                currentQ.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn w-full text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-300 rounded-lg p-4 font-medium text-gray-700 focus:outline-none";
+                    btn.innerText = opt;
+                    btn.onclick = () => handleAnswer(index, btn);
+                    optionsArea.appendChild(btn);
+                });
+
+            } else if (currentQ.type === 'tf') {
+                questionTypeBadge.innerText = "True / False";
+                questionText.innerText = currentQ.question;
+
+                const tfOptions = [
+                    { label: "True", val: true },
+                    { label: "False", val: false }
+                ];
+
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-2 gap-4";
+
+                tfOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn w-full text-center bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-300 rounded-lg p-6 font-bold text-xl text-gray-700 focus:outline-none";
+                    btn.innerText = opt.label;
+                    btn.onclick = () => handleAnswer(opt.val, btn);
+                    grid.appendChild(btn);
+                });
+                optionsArea.appendChild(grid);
+
+            } else if (currentQ.type === 'fib') {
+                questionTypeBadge.innerText = "Fill in the Blank";
+                questionText.innerHTML = `${currentQ.textBefore} <span id="fib-blank" class="blank-space transition-all">________</span> ${currentQ.textAfter}`;
+                
+                const instructions = document.createElement('p');
+                instructions.className = "text-sm text-gray-500 mb-3 italic";
+                instructions.innerText = "Select a word from the bank below to fill the blank:";
+                optionsArea.appendChild(instructions);
+
+                const bank = document.createElement('div');
+                bank.className = "flex flex-wrap gap-3";
+
+                currentQ.wordBank.forEach(word => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn bg-white border-2 border-indigo-100 hover:border-indigo-500 text-indigo-700 font-semibold py-2 px-4 rounded-full shadow-sm focus:outline-none";
+                    btn.innerText = word;
+                    btn.onclick = () => {
+                        if(hasAnswered) return;
+                        document.getElementById('fib-blank').innerText = word;
+                        document.getElementById('fib-blank').classList.add('text-indigo-600', 'border-indigo-600');
+                        handleAnswer(word, btn);
+                    };
+                    bank.appendChild(bank);
+                    bank.appendChild(btn);
+                });
+                optionsArea.appendChild(bank);
+
+            } else if (currentQ.type === 'match') {
+                questionTypeBadge.innerText = "Matching (List A \u2192 B)";
+                questionText.innerHTML = `<span class="text-sm font-normal text-gray-500 block mb-2">${currentQ.category}</span>
+                                          <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-lg inline-block text-indigo-900 font-bold mb-2 shadow-sm">
+                                            ${currentQ.listA}
+                                          </div>`;
+                
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-1 gap-3 mt-4";
+                
+                currentQ.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn w-full text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-300 rounded-lg p-4 font-medium text-gray-700 focus:outline-none flex items-center";
+                    btn.innerHTML = `<span class="bg-gray-200 text-gray-600 font-bold rounded px-2 py-1 mr-3 text-xs">List B</span> ${opt}`;
+                    btn.onclick = () => handleAnswer(index, btn);
+                    grid.appendChild(btn);
+                });
+                optionsArea.appendChild(grid);
+            }
+        }
+
+        function handleAnswer(userAnswer, selectedBtn) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const currentQ = quizData[currentQuestionIndex];
+            const isCorrect = userAnswer === currentQ.correctAnswer;
+
+            // Disable all buttons
+            const buttons = optionsArea.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+                btn.classList.remove('hover:bg-indigo-50', 'hover:border-indigo-300');
+            });
+
+            // Styling based on result
+            if (isCorrect) {
+                score++;
+                selectedBtn.classList.remove('bg-gray-50', 'opacity-60', 'border-gray-200');
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'opacity-100', 'shadow-md');
+                showFeedback(true, "Correct! \u2714\uFE0F", currentQ.explanation);
+            } else {
+                selectedBtn.classList.remove('bg-gray-50', 'opacity-60', 'border-gray-200');
+                selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'opacity-100', 'shake');
+                
+                // Highlight correct answer
+                highlightCorrectAnswer(currentQ);
+                
+                let explanationPrefix = "<strong>Why your answer is incorrect:</strong> The chosen option does not fit the context. <br><br><strong>Correction:</strong> ";
+                showFeedback(false, "Incorrect \u274C", explanationPrefix + currentQ.explanation);
+            }
+
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('fade-in');
+        }
+
+        function highlightCorrectAnswer(currentQ) {
+            const buttons = optionsArea.querySelectorAll('button');
+            if (currentQ.type === 'mcq' || currentQ.type === 'match') {
+                buttons[currentQ.correctAnswer].classList.remove('bg-gray-50', 'opacity-60');
+                buttons[currentQ.correctAnswer].classList.add('bg-emerald-50', 'border-emerald-400', 'opacity-100');
+            } else if (currentQ.type === 'tf') {
+                const correctIndex = currentQ.correctAnswer ? 0 : 1;
+                buttons[correctIndex].classList.remove('bg-gray-50', 'opacity-60');
+                buttons[correctIndex].classList.add('bg-emerald-50', 'border-emerald-400', 'opacity-100');
+            } else if (currentQ.type === 'fib') {
+                 buttons.forEach(btn => {
+                    if(btn.innerText === currentQ.correctAnswer) {
+                        btn.classList.remove('opacity-60');
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'opacity-100');
+                    }
+                 });
+            }
+        }
+
+        function showFeedback(isSuccess, title, text) {
+            feedbackArea.classList.remove('hidden');
+            feedbackTitle.innerText = title;
+            feedbackText.innerHTML = text; // innerHTML to parse strong tags
+
+            if (isSuccess) {
+                feedbackArea.classList.add('bg-emerald-50', 'border', 'border-emerald-200');
+                feedbackTitle.classList.add('text-emerald-800');
+                feedbackIcon.innerText = "🎉";
+            } else {
+                feedbackArea.classList.add('bg-rose-50', 'border', 'border-rose-200');
+                feedbackTitle.classList.add('text-rose-800');
+                feedbackIcon.innerText = "💡";
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            progressContainer.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = score;
+            const emoji = document.getElementById('result-emoji');
+            
+            if(score === 20) emoji.innerText = "🏆👑";
+            else if(score >= 15) emoji.innerText = "🌟👏";
+            else if(score >= 10) emoji.innerText = "👍📚";
+            else emoji.innerText = "💪📖";
+        }
+
+    </script>
+</body>
+</html>
