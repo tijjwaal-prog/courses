@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digestive System Quiz</title>
+    <style>
+        :root {
+            --primary: #c0392b;
+            --secondary: #e74c3c;
+            --accent: #f1c40f;
+            --bg: #fdf2e9;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f8f5;
+            --correct-text: #117a65;
+            --correct-border: #a3e4d7;
+            --incorrect-bg: #fdedec;
+            --incorrect-text: #922b21;
+            --incorrect-border: #f5b7b1;
+            --text: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-top: 6px solid var(--primary);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.4em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid #fadbd8;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            background-color: #fdfefe;
+            border: 1px solid #fadbd8;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #d5dbdb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .options label:hover {
+            background: #fdf2e9;
+            border-color: var(--secondary);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fef9e7;
+            border: 2px dashed var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #b7950b;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 450px;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--secondary);
+        }
+
+        .check-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .check-btn:disabled {
+            background-color: #e5e8e8;
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-icon {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            line-height: 1.5;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Digestive System</h1>
+    <p class="subtitle">Interactive Quiz (Chapter 8) - Test your knowledge on human digestion!</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Emulsification | Peristalsis | Cirrhosis | Villi | Maltose
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match the anatomical term with its correct description.</p>
+    <div id="match-section"></div>
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "q_mcq_1",
+                q: "1. Which layer of the digestive tract wall contains blood and lymphatic vessels as well as nerves?",
+                options: [
+                    "A) Mucosa",
+                    "B) Submucosa",
+                    "C) Muscularis",
+                    "D) Serosa"
+                ],
+                correct: 1, // B
+                correctStr: "B) Submucosa",
+                exp: "According to the text, the submucosa is the second layer consisting of loose connective tissue. It contains blood and lymphatic vessels (to carry nutrients) as well as nerves."
+            },
+            {
+                id: "q_mcq_2",
+                q: "2. During swallowing, which structure covers the glottis to ensure the bolus moves into the esophagus and not the air passage?",
+                options: [
+                    "A) Hard palate",
+                    "B) Uvula",
+                    "C) Epiglottis",
+                    "D) Lower gastroesophageal sphincter"
+                ],
+                correct: 2, // C
+                correctStr: "C) Epiglottis",
+                exp: "The text explains that during swallowing, a flap of tissue called the epiglottis covers the glottis (upper opening of the trachea) so the air passage is blocked and food goes down the esophagus."
+            },
+            {
+                id: "q_mcq_3",
+                q: "3. Why do the gastric glands in the stomach secrete hydrochloric acid (HCl) to maintain a pH of about 2?",
+                options: [
+                    "A) To digest starch into maltose.",
+                    "B) To kill bacteria and stop the activity of salivary amylase.",
+                    "C) To emulsify large fat droplets into smaller ones.",
+                    "D) To neutralize the chyme before it enters the small intestine."
+                ],
+                correct: 1, // B
+                correctStr: "B) To kill bacteria and stop the activity of salivary amylase.",
+                exp: "HCl keeps the stomach highly acidic (pH ~2), which kills bacteria/microorganisms that enter with food and stops the activity of salivary amylase, which functions at a near-neutral pH."
+            },
+            {
+                id: "q_mcq_4",
+                q: "4. Fatty acids and glycerol are absorbed into the epithelial cells of the villi. Before entering the lacteal, they are packaged into droplets called:",
+                options: [
+                    "A) Glycogen",
+                    "B) Bile salts",
+                    "C) Lipoprotein",
+                    "D) Urea"
+                ],
+                correct: 2, // C
+                correctStr: "C) Lipoprotein",
+                exp: "The text states that after fatty acids and glycerol enter the columnar epithelium cells lining the villi, they are packaged in the form of droplets of lipoprotein before entering the lacteal."
+            },
+            {
+                id: "q_mcq_5",
+                q: "5. Which of the following is NOT a function of the liver?",
+                options: [
+                    "A) Production of urea from the breakdown of amino acids.",
+                    "B) Secretion of digestive enzymes like trypsin and pancreatic amylase.",
+                    "C) Storage of iron and vitamins (A, B12, D, E, K).",
+                    "D) Detoxification of blood by eliminating poisonous substances."
+                ],
+                correct: 1, // B
+                correctStr: "B) Secretion of digestive enzymes like trypsin and pancreatic amylase.",
+                exp: "Trypsin and pancreatic amylase are secreted by the pancreas in pancreatic juice, not by the liver. The liver produces bile, detoxifies blood, stores vitamins, and produces urea."
+            }
+        ],
+        tf: [
+            {
+                id: "q_tf_1",
+                q: "1. Digestion of food is an intracellular event that occurs completely inside the cells of the digestive tract.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. The text clearly states: 'Digestion of food is an extracellular event. i.e. occur in the lumen of the digestive tract', not inside the cells."
+            },
+            {
+                id: "q_tf_2",
+                q: "2. The large intestine completes the chemical digestion of proteins and absorbs the majority of the nutrients from the chyme.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. The text explicitly states 'No digestion takes place in the large intestine.' Its main functions are to absorb water, salts, some vitamins, and store undigested materials."
+            },
+            {
+                id: "q_tf_3",
+                q: "3. The pancreas acts as both an endocrine gland that secretes insulin and an exocrine gland that produces digestive enzymes.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. The pancreas is an elongated organ with endocrine functions (secreting insulin and glucagon) and exocrine functions (producing pancreatic juice with digestive enzymes)."
+            },
+            {
+                id: "q_tf_4",
+                q: "4. Hepatitis B is mainly spread by drinking water that is contaminated by sewage.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Hepatitis A is spread by contaminated water. Hepatitis B is mainly acquired via sexual communication, contaminated needles, or blood transfusions."
+            },
+            {
+                id: "q_tf_5",
+                q: "5. The pyloric sphincter regulates the passage of chyme from the stomach into the small intestine.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. The pyloric sphincter is situated between the stomach and the small intestine and relaxes to allow small quantities of chyme to pass through."
+            }
+        ],
+        fill: [
+            {
+                id: "q_fill_1",
+                q: "1. The rhythmical contraction and relaxation that moves contents along the tubular organs of the digestive tract is known as _________.",
+                correct: "Peristalsis",
+                exp: "Peristalsis is the successive waves of involuntary contraction passing along the walls of a hollow muscular structure to force contents onward."
+            },
+            {
+                id: "q_fill_2",
+                q: "2. Salivary amylase begins the digestion of starch, breaking it down into a disaccharide sugar called _________.",
+                correct: "Maltose",
+                exp: "The text provides the equation: Enzyme salivary amylase + starch + H2O → maltose. Maltose is the typical end product of salivary amylase digestion of starch."
+            },
+            {
+                id: "q_fill_3",
+                q: "3. The wall of the small intestine has fingerlike projections called _________ that vastly increase the surface area for nutrient absorption.",
+                correct: "Villi",
+                exp: "Villi (and their microvilli) give the intestinal wall a velvety appearance and immensely increase the surface area to maximize absorption."
+            },
+            {
+                id: "q_fill_4",
+                q: "4. Bile salts derived from cholesterol aid in the _________ of fat, which disperses large fat globules into smaller droplets.",
+                correct: "Emulsification",
+                exp: "Emulsification is the dispersion of large fat globules into smaller droplets, which increases the surface area to facilitate fat digestion by specialized enzymes."
+            },
+            {
+                id: "q_fill_5",
+                q: "5. _________ is a chronic disease where normal liver tissue is substituted by nonfunctional fibrous tissue, often due to alcohol abuse.",
+                correct: "Cirrhosis",
+                exp: "Cirrhosis is an abnormal accumulation of fibrosis that replaces normal liver tissue, frequently occurring because of alcohol consumption or malnutrition."
+            }
+        ],
+        match: [
+            {
+                id: "q_match_1",
+                term: "1. Gallbladder",
+                correctIndex: 2, // Matches C
+                correctStr: "A membranous muscular sac in which bile from the liver is stored.",
+                exp: "Glossary (Page 21): Gallbladder is a membranous muscular sac in which bile from the liver is stored."
+            },
+            {
+                id: "q_match_2",
+                term: "2. Pharynx",
+                correctIndex: 4, // Matches E
+                correctStr: "The muscular tubular organ where digestive and respiratory tracts meet and separate.",
+                exp: "Glossary (Page 22): Pharynx is the muscular tubular organ in which digestive and respiratory tracts meet and separate."
+            },
+            {
+                id: "q_match_3",
+                term: "3. Cecum",
+                correctIndex: 0, // Matches A
+                correctStr: "The blind end of the large intestine located below the junction with the small intestine.",
+                exp: "Page 10: The cecum is defined as the blind end of the large intestine and it is located below the junction of large intestine with the small intestine."
+            },
+            {
+                id: "q_match_4",
+                term: "4. Rugae",
+                correctIndex: 1, // Matches B
+                correctStr: "Deep folds in the wall of the stomach that allow it to expand to full capacity.",
+                exp: "Page 7: Wall of stomach from inside has shape of deep folds (rugae) that help when the stomach extend to full capacity of about 1 liter."
+            },
+            {
+                id: "q_match_5",
+                term: "5. Chyme",
+                correctIndex: 3, // Matches D
+                correctStr: "The semifluid mass of partly digested food expelled by the stomach.",
+                exp: "Glossary (Page 20): Chyme is the semifluid mass of partly digested food expelled by the stomach into the duodenum."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) The blind end of the large intestine located below the junction with the small intestine.",
+        "B) Deep folds in the wall of the stomach that allow it to expand to full capacity.",
+        "C) A membranous muscular sac in which bile from the liver is stored.",
+        "D) The semifluid mass of partly digested food expelled by the stomach.",
+        "E) The muscular tubular organ where digestive and respiratory tracts meet and separate."
+    ];
+
+    function checkAnswer(id, type, correctValue, correctString, explanation) {
+        let isCorrect = false;
+
+        if (type === 'radio') {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("Please select an answer before checking!");
+                return;
+            }
+            const userIndex = parseInt(selected.value);
+            isCorrect = (userIndex === correctValue);
+        } else if (type === 'text') {
+            const inputElement = document.getElementById(`input_${id}`);
+            const userText = inputElement.value.trim().toLowerCase();
+            if (userText === "") {
+                alert("Please type a word from the bank!");
+                return;
+            }
+            isCorrect = (userText === correctValue.toLowerCase());
+        } else if (type === 'select') {
+            const selectElement = document.getElementById(`select_${id}`);
+            const userIndex = parseInt(selectElement.value);
+            if (isNaN(userIndex)) {
+                alert("Please select a definition from the dropdown list!");
+                return;
+            }
+            isCorrect = (userIndex === correctValue);
+        }
+
+        const feedbackBox = document.getElementById(`feedback_${id}`);
+        const submitBtn = document.getElementById(`btn_${id}`);
+
+        if (isCorrect) {
+            feedbackBox.className = "feedback correct";
+            feedbackBox.innerHTML = `<span class="feedback-icon">✔️ Correct!</span>
+                                     <div class="explanation">${explanation}</div>`;
+        } else {
+            feedbackBox.className = "feedback incorrect";
+            feedbackBox.innerHTML = `<span class="feedback-icon">❌ Incorrect.</span> The correct answer is: <b>${correctString}</b>
+                                     <div class="explanation"><b>Why is this the correct choice?</b><br>${explanation}</div>`;
+        }
+
+        submitBtn.disabled = true;
+        
+        // Disable inputs after checking
+        if (type === 'radio') {
+            document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+        } else if (type === 'text') {
+            document.getElementById(`input_${id}`).disabled = true;
+        } else if (type === 'select') {
+            document.getElementById(`select_${id}`).disabled = true;
+        }
+    }
+
+    function init() {
+        // Generate MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Fill in the Blanks
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type the answer from the word bank..." autocomplete="off">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'text', '${q.correct}', '${q.correct.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Matching
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let selectStr = `<option value="none" selected disabled>--- Select Corresponding Definition ---</option>`;
+            matchDefinitions.forEach((def, idx) => {
+                selectStr += `<option value="${idx}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${selectStr}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'select', ${q.correctIndex}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
