@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical and Laboratory Workflow in PGT</title>
+    <style>
+        :root {
+            --primary: #2b5c8f;
+            --secondary: #d4af37;
+            --bg-color: #f8f9fa;
+            --text-dark: #333;
+            --success-bg: #e8f5e9;
+            --success-text: #2e7d32;
+            --error-bg: #ffebee;
+            --error-text: #c62828;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 40px;
+            padding-left: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .question-card {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        label:hover {
+            background: #f1f1f1;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        .word-bank {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px dashed var(--secondary);
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .btn-check {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover {
+            background-color: #1d4066;
+        }
+
+        .btn-check:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--success-bg);
+            border-left: 5px solid var(--success-text);
+            color: var(--success-text);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--error-bg);
+            border-left: 5px solid var(--error-text);
+            color: var(--error-text);
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        @media(min-width: 768px) {
+            .matching-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Clinical and Laboratory Workflow in Preimplantation Genetic Testing</h1>
+
+    <h2>Part 1: Multiple Choice</h2>
+
+    <div class="question-card" id="q1">
+        <div class="question-text">1. Why is ICSI (Intracytoplasmic Sperm Injection) overwhelmingly preferred over traditional IVF in PGT cycles?</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q1" value="A"> A) It allows the embryologist to extract the Inner Cell Mass more easily.</label></li>
+            <li><label><input type="radio" name="q1" value="B"> B) To prevent DNA contamination from extraneous sperm attached to the zona pellucida during genetic analysis.</label></li>
+            <li><label><input type="radio" name="q1" value="C"> C) It naturally stimulates the ovaries to produce more follicles.</label></li>
+            <li><label><input type="radio" name="q1" value="D"> D) It skips the cleavage stage, making the embryo grow faster.</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q1', 'B', 'Traditional IVF leaves thousands of sperm around the egg, whose DNA could contaminate the PGT biopsy results. ICSI uses only one sperm, eliminating this risk.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q2">
+        <div class="question-text">2. During the clinical preparation phase, what is the exact purpose of the "Trigger Shot" (e.g., hCG)?</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q2" value="A"> A) To induce the final maturation of the oocytes before retrieval.</label></li>
+            <li><label><input type="radio" name="q2" value="B"> B) To flash-freeze the embryo for vitrification.</label></li>
+            <li><label><input type="radio" name="q2" value="C"> C) To amplify the DNA post-biopsy.</label></li>
+            <li><label><input type="radio" name="q2" value="D"> D) To measure the estradiol levels in the blood.</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q2', 'A', 'The trigger shot is administered when leading follicles reach 17.5-18mm to induce final egg maturation right before the surgical retrieval.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q3">
+        <div class="question-text">3. Following a trophectoderm biopsy, what is the critical laboratory step required before the genetic material can be sequenced?</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q3" value="A"> A) Immediate embryo transfer</label></li>
+            <li><label><input type="radio" name="q3" value="B"> B) Ovarian stimulation</label></li>
+            <li><label><input type="radio" name="q3" value="C"> C) DNA Amplification (e.g., WGA)</label></li>
+            <li><label><input type="radio" name="q3" value="D"> D) Natural sperm competition</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q3', 'C', 'Because the biopsy yields only a microscopic amount of DNA (about 5 cells), the genetic material must be chemically copied and amplified to a readable volume before Next-Generation Sequencing.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q4">
+        <div class="question-text">4. What is the primary clinical advantage of post-biopsy vitrification?</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q4" value="A"> A) It repairs fragmented DNA in aneuploid embryos.</label></li>
+            <li><label><input type="radio" name="q4" value="B"> B) It safely pauses embryo development while waiting for genetic results and allows the patient's uterine lining to recover from hormones.</label></li>
+            <li><label><input type="radio" name="q4" value="C"> C) It guarantees that a mosaic embryo will correct itself.</label></li>
+            <li><label><input type="radio" name="q4" value="D"> D) It replaces the need for a laser during the biopsy breach.</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q4', 'B', 'Vitrification (flash-freezing) gives the lab time (days/weeks) to perform complex genetic analysis while giving the maternal environment time to optimize for implantation.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q5">
+        <div class="question-text">5. At what specific developmental stage is an embryo typically biopsied for PGT?</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q5" value="A"> A) Zygote stage (Day 1)</label></li>
+            <li><label><input type="radio" name="q5" value="B"> B) Cleavage stage (Day 3)</label></li>
+            <li><label><input type="radio" name="q5" value="C"> C) Morula stage (Day 4)</label></li>
+            <li><label><input type="radio" name="q5" value="D"> D) Blastocyst stage (Day 5 or 6)</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q5', 'D', 'The biopsy is performed at the blastocyst stage because the embryo has differentiated into two distinct cell types, allowing safe extraction from the outer layer (trophectoderm).')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <h2>Part 2: True / False</h2>
+
+    <div class="question-card" id="q6">
+        <div class="question-text">6. During the embryo biopsy, cells are strategically extracted from the Inner Cell Mass (ICM) to ensure accurate genetic results.</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q6" value="True"> True</label></li>
+            <li><label><input type="radio" name="q6" value="False"> False</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q6', 'False', 'Cells are extracted ONLY from the Trophectoderm (future placenta). The Inner Cell Mass (future fetus) remains entirely untouched to ensure zero harm to the fetus.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q7">
+        <div class="question-text">7. A euploid embryo contains exactly 46 intact chromosomes and is the primary candidate for a successful transfer.</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q7" value="True"> True</label></li>
+            <li><label><input type="radio" name="q7" value="False"> False</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q7', 'True', 'Euploid means genetically healthy regarding chromosome count (46). Transferring a euploid blastocyst elevates pregnancy probability to ~65%.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q8">
+        <div class="question-text">8. Oocyte retrieval is a major open abdominal surgery requiring deep general anesthesia and a prolonged hospital stay.</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q8" value="True"> True</label></li>
+            <li><label><input type="radio" name="q8" value="False"> False</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q8', 'False', 'Oocyte retrieval is a minimally invasive procedure performed under light anesthesia, using a fine needle guided by transvaginal ultrasound.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q9">
+        <div class="question-text">9. An embryo diagnosed as 'Mosaic' contains a mixture of both normal (euploid) and abnormal (aneuploid) cells.</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q9" value="True"> True</label></li>
+            <li><label><input type="radio" name="q9" value="False"> False</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q9', 'True', 'Mosaic embryos have two or more cell populations with different chromosomal makeups, requiring complex genetic counseling to determine if transfer is an option.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q10">
+        <div class="question-text">10. The cleavage stage of embryo development occurs immediately on Day 1 following fertilization.</div>
+        <ul class="options-list">
+            <li><label><input type="radio" name="q10" value="True"> True</label></li>
+            <li><label><input type="radio" name="q10" value="False"> False</label></li>
+        </ul>
+        <button class="btn-check" onclick="checkMCQ('q10', 'False', 'Day 1 is the Zygote stage (confirmation of pronuclei). Cleavage occurs on Days 2 to 4 as the embryo divides into blastomeres.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Pronuclei | Transvaginal | Trophectoderm | Aneuploid | Next-Generation
+    </div>
+
+    <div class="question-card" id="q11">
+        <div class="question-text">11. The 24-hour check for successful fertilization looks for the appearance of two distinct ________ (one containing maternal DNA, the other paternal).</div>
+        <select id="sel-q11">
+            <option value="">-- Select Word --</option>
+            <option value="Pronuclei">Pronuclei</option>
+            <option value="Transvaginal">Transvaginal</option>
+            <option value="Trophectoderm">Trophectoderm</option>
+            <option value="Aneuploid">Aneuploid</option>
+            <option value="Next-Generation">Next-Generation</option>
+        </select>
+        <button class="btn-check" onclick="checkDropdown('q11', 'Pronuclei', 'The hallmark of fertilization success on Day 1 is the formation of two pronuclei (2PN), confirming the cell is a zygote.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q12">
+        <div class="question-text">12. During the extraction phase, a fine aspiration needle is guided by ________ ultrasound directly into the ovary to harvest the fluid.</div>
+        <select id="sel-q12">
+            <option value="">-- Select Word --</option>
+            <option value="Pronuclei">Pronuclei</option>
+            <option value="Transvaginal">Transvaginal</option>
+            <option value="Trophectoderm">Trophectoderm</option>
+            <option value="Aneuploid">Aneuploid</option>
+            <option value="Next-Generation">Next-Generation</option>
+        </select>
+        <button class="btn-check" onclick="checkDropdown('q12', 'Transvaginal', 'Oocyte retrieval relies on transvaginal ultrasound to visually guide the needle directly into the mature follicles safely.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q13">
+        <div class="question-text">13. The microscopic laser creates a precise opening to extract approximately 5 cells from the ________, the peripheral ring of cells.</div>
+        <select id="sel-q13">
+            <option value="">-- Select Word --</option>
+            <option value="Pronuclei">Pronuclei</option>
+            <option value="Transvaginal">Transvaginal</option>
+            <option value="Trophectoderm">Trophectoderm</option>
+            <option value="Aneuploid">Aneuploid</option>
+            <option value="Next-Generation">Next-Generation</option>
+        </select>
+        <button class="btn-check" onclick="checkDropdown('q13', 'Trophectoderm', 'The Trophectoderm is the outer layer of the blastocyst that will eventually form the placenta, making it safe to biopsy without harming the fetus.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q14">
+        <div class="question-text">14. An embryo that contains an abnormal chromosome count (e.g., 45 or 47) is classified as ________ and is typically excluded from transfer.</div>
+        <select id="sel-q14">
+            <option value="">-- Select Word --</option>
+            <option value="Pronuclei">Pronuclei</option>
+            <option value="Transvaginal">Transvaginal</option>
+            <option value="Trophectoderm">Trophectoderm</option>
+            <option value="Aneuploid">Aneuploid</option>
+            <option value="Next-Generation">Next-Generation</option>
+        </select>
+        <button class="btn-check" onclick="checkDropdown('q14', 'Aneuploid', 'Aneuploid embryos have a high certainty of implantation failure or miscarriage, thus they are screened out during PGT-A.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q15">
+        <div class="question-text">15. In the molecular genetics laboratory, ________ Sequencing is used to map the entire chromosomal inventory across all 23 pairs.</div>
+        <select id="sel-q15">
+            <option value="">-- Select Word --</option>
+            <option value="Pronuclei">Pronuclei</option>
+            <option value="Transvaginal">Transvaginal</option>
+            <option value="Trophectoderm">Trophectoderm</option>
+            <option value="Aneuploid">Aneuploid</option>
+            <option value="Next-Generation">Next-Generation</option>
+        </select>
+        <button class="btn-check" onclick="checkDropdown('q15', 'Next-Generation', 'Next-Generation Sequencing (NGS) is the advanced technology that reads the amplified DNA to detect missing or extra chromosomal segments.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+
+    <div class="question-card" id="q16">
+        <div class="matching-grid">
+            <div class="matching-term"><strong>16. Zygote</strong></div>
+            <select id="match-q16">
+                <option value="">-- Select Match --</option>
+                <option value="A">A) A tight, solid sphere of 12 to 32 compacted cells.</option>
+                <option value="B">B) A single cell possessing a complete set of 46 chromosomes (Day 1).</option>
+                <option value="C">C) Tracks follicle growth via ultrasound and estradiol levels.</option>
+                <option value="D">D) Detects specific inherited familial diseases.</option>
+                <option value="E">E) Detects structural chromosomal rearrangements (e.g., inversions).</option>
+            </select>
+        </div>
+        <button class="btn-check" onclick="checkMatching('q16', 'B', 'A Zygote is formed immediately after successful fertilization on Day 1, representing a single cell with 46 chromosomes.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q17">
+        <div class="matching-grid">
+            <div class="matching-term"><strong>17. Morula</strong></div>
+            <select id="match-q17">
+                <option value="">-- Select Match --</option>
+                <option value="A">A) A tight, solid sphere of 12 to 32 compacted cells.</option>
+                <option value="B">B) A single cell possessing a complete set of 46 chromosomes (Day 1).</option>
+                <option value="C">C) Tracks follicle growth via ultrasound and estradiol levels.</option>
+                <option value="D">D) Detects specific inherited familial diseases.</option>
+                <option value="E">E) Detects structural chromosomal rearrangements (e.g., inversions).</option>
+            </select>
+        </div>
+        <button class="btn-check" onclick="checkMatching('q17', 'A', 'On Day 4, the dividing blastomeres compact into a solid sphere resembling a mulberry, known as a Morula.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q18">
+        <div class="matching-grid">
+            <div class="matching-term"><strong>18. Follicular Monitoring</strong></div>
+            <select id="match-q18">
+                <option value="">-- Select Match --</option>
+                <option value="A">A) A tight, solid sphere of 12 to 32 compacted cells.</option>
+                <option value="B">B) A single cell possessing a complete set of 46 chromosomes (Day 1).</option>
+                <option value="C">C) Tracks follicle growth via ultrasound and estradiol levels.</option>
+                <option value="D">D) Detects specific inherited familial diseases.</option>
+                <option value="E">E) Detects structural chromosomal rearrangements (e.g., inversions).</option>
+            </select>
+        </div>
+        <button class="btn-check" onclick="checkMatching('q18', 'C', 'During clinical preparation, follicle growth is closely tracked using blood tests for estradiol and transvaginal ultrasounds.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q19">
+        <div class="matching-grid">
+            <div class="matching-term"><strong>19. PGT-M</strong></div>
+            <select id="match-q19">
+                <option value="">-- Select Match --</option>
+                <option value="A">A) A tight, solid sphere of 12 to 32 compacted cells.</option>
+                <option value="B">B) A single cell possessing a complete set of 46 chromosomes (Day 1).</option>
+                <option value="C">C) Tracks follicle growth via ultrasound and estradiol levels.</option>
+                <option value="D">D) Detects specific inherited familial diseases.</option>
+                <option value="E">E) Detects structural chromosomal rearrangements (e.g., inversions).</option>
+            </select>
+        </div>
+        <button class="btn-check" onclick="checkMatching('q19', 'D', 'PGT-M (Monogenic) targets specific single-gene mutations to prevent inherited familial diseases like Cystic Fibrosis or Thalassemia.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="question-card" id="q20">
+        <div class="matching-grid">
+            <div class="matching-term"><strong>20. PGT-SR</strong></div>
+            <select id="match-q20">
+                <option value="">-- Select Match --</option>
+                <option value="A">A) A tight, solid sphere of 12 to 32 compacted cells.</option>
+                <option value="B">B) A single cell possessing a complete set of 46 chromosomes (Day 1).</option>
+                <option value="C">C) Tracks follicle growth via ultrasound and estradiol levels.</option>
+                <option value="D">D) Detects specific inherited familial diseases.</option>
+                <option value="E">E) Detects structural chromosomal rearrangements (e.g., inversions).</option>
+            </select>
+        </div>
+        <button class="btn-check" onclick="checkMatching('q20', 'E', 'PGT-SR is used for couples with known structural chromosomal rearrangements, checking for issues like translocations and inversions.')">Check Answer</button>
+        <div class="feedback"></div>
+    </div>
+
+</div>
+
+<script>
+    function renderFeedback(cardId, isCorrect, explanation, correctAnswer) {
+        const card = document.getElementById(cardId);
+        const feedback = card.querySelector('.feedback');
+        const btn = card.querySelector('.btn-check');
+        const inputs = card.querySelectorAll('input, select');
+        
+        // Disable inputs
+        inputs.forEach(input => input.disabled = true);
+        btn.disabled = true;
+
+        if (isCorrect) {
+            feedback.className = 'feedback correct';
+            feedback.innerHTML = `<strong>✔️ Correct!</strong><br><br>${explanation}`;
+        } else {
+            feedback.className = 'feedback incorrect';
+            feedback.innerHTML = `<strong>❌ Incorrect.</strong> The correct answer is <strong>${correctAnswer}</strong>.<br><br><strong>Explanation:</strong> ${explanation}`;
+        }
+    }
+
+    function checkMCQ(qId, correctValue, explanation) {
+        const selected = document.querySelector(`input[name="${qId}"]:checked`);
+        if (!selected) {
+            alert("Please select an option before checking.");
+            return;
+        }
+        const isCorrect = selected.value === correctValue;
+        renderFeedback(qId, isCorrect, explanation, correctValue);
+    }
+
+    function checkDropdown(qId, correctValue, explanation) {
+        const select = document.getElementById(`sel-${qId}`);
+        if (select.value === "") {
+            alert("Please select a word from the dropdown.");
+            return;
+        }
+        const isCorrect = select.value === correctValue;
+        renderFeedback(qId, isCorrect, explanation, correctValue);
+    }
+
+    function checkMatching(qId, correctValue, explanation) {
+        const select = document.getElementById(`match-${qId}`);
+        if (select.value === "") {
+            alert("Please select a match from the dropdown.");
+            return;
+        }
+        const isCorrect = select.value === correctValue;
+        renderFeedback(qId, isCorrect, explanation, `Option ${correctValue}`);
+    }
+</script>
+
+</body>
+</html>
