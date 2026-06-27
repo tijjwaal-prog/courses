@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy-Related Organelles and the Cytoskeleton</title>
+    <style>
+        :root {
+            --primary: #1e3d59;
+            --secondary: #17b978;
+            --accent: #ff6f3c;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct-bg: #e8f8f5;
+            --correct-text: #117a65;
+            --correct-border: #a3e4d7;
+            --incorrect-bg: #fdf2f2;
+            --incorrect-text: #922b21;
+            --incorrect-border: #f5b7b1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--primary);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid #e1e8ed;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background-color: #fcfdfe;
+            border: 1px solid #e1e8ed;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #ffffff;
+            border: 1px solid #d1d8e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background: #f1f5f9;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #e3faf2;
+            border: 1px dashed var(--secondary);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #0e6251;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 450px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            background: #fff;
+        }
+
+        .check-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: #12253a;
+        }
+
+        .check-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .feedback.correct {
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+            display: block;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Energy-Related Organelles and the Cytoskeleton</h1>
+    <p class="subtitle">Interactive biology exam covering pages 23-38. Answer all questions and click Check Answer.</p>
+
+    <h2>Part 1: Multiple Choice (A–D)</h2>
+    <div id="mcq-group"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-group"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Active | Osmosis | Active site | Microtubules | Cholesterol
+    </div>
+    <div id="fill-group"></div>
+
+    <h2>Part 4: Matching</h2>
+    <p style="margin-bottom: 15px; color:#555;">Select the definition from List B that correctly matches the term from List A.</p>
+    <div id="match-group"></div>
+</div>
+
+<script>
+    const examData = {
+        mcq: [
+            {
+                id: "mcq_1",
+                q: "1. Based on the descriptive breakdown of the Sodium-Potassium Pump cycle (Figure 2.25), how many ions are transported across the membrane for each individual ATP molecule consumed?",
+                options: [
+                    "A) 2 Sodium (Na+) ions inside and 3 Potassium (K+) ions outside",
+                    "B) 3 Sodium (Na+) ions outside and 2 Potassium (K+) ions inside",
+                    "C) 3 Sodium (Na+) ions inside and 3 Potassium (K+) ions outside",
+                    "D) 1 Sodium (Na+) ion outside and 2 Potassium (K+) ions inside"
+                ],
+                correct: 1,
+                exp: "According to the cycle details on page 32, one ATP energy is consumed by the sodium-potassium pump to pump 3 Na+ ions outside the cell and 2 K+ ions inside the cell against their concentration gradients."
+            },
+            {
+                id: "mcq_2",
+                q: "2. Which component of the cell membrane is directly responsible for prevention of phospholipids from moving around too much, increasing mechanical strength and controlling membrane flexibility?",
+                options: [
+                    "A) Integral proteins",
+                    "B) Cholesterol Molecules",
+                    "C) Carbohydrate chains",
+                    "D) Peripheral proteins"
+                ],
+                correct: 1,
+                exp: "As stated on page 24, cholesterol increases mechanical strength of the cell membrane by controlling flexibility, preventing phospholipids from moving around too much, and helping anchor proteins."
+            },
+            {
+                id: "mcq_3",
+                q: "3. Which type of transport involves a carrier protein binding to a molecule, changing its shape to transfer the molecule down its concentration gradient without utilizing cellular energy (ATP)?",
+                options: [
+                    "A) Active transport",
+                    "B) Diffusion through lipid bilayer",
+                    "C) Facilitated transport (facilitated diffusion)",
+                    "D) Receptor-mediated endocytosis"
+                ],
+                correct: 2,
+                exp: "Page 28 defines facilitated transport: molecules bind to a carrier protein, changing its shape to transfer molecules inside. Because it goes down the concentration gradient, it does not expend energy."
+            },
+            {
+                id: "mcq_4",
+                q: "4. What structural difference characterizes intermediate filaments compared to microtubules and microfilaments?",
+                options: [
+                    "A) They are hollow tubes composed of tubulin dimers.",
+                    "B) They are the thinnest component made exclusively of actin strands.",
+                    "C) They are rope-like structures made of proteins like keratin that run between the nuclear envelope and plasma membrane.",
+                    "D) They are specialized only in chromosomal movement during active cell division."
+                ],
+                correct: 2,
+                exp: "According to page 20 and the properties table, intermediate filaments are rope-like protein structures (such as keratin) that run between the nuclear envelope and plasma membrane, holding intermediate size (8-12 nm)."
+            },
+            {
+                id: "mcq_5",
+                q: "5. Describe what happens to an animal cell and a plant cell when placed into a hypertonic solution environment (lower water potential outside):",
+                options: [
+                    "A) Both cells gain water, swell up, and burst completely.",
+                    "B) The animal cell will shrink and die, while the plant cell protoplast pulls away from the cell wall, becoming plasmolysed.",
+                    "C) The animal cell remains completely isotonic, while the plant cell becomes highly turgid.",
+                    "D) The animal cell swells and bursts, while the plant cell remains unaffected due to cellulose."
+                ],
+                correct: 1,
+                exp: "Per page 30 text and Figure 2.23 diagram descriptions: in a hypertonic environment, a cell loses water. Animal cells shrink and die; plant cells become plasmolysed as the protoplast shrinks away from the cell wall."
+            }
+        ],
+        tf: [
+            {
+                id: "tf_1",
+                q: "1. Nonpolar molecules like oxygen (O2) and carbon dioxide (CO2) can dissolve in the lipid bilayer and cross the plasma membrane easily without the support of membrane proteins.",
+                options: ["True", "False"],
+                correct: 0,
+                exp: "True. Page 26/27 mentions that hydrophobic nonpolar molecules like O2 and CO2 dissolve in the lipid bilayer and cross both sides of the cell easily without membrane protein support."
+            },
+            {
+                id: "tf_2",
+                q: "2. Passive transport moves substances against their concentration gradient, which requires the expenditure of cellular energy from ATP.",
+                options: ["True", "False"],
+                correct: 1,
+                exp: "False. Passive transport is the movement of substances down their concentration gradient without expending energy. Moving against the concentration gradient requiring ATP is the definition of Active Transport (page 26, 30)."
+            },
+            {
+                id: "tf_3",
+                q: "3. Cilia are typically longer structures than flagella, but exist in much smaller numbers on the cell surface.",
+                options: ["True", "False"],
+                correct: 1,
+                exp: "False. According to Table 2.3 on page 23, cilia are short (2-10 micrometers) and commonly present in large numbers, whereas flagella are longer (up to 200 micrometers) and occur in small numbers (one or few per cell)."
+            },
+            {
+                id: "tf_4",
+                q: "4. Peripheral membrane proteins penetrate deep into the hydrophobic core of the phospholipid bilayer, extending completely from one side to another.",
+                options: ["True", "False"],
+                correct: 1,
+                exp: "False. Page 24 states that integral proteins penetrate the hydrophobic core and extend through the membrane. Peripheral proteins are NOT inserted in the bilayer; they are lightly attached to the surface."
+            },
+            {
+                id: "tf_5",
+                q: "5. In receptor-mediated endocytosis, specialized receptor proteins cluster in pits, forming coated vesicles when specific solutes attach to them.",
+                options: ["True", "False"],
+                correct: 0,
+                exp: "True. According to page 33 and Figure 2.26, special solutes bind to receptors, which cluster in pits, and each coated pit forms a vesicle surrounding the bound molecule inside the cytoplasm."
+            }
+        ],
+        fill: [
+            {
+                id: "fill_1",
+                q: "1. The net diffusion of water molecules across a selectively permeable membrane from a hypotonic solution to a hypertonic solution is called ___________.",
+                correct: "osmosis",
+                exp: "Osmosis is defined on page 29 and page 37 as the spontaneous net diffusion of water molecules across a selectively permeable membrane to equalize solution concentrations."
+            },
+            {
+                id: "fill_2",
+                q: "2. Cilia and flagella contain central structural supports composed entirely of the cytoskeleton fibers known as ___________.",
+                correct: "microtubules",
+                exp: "Page 21 explicitly notes that cilia and flagella are whip-like cell projections whose central structural supports are made of microtubules."
+            },
+            {
+                id: "fill_3",
+                q: "3. In contrast to passive diffusion, ___________ transport allows cells to gather necessary nutrients even if their external concentration is lower than inside the cell.",
+                correct: "active",
+                exp: "Page 30 details that active transport moves molecules against their concentration gradient, letting the cell gather necessary molecules even if external concentration is lower."
+            },
+            {
+                id: "fill_4",
+                q: "4. A membrane protein structure can function as an enzyme if it contains a(n) ___________ exposed to cellular molecules to carry out chemical reactions.",
+                correct: "active site",
+                exp: "According to page 25 and Figure 2.19, proteins of membrane structures can serve in enzymatic activity by exposing an active site that fits certain substrates."
+            },
+            {
+                id: "fill_5",
+                q: "5. The flexibility and physical position of transport proteins within the fluid mosaic model is anchored and mechanically stabilized by the lipid molecule called ___________.",
+                correct: "cholesterol",
+                exp: "Page 24 asserts that cholesterol prevents phospholipids from moving around too much and helps to anchor protein molecules inside the membrane framework."
+            }
+        ],
+        match: [
+            {
+                id: "m_1",
+                term: "1. Mitochondria",
+                correctIndex: 2,
+                exp: "Mitochondria are double-membrane structures with internal folds (cristae) where aerobic cellular respiration takes place to generate ATP (page 16, 35)."
+            },
+            {
+                id: "m_2",
+                term: "2. Chloroplast",
+                correctIndex: 0,
+                exp: "Chloroplasts contain green chlorophyll pigment and internal stroma/grana structures to convert light energy into carbohydrates via photosynthesis (page 17, 35)."
+            },
+            {
+                id: "m_3",
+                term: "3. Pinocytosis",
+                correctIndex: 4,
+                exp: "Pinocytosis, or cellular drinking, is the process by which extracellular fluids and dissolved materials are engulfed in small vesicles (page 33, 34)."
+            },
+            {
+                id: "m_4",
+                term: "4. Microfilaments (Actin)",
+                correctIndex: 1,
+                exp: "Microfilaments are composed of two intertwined actin strands (7 nm thick) that form a dense web beneath the plasma membrane to support structures like microvilli (page 19, 20)."
+            },
+            {
+                id: "m_5",
+                term: "5. Phagocytosis",
+                correctIndex: 3,
+                exp: "Phagocytosis, or cellular eating, involves extending pseudopodia to engulf large solid particles, such as white blood cells wrapping up bacteria (page 13, 33)."
+            }
+        ]
+    };
+
+    const matchListB = [
+        "A) Organelle containing chlorophyll, inner/outer membranes, stroma, and grana; the site of photosynthesis.",
+        "B) Two intertwined strands of actin (7nm diameter) that form a dense web beneath the plasma membrane for structural support.",
+        "C) The powerhouse of the cell; double-membrane bound with cristae folds, performing aerobic cellular respiration.",
+        "D) A mechanism of endocytosis ('cellular eating') where large solid particles or bacteria are enclosed in a large vacuole.",
+        "E) A mechanism of endocytosis ('cellular drinking') where the cell forms tiny vesicles around droplets of extracellular fluid."
+    ];
+
+    function checkAnswer(id, type, correctValue, explanationText) {
+        let isCorrect = false;
+        let feedbackMessage = "";
+
+        if (type === 'radio') {
+            const checkedOpt = document.querySelector(`input[name="${id}"]:checked`);
+            if (!checkedOpt) {
+                alert("Please select an option first!");
+                return;
+            }
+            const userIndex = parseInt(checkedOpt.value);
+            isCorrect = (userIndex === correctValue);
+        } else if (type === 'text') {
+            const txtInput = document.getElementById(`input_${id}`);
+            const userText = txtInput.value.trim().toLowerCase();
+            if (userText === "") {
+                alert("Please enter your answer in the blank field!");
+                return;
+            }
+            isCorrect = (userText === correctValue.toLowerCase());
+            feedbackMessage = `The correct answer is: <b>${correctValue}</b>. `;
+        } else if (type === 'select') {
+            const selectVal = document.getElementById(`select_${id}`);
+            const userSelIndex = parseInt(selectVal.value);
+            if (isNaN(userSelIndex)) {
+                alert("Please select a valid matching pair from the menu!");
+                return;
+            }
+            isCorrect = (userSelIndex === correctValue);
+        }
+
+        const feedbackDiv = document.getElementById(`feedback_${id}`);
+        const actionBtn = document.getElementById(`btn_${id}`);
+
+        if (isCorrect) {
+            feedbackDiv.innerHTML = `<strong>✔️ Correct!</strong><div class="explanation">${explanationText}</div>`;
+            feedbackDiv.className = "feedback correct";
+        } else {
+            feedbackDiv.innerHTML = `<strong>❌ Incorrect.</strong> ${feedbackMessage}<div class="explanation"><b>Correction details:</b> ${explanationText}</div>`;
+            feedbackDiv.className = "feedback incorrect";
+        }
+
+        actionBtn.disabled = true;
+        // Disable inputs
+        if (type === 'radio') {
+            document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+        } else if (type === 'text') {
+            document.getElementById(`input_${id}`).disabled = true;
+        } else if (type === 'select') {
+            document.getElementById(`select_${id}`).disabled = true;
+        }
+    }
+
+    function initExam() {
+        // Render MCQ
+        const mcqBox = document.getElementById('mcq-group');
+        examData.mcq.forEach(item => {
+            let optionsHTML = "";
+            item.options.forEach((opt, idx) => {
+                optionsHTML += `<label><input type="radio" name="${item.id}" value="${idx}"> ${opt}</label>`;
+            });
+            mcqBox.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${item.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${item.id}" class="check-btn" onclick="checkAnswer('${item.id}', 'radio', ${item.correct}, '${item.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${item.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render TF
+        const tfBox = document.getElementById('tf-group');
+        examData.tf.forEach(item => {
+            let optionsHTML = "";
+            item.options.forEach((opt, idx) => {
+                optionsHTML += `<label><input type="radio" name="${item.id}" value="${idx}"> ${opt}</label>`;
+            });
+            tfBox.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${item.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${item.id}" class="check-btn" onclick="checkAnswer('${item.id}', 'radio', ${item.correct}, '${item.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${item.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Fill blanks
+        const fillBox = document.getElementById('fill-group');
+        examData.fill.forEach(item => {
+            fillBox.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${item.q}</div>
+                    <input type="text" id="input_${item.id}" placeholder="Type the answer from the word bank..." autocomplete="off">
+                    <br>
+                    <button id="btn_${item.id}" class="check-btn" onclick="checkAnswer('${item.id}', 'text', '${item.correct}', '${item.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${item.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Matching
+        const matchBox = document.getElementById('match-group');
+        examData.match.forEach(item => {
+            let dropdownHTML = `<option value="none" selected disabled>--- Select Matching Option from List B ---</option>`;
+            listBItems = matchListB;
+            dropdownHTML += listBItems.map((val, idx) => `<option value="${idx}">${val}</option>`).join('');
+
+            matchBox.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${item.term}</div>
+                    <select id="select_${item.id}">${dropdownHTML}</select>
+                    <br>
+                    <button id="btn_${item.id}" class="check-btn" onclick="checkAnswer('${item.id}', 'select', ${item.correctIndex}, '${item.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${item.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = initExam;
+</script>
+
+</body>
+</html>
