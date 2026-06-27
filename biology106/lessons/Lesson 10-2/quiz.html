@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Endocrine System: Functions of the Pituitary, Thyroid, Parathyroid, and Adrenal Glands</title>
+    <style>
+        :root {
+            --primary: #006064;
+            --secondary: #00838f;
+            --accent: #ff8f00;
+            --bg: #e0f7fa;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f5e9;
+            --correct-text: #2e7d32;
+            --correct-border: #a5d6a7;
+            --incorrect-bg: #ffebee;
+            --incorrect-text: #c62828;
+            --incorrect-border: #ef9a9a;
+            --text: #263238;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 96, 100, 0.1);
+            border-top: 8px solid var(--primary);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #546e7a;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid #b2ebf2;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            background-color: #fcfdfe;
+            border: 1px solid #b2ebf2;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #cfd8dc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .options label:hover {
+            background: #e0f7fa;
+            border-color: var(--secondary);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fff8e1;
+            border: 2px dashed var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #ff8f00;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 480px;
+            padding: 12px;
+            border: 1px solid #b0bec5;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--secondary);
+        }
+
+        .check-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .check-btn:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-icon {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            line-height: 1.5;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>The Endocrine System: Functions of the Pituitary, Thyroid, Parathyroid, and Adrenal Glands</h1>
+    <p class="subtitle">Interactive Quiz (Chapter 10: Pages 13-29) - Test your understanding!</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Cortisol | Osteoclasts | Estrogen | Exophthalmic | Leptin
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match the term from the dropdown list to its correct definition.</p>
+    <div id="match-section"></div>
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "q_mcq_1",
+                q: "1. Which gland needs iodine to produce T3 and T4 hormones, and what happens if it lacks it?",
+                options: [
+                    "A) Parathyroid gland / Tetany",
+                    "B) Thyroid gland / Simple goiter",
+                    "C) Adrenal gland / Myxedema",
+                    "D) Thymus gland / Exophthalmic goiter"
+                ],
+                correct: 1, // B
+                correctStr: "B) Thyroid gland / Simple goiter",
+                exp: "Page 13 states that the thyroid gland needs iodine to produce T3 and T4. Without it, the gland enlarges due to continuous stimulation from the anterior pituitary, causing a simple goiter."
+            },
+            {
+                id: "q_mcq_2",
+                q: "2. What is the primary function of the hormone calcitonin?",
+                options: [
+                    "A) It increases blood calcium levels by stimulating osteoclasts.",
+                    "B) It decreases blood glucose levels by storing it as glycogen.",
+                    "C) It deposits calcium in the bone by stimulating osteoblasts and inhibiting osteoclasts.",
+                    "D) It activates vitamin D in the kidneys."
+                ],
+                correct: 2, // C
+                correctStr: "C) It deposits calcium in the bone by stimulating osteoblasts and inhibiting osteoclasts.",
+                exp: "Pages 14-15 explain that calcitonin is released when blood calcium is high. It deposits calcium in bone by stimulating osteoblasts (which build bone) and inhibiting osteoclasts (which break down bone)."
+            },
+            {
+                id: "q_mcq_3",
+                q: "3. Abnormally decreased production of Parathyroid Hormone (PTH) leads to a condition called hypoparathyroidism. What is the main symptom of this condition?",
+                options: [
+                    "A) Soft and fragile bones",
+                    "B) Weight gain and lethargy",
+                    "C) High blood pressure and stroke",
+                    "D) Tetany (body shakes due to continuous muscle contraction)"
+                ],
+                correct: 3, // D
+                correctStr: "D) Tetany (body shakes due to continuous muscle contraction)",
+                exp: "Page 15 states that decreased PTH drops calcium levels in the blood, causing tetany, which is characterized by spontaneous continuous muscle contraction and body shakes."
+            },
+            {
+                id: "q_mcq_4",
+                q: "4. Which part of the adrenal gland produces epinephrine and norepinephrine for short-term emergency situations?",
+                options: [
+                    "A) Adrenal medulla",
+                    "B) Adrenal cortex",
+                    "C) Islets of Langerhans",
+                    "D) Pineal gland"
+                ],
+                correct: 0, // A
+                correctStr: "A) Adrenal medulla",
+                exp: "Page 17 explains that the adrenal medulla produces Adrenaline (epinephrine) and noradrenaline (norepinephrine) which function for short periods in emergency situations."
+            },
+            {
+                id: "q_mcq_5",
+                q: "5. Which non-steroid hormone is produced by the kidneys to stimulate the production of red blood cells?",
+                options: [
+                    "A) Melatonin",
+                    "B) Leptin",
+                    "C) Prostaglandins",
+                    "D) Erythropoietin (EPO)"
+                ],
+                correct: 3, // D
+                correctStr: "D) Erythropoietin (EPO)",
+                exp: "Pages 23-24 state that Erythropoietin (EPO) is a hormone produced by the kidneys due to low oxygen levels to stimulate the production and maturation of red blood cells."
+            }
+        ],
+        tf: [
+            {
+                id: "q_tf_1",
+                q: "1. Insulin is secreted by the pancreas to increase the uptake of glucose by cells, thereby lowering the level of glucose in the blood.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 20 explains that insulin is secreted when blood glucose is high (e.g., after a meal) to increase cellular uptake of glucose and store it as glycogen, thus lowering blood glucose levels."
+            },
+            {
+                id: "q_tf_2",
+                q: "2. The pineal gland secretes melatonin primarily during daylight to promote waking up.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 22 states that melatonin is produced principally at NIGHT. Its secretion is increased by darkness (causing sleep) and decreased by daylight (causing waking up)."
+            },
+            {
+                id: "q_tf_3",
+                q: "3. The thymus gland grows to its maximum size and activity during adulthood.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 23 explicitly states that the thymus gland grows to its maximum size and activity during CHILDHOOD, and its size and activity minimize with age."
+            },
+            {
+                id: "q_tf_4",
+                q: "4. Glucagon is secreted when the blood glucose level is low to transform glycogen back into glucose.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 20 states that glucagon is secreted when blood glucose is low (e.g., between meals) to transform glycogen back into glucose in the liver and muscles."
+            },
+            {
+                id: "q_tf_5",
+                q: "5. Aldosterone causes the kidneys to excrete sodium (Na), leading to a decrease in blood volume and pressure.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 17 explains that aldosterone causes the kidneys to REABSORB sodium (and water follows), which INCREASES blood volume and pressure. ANH is the hormone that causes excretion of Na."
+            }
+        ],
+        fill: [
+            {
+                id: "q_fill_1",
+                q: "1. Hyperthyroidism is also known as Graves' disease or _________ goiter because tissues behind the eyes swell and cause them to pop out.",
+                correct: "Exophthalmic",
+                exp: "Page 14 states that overactive thyroid causes hyperthyroidism, also known as Graves' disease or exophthalmic goiter due to edema swelling behind the eye."
+            },
+            {
+                id: "q_fill_2",
+                q: "2. Parathyroid hormone (PTH) regulates blood calcium by stimulating _________ activity to release calcium from the bones into the blood.",
+                correct: "Osteoclasts",
+                exp: "Page 15 mentions that PTH regulates blood calcium by stimulating osteoclasts activity, which releases calcium from the bones."
+            },
+            {
+                id: "q_fill_3",
+                q: "3. The adrenal cortex is stimulated by ACTH to secrete glucocorticoids like _________ for carbohydrate, protein, and fat metabolism.",
+                correct: "Cortisol",
+                exp: "Page 17 explains that the adrenal cortex secretes glucocorticoids (e.g. Cortisol) that function for the regulation of metabolism to increase blood glucose."
+            },
+            {
+                id: "q_fill_4",
+                q: "4. In females, the ovaries produce _________, which works for egg maturation and maintaining secondary sex characteristics like fat distribution.",
+                correct: "Estrogen",
+                exp: "Page 22 states that estrogen is working for egg maturation and functions for causing and maintaining secondary sex characteristics of females, including fat distribution."
+            },
+            {
+                id: "q_fill_5",
+                q: "5. _________ is a peptide hormone secreted from adipose tissue that plays a significant role in appetite control feedback.",
+                correct: "Leptin",
+                exp: "Page 23 describes Leptin as a non-steroid hormone secreted from adipose tissue that attaches to neurons in the CNS to control appetite and bring about feelings of satiation."
+            }
+        ],
+        match: [
+            {
+                id: "q_match_1",
+                term: "1. Myxedema",
+                correctIndex: 2, // Matches C
+                correctStr: "A pathological condition of severe hypothyroidism in adults characterized by weight gain, lethargy, and puffiness.",
+                exp: "Glossary (Page 28) and Page 13: Myxedema is a condition of severe hypothyroidism in adults characterized by weight gain, lethargy, firm inelastic edema, and puffiness."
+            },
+            {
+                id: "q_match_2",
+                term: "2. Islets of Langerhans",
+                correctIndex: 0, // Matches A
+                correctStr: "Endocrine tissue in the pancreas responsible for producing insulin and glucagon.",
+                exp: "Page 20: The endocrine tissue in the pancreas is named islets of Langerhans, responsible for the production and secretion of insulin and glucagon."
+            },
+            {
+                id: "q_match_3",
+                term: "3. Tetany",
+                correctIndex: 4, // Matches E
+                correctStr: "A condition characterized by body shakes and continuous muscle contraction due to low blood calcium.",
+                exp: "Glossary (Page 29) and Page 15: Tetany is a condition characterized by calcium imbalance causing severe continuous muscle contraction (spasms) and body shakes."
+            },
+            {
+                id: "q_match_4",
+                term: "4. ANH (Atrial natriuretic hormone)",
+                correctIndex: 1, // Matches B
+                correctStr: "Secreted by the heart to promote excretion of water and salt, aiming to decrease blood pressure.",
+                exp: "Glossary (Page 27) and Page 17: ANH is secreted by the atria of the heart to promote the excretion of sodium and water, thus decreasing blood volume and pressure."
+            },
+            {
+                id: "q_match_5",
+                term: "5. Prostaglandins",
+                correctIndex: 3, // Matches D
+                correctStr: "Local chemical signals that function to cause pain and mediate the effects of pyrogens.",
+                exp: "Page 24: Prostaglandins are local hormones (chemical signals) that function to cause pain and mediate the effects of pyrogens (which regulate temperature)."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) Endocrine tissue in the pancreas responsible for producing insulin and glucagon.",
+        "B) Secreted by the heart to promote excretion of water and salt, aiming to decrease blood pressure.",
+        "C) A pathological condition of severe hypothyroidism in adults characterized by weight gain, lethargy, and puffiness.",
+        "D) Local chemical signals that function to cause pain and mediate the effects of pyrogens.",
+        "E) A condition characterized by body shakes and continuous muscle contraction due to low blood calcium."
+    ];
+
+    function checkAnswer(id, type, correctValue, correctString, explanation) {
+        let isCorrect = false;
+
+        if (type === 'radio') {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("Please select an answer before checking!");
+                return;
+            }
+            const userIndex = parseInt(selected.value);
+            isCorrect = (userIndex === correctValue);
+        } else if (type === 'text') {
+            const inputElement = document.getElementById(`input_${id}`);
+            const userText = inputElement.value.trim().toLowerCase();
+            if (userText === "") {
+                alert("Please type a word from the bank!");
+                return;
+            }
+            isCorrect = (userText === correctValue.toLowerCase());
+        } else if (type === 'select') {
+            const selectElement = document.getElementById(`select_${id}`);
+            const userIndex = parseInt(selectElement.value);
+            if (isNaN(userIndex)) {
+                alert("Please select a definition from the dropdown list!");
+                return;
+            }
+            isCorrect = (userIndex === correctValue);
+        }
+
+        const feedbackBox = document.getElementById(`feedback_${id}`);
+        const submitBtn = document.getElementById(`btn_${id}`);
+
+        if (isCorrect) {
+            feedbackBox.className = "feedback correct";
+            feedbackBox.innerHTML = `<span class="feedback-icon">✔️ Correct!</span>
+                                     <div class="explanation">${explanation}</div>`;
+        } else {
+            feedbackBox.className = "feedback incorrect";
+            feedbackBox.innerHTML = `<span class="feedback-icon">❌ Incorrect.</span> The correct answer is: <b>${correctString}</b>
+                                     <div class="explanation"><b>Why is this the best choice?</b><br>${explanation}</div>`;
+        }
+
+        submitBtn.disabled = true;
+        
+        // Disable inputs after checking
+        if (type === 'radio') {
+            document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+        } else if (type === 'text') {
+            document.getElementById(`input_${id}`).disabled = true;
+        } else if (type === 'select') {
+            document.getElementById(`select_${id}`).disabled = true;
+        }
+    }
+
+    function init() {
+        // Generate MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Fill in the Blanks
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type the answer from the word bank..." autocomplete="off">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'text', '${q.correct}', '${q.correct.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Matching
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let selectStr = `<option value="none" selected disabled>--- Select Corresponding Definition ---</option>`;
+            matchDefinitions.forEach((def, idx) => {
+                selectStr += `<option value="${idx}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${selectStr}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'select', ${q.correctIndex}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>

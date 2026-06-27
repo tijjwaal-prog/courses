@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Division: The Mitotic of an Animal Cell</title>
+    <style>
+        :root {
+            --primary: #283593;
+            --secondary: #3949ab;
+            --accent: #ffca28;
+            --bg: #f5f5f6;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f5e9;
+            --correct-text: #2e7d32;
+            --correct-border: #81c784;
+            --incorrect-bg: #ffebee;
+            --incorrect-text: #c62828;
+            --incorrect-border: #e57373;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-top: 6px solid var(--accent);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.3em;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 35px;
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid #c5cae9;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border: 1px solid #cfd8dc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .options label:hover {
+            background-color: #e8eaf6;
+            border-color: var(--secondary);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fff8e1;
+            border: 2px dashed #ffca28;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #f57f17;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 450px;
+            padding: 12px;
+            border: 1px solid #b0bec5;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            outline: none;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .check-btn {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .check-btn:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: fadeInDown 0.4s ease-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-top: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cell Division: The Mitotic of an Animal Cell</h1>
+    <p class="subtitle">Read each question carefully. Select or type your answer and click "Check Answer" for immediate feedback.</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        [ Word Bank: Kinetochore | Chromatin | Cleavage | Centrosome | Interphase ]
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match the correct definition to each phase or term.</p>
+    <div id="match-section"></div>
+
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "mcq1",
+                q: "1. What is the correct sequence of the cell cycle phases?",
+                options: ["A) G1 -> M -> G2 -> S", "B) S -> G1 -> G2 -> M", "C) G1 -> S -> G2 -> M", "D) M -> G1 -> S -> G2"],
+                correct: 2, // C
+                exp: "The correct sequence is G1 (first gap/growth), S (DNA synthesis), G2 (second gap), and finally M (Mitotic phase)."
+            },
+            {
+                id: "mcq2",
+                q: "2. During which specific phase of mitosis do the chromosomes align perfectly at the cell equator?",
+                options: ["A) Prophase", "B) Metaphase", "C) Anaphase", "D) Telophase"],
+                correct: 1, // B
+                exp: "During Metaphase, the spindle fibers attach to the centromeres and pull the chromosomes until they are lined up along the metaphase plate (the equator of the cell)."
+            },
+            {
+                id: "mcq3",
+                q: "3. What is the primary function of the S phase during interphase?",
+                options: ["A) The cell divides its cytoplasm.", "B) The cell replicates its DNA.", "C) The nuclear envelope breaks down.", "D) The cell enters a resting state."],
+                correct: 1, // B
+                exp: "The S phase stands for Synthesis. During this phase, the cell replicates its genetic material (DNA) so that each new daughter cell receives a complete set."
+            },
+            {
+                id: "mcq4",
+                q: "4. By the end of normal mitotic cell division in an animal cell, what is the final outcome?",
+                options: ["A) Four genetically different haploid cells.", "B) Two genetically different diploid cells.", "C) Four genetically identical diploid cells.", "D) Two genetically identical diploid cells."],
+                correct: 3, // D
+                exp: "Mitosis ensures that the original parent cell divides to produce two daughter cells that are genetically identical to each other and to the parent cell (diploid)."
+            },
+            {
+                id: "mcq5",
+                q: "5. In an animal cell, what structure forms during cytokinesis to divide the cell in half?",
+                options: ["A) Cell plate", "B) Cleavage furrow", "C) Nuclear envelope", "D) Spindle equator"],
+                correct: 1, // B
+                exp: "Unlike plant cells which form a cell plate, animal cells form a cleavage furrow. A contractile ring of microfilaments pinches the plasma membrane inward until the cell divides."
+            }
+        ],
+        tf: [
+            {
+                id: "tf1",
+                q: "1. Interphase is the shortest part of the cell cycle, while the mitotic phase takes the majority of the time.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Interphase is actually the longest part of the cell cycle (often taking 90% of the time), during which the cell grows and copies its DNA."
+            },
+            {
+                id: "tf2",
+                q: "2. Sister chromatids are pulled apart and move toward opposite poles of the cell during anaphase.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. During anaphase, the centromeres split, and spindle fibers pull the sister chromatids (now individual chromosomes) toward the opposite poles."
+            },
+            {
+                id: "tf3",
+                q: "3. The nuclear envelope begins to reform around the chromosomes during prophase.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. The nuclear envelope breaks down during prophase to allow spindle fibers to reach the chromosomes. It reforms later during telophase."
+            },
+            {
+                id: "tf4",
+                q: "4. The mitotic spindle in animal cells is organized by structures known as centrioles.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. In animal cells, the centrosome contains a pair of centrioles which help organize the microtubule network that forms the mitotic spindle."
+            },
+            {
+                id: "tf5",
+                q: "5. Mitosis is used by multicellular animals primarily for sexual reproduction.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Mitosis is used for growth, tissue repair, and replacing dead cells. Meiosis is the specialized division used for sexual reproduction."
+            }
+        ],
+        fill: [
+            {
+                id: "fill1",
+                q: "1. During the non-dividing phase, DNA exists in a loose, thread-like uncoiled mass known as _________.",
+                correct: "Chromatin",
+                exp: "Before condensing into distinct chromosomes during prophase, the genetic material in the nucleus is a loose mass called chromatin."
+            },
+            {
+                id: "fill2",
+                q: "2. The protein complex located on the centromere to which spindle fibers attach is called the _________.",
+                correct: "Kinetochore",
+                exp: "Spindle fibers attach to the kinetochore, a specialized protein structure found at the centromere of each chromosome."
+            },
+            {
+                id: "fill3",
+                q: "3. Animal cells divide their cytoplasm by pinching inward, forming a shallow groove called a _________ furrow.",
+                correct: "Cleavage",
+                exp: "The cleavage furrow deepens as an actin ring contracts, eventually separating the animal cell into two distinct cells."
+            },
+            {
+                id: "fill4",
+                q: "4. The main microtubule-organizing center of the animal cell, which duplicates before division, is the _________.",
+                correct: "Centrosome",
+                exp: "The centrosome contains the centrioles. It duplicates during interphase and moves to opposite poles to form the spindle."
+            },
+            {
+                id: "fill5",
+                q: "5. The phase encompassing G1, S, and G2 where the cell prepares for division is collectively called _________.",
+                correct: "Interphase",
+                exp: "Interphase is the preparatory phase where the cell performs its normal functions, grows, and replicates its DNA."
+            }
+        ],
+        match: [
+            {
+                id: "m1",
+                term: "1. Prophase",
+                correctIndex: 2,
+                exp: "During prophase, chromatin condenses into visible chromosomes, the nuclear envelope breaks down, and the spindle begins to form."
+            },
+            {
+                id: "m2",
+                term: "2. Telophase",
+                correctIndex: 4,
+                exp: "Telophase is often called the reverse of prophase. Chromosomes begin to uncoil, and a new nuclear envelope forms around each set."
+            },
+            {
+                id: "m3",
+                term: "3. Centromere",
+                correctIndex: 0,
+                exp: "The centromere is the constricted region of a chromosome where two sister chromatids are tightly joined together."
+            },
+            {
+                id: "m4",
+                term: "4. Cytokinesis",
+                correctIndex: 3,
+                exp: "Cytokinesis is the final physical division of the cytoplasm and cell membrane, splitting the parent cell into two daughter cells."
+            },
+            {
+                id: "m5",
+                term: "5. Anaphase",
+                correctIndex: 1,
+                exp: "During anaphase, the sister chromatids are forcibly separated and pulled to the opposite poles of the cell."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) The narrow region where two sister chromatids are held together.",
+        "B) The phase where sister chromatids separate and move toward opposite poles.",
+        "C) The phase where chromatin condenses into visible chromosomes and the spindle forms.",
+        "D) The actual physical division of the cytoplasm into two separate cells.",
+        "E) The phase where chromosomes uncoil and the nuclear envelope reforms."
+    ];
+
+    function checkRadio(id, correctVal, explanation) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (!selected) {
+            alert("Please select an option first.");
+            return;
+        }
+
+        const userVal = parseInt(selected.value);
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect.</div>
+                                  <div class="explanation"><b>Why the correct option is better:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+    }
+
+    function checkText(id, correctVal, explanation) {
+        const input = document.getElementById(`input_${id}`);
+        const userVal = input.value.trim().toLowerCase();
+
+        if (userVal === "") {
+            alert("Please type an answer from the word bank.");
+            return;
+        }
+
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal.toLowerCase()) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect. The correct word is '${correctVal}'.</div>
+                                  <div class="explanation"><b>Explanation:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        input.disabled = true;
+    }
+
+    function checkSelect(id, correctVal, explanation) {
+        const select = document.getElementById(`select_${id}`);
+        const userVal = parseInt(select.value);
+
+        if (isNaN(userVal)) {
+            alert("Please select a definition from the list.");
+            return;
+        }
+
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct Match!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect Match.</div>
+                                  <div class="explanation"><b>Why this is the correct match:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        select.disabled = true;
+    }
+
+    function renderQuiz() {
+        // Render MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsHTML = '';
+            q.options.forEach((opt, index) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${index}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkRadio('${q.id}', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsHTML = '';
+            q.options.forEach((opt, index) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${index}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkRadio('${q.id}', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Fill
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type your answer here..." autocomplete="off">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkText('${q.id}', '${q.correct}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Match
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let optionsHTML = `<option value="none" selected disabled>-- Select the correct definition --</option>`;
+            matchDefinitions.forEach((def, index) => {
+                optionsHTML += `<option value="${index}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${optionsHTML}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkSelect('${q.id}', ${q.correctIndex}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    // Initialize Quiz
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
