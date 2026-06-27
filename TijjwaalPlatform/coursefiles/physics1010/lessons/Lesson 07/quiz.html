@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Quiz: Heat Transfer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #fffbeb; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .disabled-card { pointer-events: none; opacity: 0.85; }
+        
+        /* Custom styling for physics equations */
+        .eq { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.15em; font-weight: 500; color: #78350f; }
+        .math-symbol { font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-orange-600 to-amber-500 text-white rounded-3xl p-8 mb-10 shadow-lg text-center fade-in">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">Heat Transfer</h1>
+            <p class="text-orange-50 text-lg md:text-xl font-medium">General Physics (1) - Interactive Quiz</p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
+                <span class="bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm">20 Questions</span>
+                <span class="bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm">Immediate Feedback</span>
+                <span class="bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm">Physics Equations</span>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12"></div>
+        
+        <!-- Completion Section -->
+        <div id="completion-message" class="hidden text-center mt-12 mb-12 fade-in">
+            <div class="bg-white p-8 rounded-3xl shadow-xl border-2 border-orange-100">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Quiz Completed! 🔥</h2>
+                <p class="text-lg text-slate-600">You have completed the Heat Transfer assessment. Review your detailed feedback below.</p>
+                <div class="mt-6 text-5xl font-black text-orange-500 drop-shadow-sm" id="final-score"></div>
+                <button onclick="location.reload()" class="mt-8 bg-orange-500 text-white px-8 py-3 rounded-xl font-bold text-lg hover:bg-orange-600 hover:shadow-lg transition-all transform hover:-translate-y-1">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Model based on General Physics (1) - Heat Transfer (Pages 100-112)
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                id: 1, section: "Multiple Choice", type: "mcq",
+                question: "According to Fourier's Law of heat conduction (<span class='eq'>P<sub>cond</sub> = kA&Delta;T / L</span>), what happens to the rate of heat transfer if the thickness (<span class='eq'>L</span>) of the material is doubled?",
+                options: [
+                    "It is doubled.", 
+                    "It remains the same.", 
+                    "It is halved.", 
+                    "It increases by a factor of 4."
+                ],
+                correct: 2,
+                explanation: "The rate of heat conduction (<span class='eq'>P<sub>cond</sub></span>) is inversely proportional to the thickness (<span class='eq'>L</span>). Therefore, if the thickness is doubled (<span class='eq'>2L</span>), the heat transfer rate becomes half of its original value."
+            },
+            {
+                id: 2, section: "Multiple Choice", type: "mcq",
+                question: "According to the Stefan-Boltzmann Law, the power radiated by a blackbody is proportional to <span class='eq'>T<sup>4</sup></span>. If the absolute temperature of a blackbody is doubled (e.g., from 300 K to 600 K), by what factor does the radiated power increase?",
+                options: ["2", "4", "8", "16"],
+                correct: 3,
+                explanation: "Because power scales with the fourth power of absolute temperature (<span class='eq'>P &prop; T<sup>4</sup></span>), doubling the temperature results in an increase of <span class='eq'>2<sup>4</sup> = 16</span> times the original radiated power."
+            },
+            {
+                id: 3, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A glass window has an area of <span class='eq'>2.0 m<sup>2</sup></span> and a thickness of <span class='eq'>0.005 m</span>. If the temperature difference across the glass is <span class='eq'>20&deg;C</span>, what is the rate of heat conduction? (Given: <span class='eq'>k<sub>glass</sub> = 1.0 W/m&middot;K</span>)",
+                options: ["8,000 W", "4,000 W", "800 W", "16,000 W"],
+                correct: 0,
+                explanation: "Using <span class='eq'>P<sub>cond</sub> = kA&Delta;T / L</span>:<br> P = (1.0 W/m&middot;K) &times; (2.0 m<sup>2</sup>) &times; (20 K) / (0.005 m) = 40 / 0.005 = <strong>8,000 W</strong>. (Note: A temperature difference in &deg;C is exactly equal to a difference in Kelvin)."
+            },
+            {
+                id: 4, section: "Multiple Choice", type: "mcq",
+                question: "When calculating the steady-state heat conduction through a <i>compound slab</i> consisting of two materials in series, which of the following properties is the same for both materials?",
+                options: [
+                    "The temperature difference across each layer.",
+                    "The thermal conductivity (<span class='math-symbol'>k</span>).",
+                    "The rate of heat transfer (<span class='eq'>P<sub>cond</sub></span>).",
+                    "The thermal resistance (<span class='math-symbol'>R</span>)."
+                ],
+                correct: 2,
+                explanation: "In a steady state, energy cannot accumulate in the boundary between the materials. Thus, the rate at which heat enters the first layer must exactly equal the rate at which it passes through the second layer (<span class='eq'>P<sub>1</sub> = P<sub>2</sub> = P<sub>total</sub></span>)."
+            },
+            {
+                id: 5, section: "Multiple Choice", type: "mcq",
+                question: "What is the physical meaning of the emissivity (<span class='math-symbol'>&epsilon;</span>) of an object's surface?",
+                options: [
+                    "It is a measure of how well a material conducts heat.",
+                    "It is the ratio of an object's radiated power to that of a perfect blackbody at the same temperature.",
+                    "It is the minimum temperature required to emit visible light.",
+                    "It describes the specific heat capacity of the surface layer."
+                ],
+                correct: 1,
+                explanation: "Emissivity (<span class='math-symbol'>&epsilon;</span>) is a dimensionless number between 0 and 1 that characterizes how effectively a surface emits thermal radiation compared to an ideal blackbody (<span class='eq'>&epsilon; = 1</span>)."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                id: 6, section: "True / False", type: "tf",
+                question: "Thermal conductivity (<span class='math-symbol'>k</span>) depends on the size and shape (geometry) of the object.",
+                correct: false,
+                explanation: "Thermal conductivity (<span class='math-symbol'>k</span>) is an <i>intrinsic</i> physical property of the material itself (like copper vs. wood). It does not depend on the object's geometry. Thermal <i>resistance</i> (<span class='eq'>R = L/k</span>), however, does depend on geometry."
+            },
+            {
+                id: 7, section: "True / False", type: "tf",
+                question: "Heat transfer by convection requires the presence of a fluid (liquid or gas) medium.",
+                correct: true,
+                explanation: "Convection involves the physical bulk movement of a heated fluid displacing a cooler fluid. Therefore, it cannot happen in a solid or a vacuum; it strictly requires a fluid medium."
+            },
+            {
+                id: 8, section: "True / False", type: "tf",
+                question: "A perfect reflector (such as a highly polished silver mirror) has an emissivity value of <span class='eq'>&epsilon; = 1</span>.",
+                correct: false,
+                explanation: "A perfect blackbody (perfect absorber/emitter) has an emissivity of <span class='eq'>&epsilon; = 1</span>. A perfect reflector absorbs nothing and emits nothing, so its emissivity is <span class='eq'>&epsilon; = 0</span>."
+            },
+            {
+                id: 9, section: "True / False", type: "tf",
+                question: "The net rate of radiation of an object depends on both its own temperature (<span class='eq'>T</span>) and the temperature of its surrounding environment (<span class='eq'>T<sub>env</sub></span>).",
+                correct: true,
+                explanation: "An object both emits radiation to its environment and absorbs radiation from it. The net power is given by <span class='eq'>P<sub>net</sub> = &sigma;&epsilon;A(T<sup>4</sup> - T<sub>env</sub><sup>4</sup>)</span>."
+            },
+            {
+                id: 10, section: "True / False", type: "tf",
+                question: "In the formula for thermal radiation, the temperature (<span class='eq'>T</span>) can be plugged in using the Celsius scale.",
+                correct: false,
+                explanation: "In the Stefan-Boltzmann law (<span class='eq'>P = &sigma;&epsilon;AT<sup>4</sup></span>), the temperature <strong>must</strong> be strictly in absolute units (Kelvin). Using Celsius will yield completely incorrect results because the relationship is not based on a temperature difference, but an absolute power."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                id: 11, section: "Fill in the Blanks", type: "fib",
+                question: "The transfer of heat by the macroscopic movement of mass within a fluid is called ______.",
+                correct: "Convection",
+                explanation: "In convection, warmer, less dense fluid rises while cooler, denser fluid sinks, creating convection currents that transfer heat."
+            },
+            {
+                id: 12, section: "Fill in the Blanks", type: "fib",
+                question: "The intrinsic property of a material that determines its ability to conduct heat is its ______.",
+                correct: "Thermal Conductivity",
+                explanation: "Metals typically have high thermal conductivity (they are conductors), while materials like wood or fiberglass have low thermal conductivity (they are insulators)."
+            },
+            {
+                id: 13, section: "Fill in the Blanks", type: "fib",
+                question: "An idealized object that absorbs all incident electromagnetic radiation is known as a ______.",
+                correct: "Blackbody",
+                explanation: "A blackbody is a perfect absorber and, consequently, a perfect emitter of thermal radiation, serving as the theoretical standard with an emissivity of 1."
+            },
+            {
+                id: 14, section: "Fill in the Blanks", type: "fib",
+                question: "Radiation transfers heat via ______ waves, allowing it to occur even across the vacuum of space.",
+                correct: "Electromagnetic",
+                explanation: "Unlike conduction and convection, radiation does not require a physical medium. The heat from the Sun reaches Earth exclusively via electromagnetic radiation (infrared, visible, etc.)."
+            },
+            {
+                id: 15, section: "Fill in the Blanks", type: "fib",
+                question: "In the construction and insulation industry, the insulating property of a material is commonly measured by its ______.",
+                correct: "R-value",
+                explanation: "The R-value represents thermal resistance (<span class='eq'>R = L/k</span>). A higher R-value indicates better insulation (less heat flow)."
+            },
+
+            // --- MATCHING ---
+            {
+                id: 16, section: "Matching", type: "match",
+                question: "Symbol: <span class='eq'>k</span>",
+                correct: "D",
+                explanation: "The symbol <span class='eq'>k</span> represents thermal conductivity in Fourier's law of heat conduction."
+            },
+            {
+                id: 17, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>P<sub>rad</sub> = &sigma;&epsilon;AT<sup>4</sup></span>",
+                correct: "E",
+                explanation: "This is the Stefan-Boltzmann Law, which calculates the total power radiated by an object's surface due to its temperature."
+            },
+            {
+                id: 18, section: "Matching", type: "match",
+                question: "Concept: Steady-State",
+                correct: "C",
+                explanation: "Steady-state occurs when the temperature profile through a material stops changing with time, meaning heat enters and leaves at the exact same constant rate."
+            },
+            {
+                id: 19, section: "Matching", type: "match",
+                question: "Constant: <span class='eq'>&sigma;</span> (5.67 &times; 10<sup>-8</sup> W/m<sup>2</sup>&middot;K<sup>4</sup>)",
+                correct: "A",
+                explanation: "This is the Stefan-Boltzmann constant, a fundamental physical constant used in calculating thermal radiation."
+            },
+            {
+                id: 20, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>R = L/k</span>",
+                correct: "B",
+                explanation: "This equation defines the thermal resistance (R) of a single slab of material of thickness L and thermal conductivity k."
+            }
+        ];
+
+        // Shared resources for specific sections
+        const wordBank = ["Convection", "Thermal Conductivity", "Blackbody", "Electromagnetic", "R-value"];
+        const matchOptions = [
+            { letter: "A", text: "The Stefan-Boltzmann constant." },
+            { letter: "B", text: "Equation for the thermal resistance of a uniform material slab." },
+            { letter: "C", text: "A condition where temperatures within a system no longer change over time." },
+            { letter: "D", text: "Symbol for the intrinsic thermal conductivity of a material." },
+            { letter: "E", text: "Stefan-Boltzmann Law for the rate of emitted radiation." }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        // Render the Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const sections = ["Multiple Choice", "True / False", "Fill in the Blanks", "Matching"];
+
+            sections.forEach(sectionTitle => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "mb-14";
+                
+                const sectionHeader = document.createElement('h2');
+                sectionHeader.className = "text-2xl md:text-3xl font-extrabold text-orange-800 border-b-4 border-orange-200 pb-3 mb-8";
+                sectionHeader.innerText = sectionTitle;
+                sectionDiv.appendChild(sectionHeader);
+
+                if (sectionTitle === "Fill in the Blanks") {
+                    const wbDiv = document.createElement('div');
+                    wbDiv.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-orange-100";
+                    wbDiv.innerHTML = `<h3 class="font-bold text-orange-700 mb-3 text-sm uppercase tracking-widest">Word Bank (Select from these)</h3>
+                                       <div class="flex flex-wrap gap-3">${wordBank.sort().map(w => `<span class="bg-orange-50 border border-orange-200 px-4 py-1.5 rounded-lg text-orange-900 font-semibold shadow-sm">${w}</span>`).join('')}</div>`;
+                    sectionDiv.appendChild(wbDiv);
+                } else if (sectionTitle === "Matching") {
+                    const matchTable = document.createElement('div');
+                    matchTable.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-orange-100";
+                    matchTable.innerHTML = `<h3 class="font-bold text-orange-700 mb-4 text-sm uppercase tracking-widest">List B (Definitions & Equations)</h3>
+                                            <ul class="space-y-3">
+                                                ${matchOptions.map(opt => `<li class="flex gap-4 p-3 bg-amber-50/50 rounded-lg border border-amber-100"><strong class="text-orange-600 font-black text-lg">${opt.letter}</strong> <span class="text-slate-800 font-medium">${opt.text}</span></li>`).join('')}
+                                            </ul>`;
+                    sectionDiv.appendChild(matchTable);
+                }
+
+                const sectionQuestions = quizData.filter(q => q.section === sectionTitle);
+                
+                sectionQuestions.forEach((q, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = "bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-orange-100 mb-6 transition-all relative overflow-hidden group hover:border-orange-300 hover:shadow-md";
+                    qCard.id = `q-card-${q.id}`;
+
+                    let interactionHTML = '';
+
+                    if (q.type === 'mcq') {
+                        interactionHTML = `<div class="mt-6 grid gap-3">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="checkAnswer(${q.id}, ${i})" id="btn-${q.id}-${i}" 
+                                class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-orange-400 hover:bg-orange-50 transition-all font-medium text-slate-700 text-lg flex items-center gap-4">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 font-bold text-sm shrink-0">${String.fromCharCode(65 + i)}</span> 
+                                    <span>${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>`;
+                    } else if (q.type === 'tf') {
+                        interactionHTML = `<div class="mt-6 flex gap-4">
+                            <button onclick="checkAnswer(${q.id}, true)" id="btn-${q.id}-true" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-orange-400 hover:bg-orange-50 transition-all font-bold text-xl text-slate-700 shadow-sm">True</button>
+                            <button onclick="checkAnswer(${q.id}, false)" id="btn-${q.id}-false" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-orange-400 hover:bg-orange-50 transition-all font-bold text-xl text-slate-700 shadow-sm">False</button>
+                        </div>`;
+                    } else if (q.type === 'fib') {
+                        interactionHTML = `<div class="mt-6">
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full md:w-2/3 p-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-lg font-semibold text-slate-700 cursor-pointer shadow-sm transition-all">
+                                <option value="" disabled selected>--- Select the correct word ---</option>
+                                ${wordBank.sort().map(w => `<option value="${w}">${w}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    } else if (q.type === 'match') {
+                        interactionHTML = `<div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-500 text-sm uppercase tracking-wider whitespace-nowrap">Matches with list B:</span>
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full p-4 rounded-xl border-2 border-slate-200 bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 font-bold text-slate-700 cursor-pointer shadow-sm transition-all text-center">
+                                <option value="" disabled selected>--- Select Option ---</option>
+                                ${matchOptions.map(o => `<option value="${o.letter}">Option ${o.letter}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    }
+
+                    qCard.innerHTML = `
+                        <div class="flex gap-5">
+                            <div class="bg-orange-100 text-orange-700 w-10 h-10 rounded-full flex items-center justify-center font-black text-lg flex-shrink-0 shadow-inner">${index + 1}</div>
+                            <div class="flex-1 text-xl font-semibold text-slate-800 leading-relaxed">${q.question}</div>
+                        </div>
+                        ${interactionHTML}
+                        <div id="feedback-${q.id}" class="mt-6 hidden rounded-2xl p-5 text-base animate-fadeIn border-l-4 shadow-sm"></div>
+                    `;
+                    sectionDiv.appendChild(qCard);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle Evaluation
+        function checkAnswer(questionId, userAnswer) {
+            const questionData = quizData.find(q => q.id === questionId);
+            const isCorrect = userAnswer === questionData.correct;
+            const card = document.getElementById(`q-card-${questionId}`);
+            const feedbackBox = document.getElementById(`feedback-${questionId}`);
+
+            card.classList.add('disabled-card');
+            card.classList.remove('hover:border-orange-300', 'hover:shadow-md');
+            
+            let correctIndicator = '';
+            let explanationText = `<div class="mt-3 text-slate-700 font-medium leading-relaxed bg-white/60 p-4 rounded-xl border border-white/50">${questionData.explanation}</div>`;
+            let bestAnswerNotice = '';
+
+            if (isCorrect) {
+                score++;
+                card.classList.add('border-emerald-200', 'bg-emerald-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-emerald-700 text-xl mb-2">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        Correct!
+                                    </div>`;
+                feedbackBox.className = "mt-6 rounded-2xl p-5 bg-emerald-100 border-l-4 border-emerald-500 block fade-in";
+                
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const btn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    btn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-center gap-4 shadow-sm";
+                }
+            } else {
+                card.classList.add('border-rose-200', 'bg-rose-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-rose-700 text-xl mb-1">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        Incorrect
+                                    </div>`;
+                
+                let correctAnswerLabel = questionData.correct;
+                if (questionData.type === 'mcq') {
+                    correctAnswerLabel = `${String.fromCharCode(65 + questionData.correct)}. ${questionData.options[questionData.correct]}`;
+                } else if (questionData.type === 'tf') {
+                    correctAnswerLabel = questionData.correct ? "True" : "False";
+                } else if (questionData.type === 'match') {
+                    correctAnswerLabel = `Option ${questionData.correct}`;
+                }
+
+                bestAnswerNotice = `<p class="text-rose-900 font-semibold mt-2 text-lg">The correct answer is: <span class="bg-white px-3 py-1 rounded-md border border-rose-200 shadow-sm inline-block mt-1">${correctAnswerLabel}</span></p>`;
+                
+                feedbackBox.className = "mt-6 rounded-2xl p-5 bg-rose-100 border-l-4 border-rose-500 block fade-in";
+
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const wrongBtn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    if(wrongBtn) wrongBtn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-400 bg-rose-50 font-medium text-rose-900 text-lg flex items-center gap-4 opacity-70 line-through";
+                    
+                    const rightBtn = document.getElementById(`btn-${questionId}-${questionData.correct}`);
+                    if(rightBtn) rightBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-center gap-4 shadow-sm mt-2";
+                }
+            }
+
+            if(questionData.type === 'fib' || questionData.type === 'match') {
+                const sel = document.getElementById(`select-${questionId}`);
+                sel.disabled = true;
+                if(isCorrect) {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-center appearance-none";
+                } else {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-800 font-bold text-center appearance-none line-through opacity-80";
+                }
+            }
+
+            feedbackBox.innerHTML = correctIndicator + bestAnswerNotice + explanationText;
+
+            answeredQuestions++;
+            if(answeredQuestions === quizData.length) {
+                document.getElementById('completion-message').classList.remove('hidden');
+                
+                const finalScoreElem = document.getElementById('final-score');
+                finalScoreElem.innerText = `${score} / ${quizData.length}`;
+                if (score === 20) finalScoreElem.className = "mt-6 text-5xl font-black text-emerald-500 drop-shadow-sm";
+                else if (score >= 15) finalScoreElem.className = "mt-6 text-5xl font-black text-orange-500 drop-shadow-sm";
+                else if (score >= 10) finalScoreElem.className = "mt-6 text-5xl font-black text-amber-500 drop-shadow-sm";
+                else finalScoreElem.className = "mt-6 text-5xl font-black text-rose-500 drop-shadow-sm";
+            }
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>

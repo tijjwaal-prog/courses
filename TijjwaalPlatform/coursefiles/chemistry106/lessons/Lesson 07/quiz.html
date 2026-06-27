@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compounds containing a carbonyl Group</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fff1f2;
+            /* خلفية وردي فاتح جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-rose-800 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-code-branch text-rose-600"></i>
+                Compounds containing a carbonyl Group (C=O)
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (69 - 78): Aldehydes, Ketones &
+                Carboxylic Derivatives</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-rose-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-rose-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-pink-50 border-l-4 border-pink-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-rose-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-rose-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-rose-100">
+            <i class="fa-solid fa-gem text-7xl text-rose-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم مركبات مجموعة الكربونيل بنجاح.</p>
+
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-rose-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-rose-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-rose-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the hybridization state of the carbon atom in a carbonyl group (C=O)?",
+                options: ["sp", "sp²", "sp³", "sp³d"],
+                a: "sp²",
+                exp: "The carbonyl carbon forms three sigma bonds and one pi bond. To minimize repulsion, the three sigma bonds arrange in a trigonal planar geometry, which requires sp² hybridization with ~120° bond angles."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following best describes the polarization of the carbonyl double bond (C=O)?",
+                options: ["The carbon is partially negative, and the oxygen is partially positive.", "The electrons are shared perfectly equally (non-polar).", "The oxygen is partially negative, and the carbon is partially positive.", "Both atoms have a full formal charge of zero with no partial charges."],
+                a: "The oxygen is partially negative, and the carbon is partially positive.",
+                exp: "Oxygen is significantly more electronegative than carbon. It pulls the pi electrons towards itself, creating a dipole where Oxygen is δ- (nucleophilic) and Carbon is δ+ (electrophilic)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Carboxylic acids (R-COOH) have unusually high boiling points compared to aldehydes of similar molecular weight. Why?",
+                options: ["They have stronger London dispersion forces.", "They form highly stable hydrogen-bonded dimers.", "The C=O bond in acids is completely ionic.", "They have lower molecular masses."],
+                a: "They form highly stable hydrogen-bonded dimers.",
+                exp: "Carboxylic acids have both a highly polarized C=O and an -OH group. Two acid molecules can hydrogen bond with each other simultaneously, forming a 'dimer' that is very difficult to boil apart."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which carboxylic acid derivative contains a nitrogen atom directly attached to the carbonyl carbon?",
+                options: ["Ester", "Acid Halide", "Acid Anhydride", "Amide"],
+                a: "Amide",
+                exp: "An amide has the general structure R-CO-NR₂. The nitrogen is bonded directly to the carbonyl carbon. This is the same linkage found in proteins (peptide bonds)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the primary product when a primary alcohol (R-CH₂-OH) is fully oxidized?",
+                options: ["Ketone", "Carboxylic Acid", "Ester", "Alkene"],
+                a: "Carboxylic Acid",
+                exp: "A primary alcohol oxidizes first to an aldehyde (R-CHO), which is then rapidly oxidized further to a Carboxylic Acid (R-COOH) under standard oxidizing conditions."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Aldehydes have their carbonyl group located in the middle of the carbon chain, bonded to two other carbon atoms.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The carbonyl group in an aldehyde is ALWAYS terminal (at the end of the chain) because it must be bonded to at least one Hydrogen atom (R-CHO). Ketones have the internal carbonyl."
+            },
+            {
+                type: "True / False",
+                q: "Because of the partial positive charge on the carbonyl carbon, it undergoes nucleophilic addition reactions.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Nucleophiles (electron-rich species) are attracted to the electron-deficient (δ+) carbonyl carbon, breaking the pi bond to add to the molecule."
+            },
+            {
+                type: "True / False",
+                q: "Ketones are easily oxidized to carboxylic acids using mild oxidizing agents like Tollens' reagent.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Ketones lack a hydrogen atom attached to the carbonyl carbon, making them very resistant to oxidation. Aldehydes, however, are easily oxidized (this is the basis of the Tollens' silver mirror test)."
+            },
+            {
+                type: "True / False",
+                q: "The carboxylate anion (R-COO⁻) is exceptionally stable because the negative charge is delocalized equally over two oxygen atoms via resonance.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. When a carboxylic acid loses a proton, the resulting negative charge does not sit on one oxygen. Resonance spreads it across the O-C-O system, greatly stabilizing the ion and making the compound acidic."
+            },
+            {
+                type: "True / False",
+                q: "Esters are often characterized by their pleasant, fruity, or floral odors.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Unlike carboxylic acids (which often smell awful, like vinegar or rancid butter) or amines (which smell like fish), esters are the compounds responsible for the natural fragrances of fruits and flowers."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Aldehydes always have the carbonyl group located at a ________ position in the carbon chain.",
+                options: ["Terminal", "Ester", "Electrophilic", "Resonance", "Anhydride"],
+                a: "Terminal",
+                exp: "Terminal means 'at the end'. Because an aldehyde has the formula R-C(=O)-H, the carbon chain cannot continue past the carbonyl group."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The condensation reaction between a carboxylic acid and an alcohol (usually with an acid catalyst) produces an ________.",
+                options: ["Terminal", "Ester", "Electrophilic", "Resonance", "Anhydride"],
+                a: "Ester",
+                exp: "This is known as Fischer Esterification. The -OH from the acid and the H from the alcohol combine to form water, linking the remaining parts into an ester (R-COO-R')."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The carbonyl carbon acts as an ________ center because it possesses a partial positive charge, attracting electron-rich species.",
+                options: ["Terminal", "Ester", "Electrophilic", "Resonance", "Anhydride"],
+                a: "Electrophilic",
+                exp: "Electrophilic means 'electron-seeking'. The oxygen pulls electrons away, leaving the carbon 'hungry' for electrons from a nucleophile."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The acidic strength of carboxylic acids is primarily due to the stabilization of their conjugate base through ________.",
+                options: ["Terminal", "Ester", "Electrophilic", "Resonance", "Anhydride"],
+                a: "Resonance",
+                exp: "Resonance allows the pi electrons and the negative charge to smear across multiple atoms, lowering the overall energy of the molecule."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When two carboxylic acid molecules combine and lose a molecule of water, they form an acid ________ (R-CO-O-CO-R).",
+                options: ["Terminal", "Ester", "Electrophilic", "Resonance", "Anhydride"],
+                a: "Anhydride",
+                exp: "The word 'anhydride' literally means 'without water'. It is formed by the dehydration of two acid molecules."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the general formula to the functional group: \nR-C(=O)-H",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "Acid Halide", "Acid Anhydride"],
+                a: "Aldehyde",
+                exp: "The presence of at least one Hydrogen attached directly to the carbonyl carbon defines an aldehyde."
+            },
+            {
+                type: "Matching",
+                q: "Match the general formula to the functional group: \nR-C(=O)-R'",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "Acid Halide", "Acid Anhydride"],
+                a: "Ketone",
+                exp: "The carbonyl carbon is flanked by two other carbon chains (R and R'), placing it internally within the molecule."
+            },
+            {
+                type: "Matching",
+                q: "Match the general formula to the functional group: \nR-C(=O)-OH",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "Acid Halide", "Acid Anhydride"],
+                a: "Carboxylic Acid",
+                exp: "The combination of the carbonyl (C=O) and the hydroxyl (-OH) creates the acidic carboxyl group."
+            },
+            {
+                type: "Matching",
+                q: "Match the general formula to the functional group: \nR-C(=O)-Cl",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "Acid Halide", "Acid Anhydride"],
+                a: "Acid Halide",
+                exp: "Also known as an acyl halide. The -OH of a carboxylic acid is replaced by a halogen. These are the most reactive of the carboxylic derivatives."
+            },
+            {
+                type: "Matching",
+                q: "Match the general formula to the functional group: \nR-C(=O)-O-C(=O)-R'",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "Acid Halide", "Acid Anhydride"],
+                a: "Acid Anhydride",
+                exp: "Two acyl groups (R-C=O) are connected by a central bridging oxygen atom."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-pink-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Terminal, Ester, Electrophilic, Resonance, Anhydride";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-pink-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Aldehyde, Ketone, Carboxylic Acid, Acid Halide, Acid Anhydride";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-rose-400 hover:bg-rose-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-rose-400', 'hover:bg-rose-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-rose-400', 'hover:bg-rose-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى احترافي! لديك فهم عميق لمركبات الكربونيل ومشتقاتها. 🔬";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع! تذكر دائماً الفرق بين الألدهيد والكيتون في تفاعلات الأكسدة. 👍";
+            } else {
+                msgEl.textContent = "هذا الفصل يحتوي على تفاصيل كثيرة. راجع مشتقات الأحماض الكربوكسيلية وحاول مجدداً! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

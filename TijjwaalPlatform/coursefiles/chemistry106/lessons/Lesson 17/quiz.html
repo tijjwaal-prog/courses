@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alcohols with more than One Hydroxyl Group</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0fdf4;
+            /* خلفية خضراء مزرقة فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #0d9488 0%, #0369a1 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-teal-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-droplet text-teal-600"></i>
+                Alcohols with more than One Hydroxyl Group
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (166 - 176): Glycols, Glycerol &
+                their Reactions</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-teal-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-teal-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-sky-50 border-l-4 border-sky-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-teal-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-teal-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-teal-100">
+            <i class="fa-solid fa-flask-vial text-7xl text-teal-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم الكحولات متعددة الهيدروكسيل بنجاح.</p>
+
+            <div class="bg-teal-50 border border-teal-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-teal-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-teal-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-teal-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the correct systematic (IUPAC) name for glycerol?",
+                options: ["1,2-ethanediol", "1,2,3-propanetriol", "1,3-propanediol", "1,2,3-butanetriol"],
+                a: "1,2,3-propanetriol",
+                exp: "Glycerol has a three-carbon backbone with one hydroxyl (-OH) group attached to each carbon atom, making it a triol."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following is the most common commercial use for ethylene glycol (1,2-ethanediol)?",
+                options: ["Food sweetener", "Automobile antifreeze", "Soap manufacturing", "Cooking oil"],
+                a: "Automobile antifreeze",
+                exp: "Ethylene glycol mixes completely with water and significantly lowers its freezing point (and raises its boiling point), making it an ideal engine coolant and antifreeze."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Ethylene glycol is industrially prepared by the hydration (addition of water) of which intermediate compound?",
+                options: ["Ethylene oxide", "Acetaldehyde", "Ethanol", "Chloroethane"],
+                a: "Ethylene oxide",
+                exp: "Ethylene reacts with oxygen over a silver catalyst to form the cyclic ether ethylene oxide, which is then hydrolyzed with water to produce ethylene glycol."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What happens when a vicinal diol (like 1,2-ethanediol) is treated with periodic acid (HIO₄)?",
+                options: ["It is reduced to an alkane.", "The C-C bond is cleaved to form two carbonyl compounds.", "It is dehydrated to an alkyne.", "It forms a cyclic ether."],
+                a: "The C-C bond is cleaved to form two carbonyl compounds.",
+                exp: "Periodic acid (HIO₄) selectively breaks the carbon-carbon bond between the adjacent hydroxyl groups, oxidizing them into aldehydes or ketones."
+            },
+            {
+                type: "Multiple Choice",
+                q: "The reaction of glycerol with concentrated nitric acid (HNO₃) and sulfuric acid (H₂SO₄) produces a compound primarily used as:",
+                options: ["A fertilizer", "A flavoring agent", "An explosive and heart medication", "A plasticizer"],
+                a: "An explosive and heart medication",
+                exp: "The reaction produces nitroglycerin (glyceryl trinitrate). It is a powerful explosive (dynamite component) and is also used medically as a vasodilator to treat angina (chest pain)."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Ethylene glycol and glycerol are virtually insoluble in water due to their hydrocarbon carbon chains.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The presence of multiple -OH groups allows them to form a massive network of hydrogen bonds with water molecules, making them completely miscible (soluble in all proportions) with water."
+            },
+            {
+                type: "True / False",
+                q: "Propylene glycol is often used as a safer, non-toxic alternative to ethylene glycol in food, cosmetics, and eco-friendly antifreeze.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Ethylene glycol is highly toxic to mammals (it metabolizes to harmful oxalic acid), whereas propylene glycol is generally recognized as safe and metabolizes to normal lactic acid."
+            },
+            {
+                type: "True / False",
+                q: "A 'vicinal' diol is a compound where both hydroxyl (-OH) groups are attached to the exact same carbon atom.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. A vicinal diol has -OH groups on ADJACENT (neighboring) carbon atoms. Diols on the SAME carbon are called 'geminal' diols (or hydrates) and are usually highly unstable."
+            },
+            {
+                type: "True / False",
+                q: "Glycerol is naturally found as the structural backbone of animal fats and vegetable oils (triglycerides).",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Fats and oils are esters formed from one molecule of glycerol and three long-chain fatty acids. Saponification (hydrolysis) of these fats yields soap and free glycerol."
+            },
+            {
+                type: "True / False",
+                q: "Alcohols with multiple hydroxyl groups typically have much lower boiling points than monohydric alcohols of similar molecular weight.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. More -OH groups mean more extensive intermolecular hydrogen bonding. This results in significantly HIGHER boiling points and higher viscosity (making them thick and syrupy)."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Glycerol is a thick, syrupy liquid, meaning it is highly ________ due to intense intermolecular hydrogen bonding.",
+                options: ["Saponification", "Polyester", "Hygroscopic", "Viscous", "Oxidation"],
+                a: "Viscous",
+                exp: "The three hydroxyl groups create a strong network of hydrogen bonds, heavily restricting the movement and flow of the liquid molecules, resulting in high viscosity."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Ethylene glycol is heavily used as a raw material in the industrial manufacture of ________ fibers and plastics (such as PET).",
+                options: ["Saponification", "Polyester", "Hygroscopic", "Viscous", "Oxidation"],
+                a: "Polyester",
+                exp: "Ethylene glycol reacts with terephthalic acid via condensation polymerization to form polyethylene terephthalate (PET), a globally essential plastic."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Glycerol has the exceptional ability to absorb and hold moisture from the surrounding air, a property known as being ________.",
+                options: ["Saponification", "Polyester", "Hygroscopic", "Viscous", "Oxidation"],
+                a: "Hygroscopic",
+                exp: "Because it is hygroscopic, glycerol acts as an excellent humectant, used in lotions, cosmetics, and baked goods to prevent them from drying out."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The alkaline hydrolysis of animal fats and vegetable oils using NaOH to produce soap and glycerol is called ________.",
+                options: ["Saponification", "Polyester", "Hygroscopic", "Viscous", "Oxidation"],
+                a: "Saponification",
+                exp: "Reacting a triglyceride with lye (NaOH) cleaves the ester bonds, yielding sodium salts of fatty acids (soap) and liberating the glycerol backbone."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The reaction of a vicinal diol with periodic acid (HIO₄) is a specific type of ________ cleavage that produces carbonyl compounds.",
+                options: ["Saponification", "Polyester", "Hygroscopic", "Viscous", "Oxidation"],
+                a: "Oxidation",
+                exp: "Cleavage by HIO₄ is an oxidative process that specifically targets the C-C bond situated between two adjacent -OH groups."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the structure/description to its correct identity: \nHO-CH₂-CH₂-OH",
+                options: ["Ethylene glycol", "Glycerol", "Propylene glycol", "Reagent for cleaving vicinal diols", "Explosive and vasodilator"],
+                a: "Ethylene glycol",
+                exp: "Also known as 1,2-ethanediol. It is highly toxic, has a sweet taste, and is the primary component of automotive antifreeze."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure/description to its correct identity: \nHO-CH₂-CH(OH)-CH₂-OH",
+                options: ["Ethylene glycol", "Glycerol", "Propylene glycol", "Reagent for cleaving vicinal diols", "Explosive and vasodilator"],
+                a: "Glycerol",
+                exp: "Also known as 1,2,3-propanetriol or glycerin. A non-toxic, sweet-tasting, highly viscous liquid used in food and cosmetics."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure/description to its correct identity: \nCH₃-CH(OH)-CH₂-OH",
+                options: ["Ethylene glycol", "Glycerol", "Propylene glycol", "Reagent for cleaving vicinal diols", "Explosive and vasodilator"],
+                a: "Propylene glycol",
+                exp: "Also known as 1,2-propanediol. It is an FDA-approved, non-toxic alternative to ethylene glycol, used widely in pharmaceuticals and food."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure/description to its correct identity: \nPeriodic Acid (HIO₄)",
+                options: ["Ethylene glycol", "Glycerol", "Propylene glycol", "Reagent for cleaving vicinal diols", "Explosive and vasodilator"],
+                a: "Reagent for cleaving vicinal diols",
+                exp: "This reagent specifically breaks the C-C bond of 1,2-diols, acting as a diagnostic test for vicinal hydroxyl groups."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure/description to its correct identity: \nNitroglycerin (Glyceryl trinitrate)",
+                options: ["Ethylene glycol", "Glycerol", "Propylene glycol", "Reagent for cleaving vicinal diols", "Explosive and vasodilator"],
+                a: "Explosive and vasodilator",
+                exp: "Formed by the complete esterification of glycerol with nitric acid. It is the active ingredient in dynamite and a potent medication for angina."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-teal-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Saponification, Polyester, Hygroscopic, Viscous, Oxidation";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-teal-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Ethylene glycol, Glycerol, Propylene glycol, Reagent for cleaving vicinal diols, Explosive and vasodilator";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-teal-600 hover:bg-teal-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-teal-600', 'hover:bg-teal-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-teal-600', 'hover:bg-teal-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى احترافي عالٍ! استيعابك لخواص وتطبيقات الجلايكول والجليسرول مبهر جداً. 🌟";
+            } else if (score >= 13) {
+                msgEl.textContent = "أداء قوي وممتاز! مع مراجعة بسيطة لتفاعلات الأكسدة ستصبح خبيراً. 👍";
+            } else {
+                msgEl.textContent = "هذه المركبات لها تطبيقات صناعية وطبية هامة. راجع خواصها وأعد الاختبار لتثبيت المعرفة! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

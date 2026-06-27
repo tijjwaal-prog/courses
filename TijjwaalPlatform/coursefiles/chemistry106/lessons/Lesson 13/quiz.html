@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactions of Benzene</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f9ff;
+            /* خلفية سماوية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-blue-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-atom text-blue-600"></i>
+                Reactions of Benzene
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (135 - 142): EAS Mechanisms &
+                Substituent Effects</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-blue-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-blue-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-sky-50 border-l-4 border-sky-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-blue-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-blue-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-blue-100">
+            <i class="fa-solid fa-flask-vial text-7xl text-blue-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تفاعلات البنزين بنجاح.</p>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-blue-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-blue-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-blue-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "In the nitration of benzene, what is the actual strongly electrophilic species that attacks the benzene ring?",
+                options: ["Nitric acid (HNO₃)", "Nitrite ion (NO₂⁻)", "Nitronium ion (NO₂⁺)", "Sulfuric acid (H₂SO₄)"],
+                a: "Nitronium ion (NO₂⁺)",
+                exp: "Sulfuric acid acts as a catalyst to protonate nitric acid, causing it to lose water and form the highly reactive, positively charged Nitronium ion (NO₂⁺)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which specific catalyst is required for the bromination of benzene (C₆H₆ + Br₂ → C₆H₅Br + HBr)?",
+                options: ["FeBr₃ (Iron(III) bromide)", "AlCl₃ (Aluminum chloride)", "H₂SO₄ (Sulfuric acid)", "Pt (Platinum)"],
+                a: "FeBr₃ (Iron(III) bromide)",
+                exp: "Benzene is too stable to react with neutral Br₂. The Lewis acid catalyst FeBr₃ polarizes the Br₂ molecule, making one bromine atom strongly electrophilic."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the major organic product of a Friedel-Crafts alkylation between benzene and chloromethane (CH₃Cl) in the presence of AlCl₃?",
+                options: ["Chlorobenzene", "Toluene (Methylbenzene)", "Phenol", "Nitrobenzene"],
+                a: "Toluene (Methylbenzene)",
+                exp: "The AlCl₃ catalyst helps generate a methyl carbocation (CH₃⁺) from CH₃Cl, which then substitutes a hydrogen on the benzene ring to form Toluene."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following substituents is classified as an ortho/para directing DEACTIVATOR?",
+                options: ["-OH (Hydroxyl)", "-CH₃ (Methyl)", "-Cl (Chloro)", "-NO₂ (Nitro)"],
+                a: "-Cl (Chloro)",
+                exp: "Halogens (like -Cl, -Br) are unique. They deactivate the ring via strong electron withdrawal (inductive effect), but their lone pairs stabilize ortho/para intermediates via resonance, making them ortho/para directors."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Friedel-Crafts acylation of benzene involves the generation and attack of which intermediate?",
+                options: ["An alkyl radical", "An acylium ion (R-C≡O⁺)", "A nitronium ion", "A benzyne intermediate"],
+                a: "An acylium ion (R-C≡O⁺)",
+                exp: "Reaction of an acid chloride (RCOCl) with AlCl₃ removes the chloride, leaving a resonance-stabilized acylium ion (R-C⁺=O ↔ R-C≡O⁺) which acts as the electrophile."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "The first step of an Electrophilic Aromatic Substitution (EAS) is the attack of the benzene pi electrons on the electrophile, temporarily destroying aromaticity.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The ring acts as a nucleophile, breaking its continuous pi system to bond with the electrophile, forming a non-aromatic, resonance-stabilized carbocation (sigma complex)."
+            },
+            {
+                type: "True / False",
+                q: "Friedel-Crafts alkylation works very well and rapidly on benzene rings that have strong deactivating groups like -NO₂.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Friedel-Crafts reactions fail completely on strongly deactivated rings (like nitrobenzene) because the ring lacks sufficient electron density to attack the carbocation."
+            },
+            {
+                type: "True / False",
+                q: "The sulfonation of benzene (using SO₃ and H₂SO₄) is unique among the five main EAS reactions because it is readily reversible.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Heating benzenesulfonic acid in dilute aqueous acid will remove the -SO₃H group and regenerate benzene. The other EAS reactions are generally irreversible."
+            },
+            {
+                type: "True / False",
+                q: "Activating groups generally increase the rate of EAS reactions by donating electron density into the benzene ring.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. By pushing electrons into the ring (via resonance or induction), activating groups make the ring a stronger nucleophile and stabilize the positively charged intermediate."
+            },
+            {
+                type: "True / False",
+                q: "A meta-directing group stabilizes the intermediate carbocation when the electrophile attacks the ortho or para positions.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Meta-directors are highly electron-withdrawing. If attack occurs at ortho/para, a positive charge is placed directly adjacent to the withdrawing group, severely DESTABILIZING it. Hence, they direct meta by default."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Friedel-Crafts ________ involves the reaction of benzene with an alkyl halide (R-X) to form an alkylbenzene.",
+                options: ["Sigma", "Acylation", "Alkylation", "Meta", "Catalyst"],
+                a: "Alkylation",
+                exp: "Alkylation adds an alkyl group (like methyl, ethyl, etc.) to the ring."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "A Lewis acid ________, such as AlCl₃ or FeBr₃, is absolutely necessary to make the electrophile strong enough to attack the stable benzene ring.",
+                options: ["Sigma", "Acylation", "Alkylation", "Meta", "Catalyst"],
+                a: "Catalyst",
+                exp: "The catalyst lowers the activation energy by forming a complex with the reagent, generating a highly reactive, full or partial positive charge."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Electron-withdrawing groups, such as the nitro group (-NO₂), direct incoming electrophiles primarily to the ________ position.",
+                options: ["Sigma", "Acylation", "Alkylation", "Meta", "Catalyst"],
+                a: "Meta",
+                exp: "Because the ortho and para positions are destabilized by the withdrawing group, the meta position (which avoids placing the positive charge near the substituent) is the favored pathway."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The non-aromatic, positively charged intermediate formed during an EAS reaction is called an arenium ion or a ________ complex.",
+                options: ["Sigma", "Acylation", "Alkylation", "Meta", "Catalyst"],
+                a: "Sigma",
+                exp: "It's called a sigma complex because a new sigma bond has been formed between the carbon and the electrophile, using two electrons from the original pi system."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Friedel-Crafts ________ uses an acid chloride (R-COCl) to attach a carbonyl group directly to the benzene ring, forming an aromatic ketone.",
+                options: ["Sigma", "Acylation", "Alkylation", "Meta", "Catalyst"],
+                a: "Acylation",
+                exp: "Acylation adds an acyl group (R-C=O). This reaction does not suffer from the polyalkylation problems seen in Friedel-Crafts alkylation."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the EAS Reaction to its corresponding Reagents: \nNitration",
+                options: ["HNO₃ / H₂SO₄", "SO₃ / H₂SO₄", "X₂ / FeX₃", "Strong Activating Group", "Strong Deactivating Group"],
+                a: "HNO₃ / H₂SO₄",
+                exp: "This mixture (nitrating acid) produces the active nitronium ion (NO₂⁺) needed to place an -NO₂ group on the ring."
+            },
+            {
+                type: "Matching",
+                q: "Match the EAS Reaction to its corresponding Reagents: \nSulfonation",
+                options: ["HNO₃ / H₂SO₄", "SO₃ / H₂SO₄", "X₂ / FeX₃", "Strong Activating Group", "Strong Deactivating Group"],
+                a: "SO₃ / H₂SO₄",
+                exp: "Fuming sulfuric acid (SO₃ dissolved in H₂SO₄) provides the highly electrophilic sulfur trioxide molecule to form benzenesulfonic acid."
+            },
+            {
+                type: "Matching",
+                q: "Match the EAS Reaction to its corresponding Reagents: \nHalogenation (Chlorination or Bromination)",
+                options: ["HNO₃ / H₂SO₄", "SO₃ / H₂SO₄", "X₂ / FeX₃", "Strong Activating Group", "Strong Deactivating Group"],
+                a: "X₂ / FeX₃",
+                exp: "The halogen (Cl₂ or Br₂) reacts with the corresponding Iron(III) halide catalyst to generate the halogen cation (X⁺)."
+            },
+            {
+                type: "Matching",
+                q: "Match the substituent type to its correct description: \n-NH₂ (Amino group) or -OH (Hydroxyl group)",
+                options: ["HNO₃ / H₂SO₄", "SO₃ / H₂SO₄", "X₂ / FeX₃", "Strong Activating Group", "Strong Deactivating Group"],
+                a: "Strong Activating Group",
+                exp: "These groups have lone pairs directly adjacent to the ring, allowing them to strongly donate electron density via resonance, greatly speeding up EAS reactions."
+            },
+            {
+                type: "Matching",
+                q: "Match the substituent type to its correct description: \n-NO₂ (Nitro group) or -CF₃ (Trifluoromethyl group)",
+                options: ["HNO₃ / H₂SO₄", "SO₃ / H₂SO₄", "X₂ / FeX₃", "Strong Activating Group", "Strong Deactivating Group"],
+                a: "Strong Deactivating Group",
+                exp: "These groups pull electron density away from the ring through inductive or resonance effects, severely slowing down EAS reactions and directing meta."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Sigma, Acylation, Alkylation, Meta, Catalyst";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-blue-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> HNO₃ / H₂SO₄, SO₃ / H₂SO₄, X₂ / FeX₃, Strong Activating Group, Strong Deactivating Group";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-blue-500 hover:bg-blue-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-500', 'hover:bg-blue-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-blue-500', 'hover:bg-blue-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "مستوى احترافي عالٍ! استيعابك لميكانيكيات (EAS) وتأثير المجموعات ممتاز جداً. 🌟";
+            } else if (score >= 13) {
+                msgEl.textContent = "أداء قوي! مع مراجعة بسيطة للكواشف (Reagents) ووسطاء التفاعل ستكون بلا أخطاء. ✨";
+            } else {
+                msgEl.textContent = "تفاعلات البنزين تتطلب تركيزاً في الحفظ والفهم. اقرأ التوضيحات جيداً وأعد الاختبار! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

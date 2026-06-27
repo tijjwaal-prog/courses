@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Preimplantation Genetic Testing (PGT) - Quiz</title>
+    <style>
+        :root {
+            --primary: #cba365;
+            --primary-dark: #a88143;
+            --bg-color: #fdfbf7;
+            --text-color: #333;
+            --correct-bg: #e8f5e9;
+            --correct-border: #4caf50;
+            --incorrect-bg: #ffebee;
+            --incorrect-border: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 40px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .question-card {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+
+        .options label:hover {
+            background: #f1f1f1;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            border-left: 5px solid var(--correct-border);
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            border-left: 5px solid var(--incorrect-border);
+            color: #c62828;
+        }
+
+        .word-bank {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            margin: 5px 0;
+            outline: none;
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .score-board {
+            position: sticky;
+            top: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            float: right;
+            margin-left: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        @media(max-width: 768px) {
+            .matching-grid {
+                grid-template-columns: 1fr;
+            }
+            .score-board {
+                float: none;
+                margin: 0 auto 20px auto;
+                width: max-content;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="score-board">Score: <span id="score">0</span> / 20</div>
+    
+    <h1>Introduction to Preimplantation Genetic Testing (PGT)</h1>
+    <p style="text-align:center; color:#666;">Prepared based on Dr. Hala Abas's foundational course materials.</p>
+
+    <h2>Part 1: Multiple Choice (Select one answer)</h2>
+    <div id="mcq-container"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-container"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Blastomere | TESA | Morula | Mitotic | Zygote
+    </div>
+    <div id="fitb-container"></div>
+
+    <h2>Part 4: Matching</h2>
+    <p>Select the correct description from List B that matches the term in List A.</p>
+    <div id="matching-container"></div>
+
+</div>
+
+<script>
+    let score = 0;
+    const scoreElement = document.getElementById('score');
+
+    function updateScore() {
+        scoreElement.textContent = score;
+    }
+
+    function checkAnswer(btn, isCorrect, correctText, explanation) {
+        const card = btn.closest('.question-card');
+        const feedbackDiv = card.querySelector('.feedback');
+        const inputs = card.querySelectorAll('input, select');
+        
+        inputs.forEach(input => input.disabled = true);
+        btn.disabled = true;
+
+        if (isCorrect) {
+            score++;
+            updateScore();
+            feedbackDiv.className = 'feedback correct';
+            feedbackDiv.innerHTML = `<strong>✔️ Correct!</strong> ${explanation}`;
+        } else {
+            feedbackDiv.className = 'feedback incorrect';
+            feedbackDiv.innerHTML = `<strong>❌ Incorrect.</strong> The correct answer is <strong>${correctText}</strong>. <br><br><em>Explanation:</em> ${explanation}`;
+        }
+    }
+
+    // --- Data ---
+
+    const mcqData = [
+        {
+            q: "What is the primary difference between IVF and ICSI?",
+            options: {
+                A: "IVF uses natural penetration; ICSI involves direct injection of a single sperm.",
+                B: "IVF is used for male infertility; ICSI is used for standard cases.",
+                C: "IVF occurs on Day 5; ICSI occurs on Day 1.",
+                D: "There is no functional difference; they are the same procedure."
+            },
+            correct: "A",
+            explanation: "In traditional IVF, sperm and oocytes are co-incubated for natural penetration. In ICSI, a single selected sperm is injected directly into the mature oocyte using a microinjection needle."
+        },
+        {
+            q: "Which of the following is a key indication for choosing ICSI over traditional IVF?",
+            options: {
+                A: "Standard, unexplained infertility cases.",
+                B: "Male factor infertility (e.g., low sperm count, poor motility).",
+                C: "To speed up the cleavage stage of the embryo.",
+                D: "When observing the morula stage on Day 3."
+            },
+            correct: "B",
+            explanation: "ICSI is specifically indicated for male factor infertility, repeated fertilization failure, use of frozen/surgical sperm, and in PGT cycles."
+        },
+        {
+            q: "At what developmental stage is an embryo considered eligible for PGT biopsy?",
+            options: {
+                A: "Zygote (Day 1)",
+                B: "Cleavage (Day 3)",
+                C: "Morula (Day 4)",
+                D: "Blastocyst (Day 5)"
+            },
+            correct: "D",
+            explanation: "Each milestone is a quality checkpoint, and only embryos that successfully reach the blastocyst stage (Day 5) are eligible for PGT biopsy."
+        },
+        {
+            q: "How is successful fertilization confirmed on Day 1?",
+            options: {
+                A: "By the presence of 2 to 8 blastomeres.",
+                B: "By the formation of the Inner Cell Mass (ICM).",
+                C: "By the presence of two pronuclei (2PN).",
+                D: "By the compaction of 12-32 cells."
+            },
+            correct: "C",
+            explanation: "A successfully fertilized oocyte (zygote) is identified by the presence of 2PN: one from the sperm and one from the egg. Abnormal ones (1PN or 3PN) are discarded."
+        },
+        {
+            q: "On Day 5, the blastocyst divides into two main structures. What does the trophectoderm eventually become?",
+            options: {
+                A: "The future foetus",
+                B: "The future placenta",
+                C: "The pronuclei",
+                D: "The unfertilized oocyte"
+            },
+            correct: "B",
+            explanation: "The Day 5 blastocyst contains hundreds of cells divided into the Inner Cell Mass (ICM), which becomes the future foetus, and the trophectoderm, which becomes the future placenta."
+        }
+    ];
+
+    const tfData = [
+        {
+            q: "An embryo showing 3PN on Day 1 is considered abnormal and is discarded.",
+            correct: "True",
+            explanation: "Abnormal fertilization, such as the presence of 1PN or 3PN, indicates a genetic anomaly. These zygotes are discarded and not cultured further."
+        },
+        {
+            q: "The cleavage stage occurs on Day 4 of embryo development.",
+            correct: "False",
+            explanation: "The cleavage stage occurs on Day 2-3, where the embryo divides into 2 to 8 cells. Day 4 is the Morula stage."
+        },
+        {
+            q: "ICSI is preferred in PGT cycles to avoid DNA contamination from extra sperm attached to the outside of the egg.",
+            correct: "True",
+            explanation: "Since traditional IVF involves thousands of sperm surrounding the egg, extra sperm DNA could contaminate the PGT results. ICSI uses only one sperm, preventing this."
+        },
+        {
+            q: "During the Morula stage (Day 4), individual blastomeres are highly distinguishable and spread apart.",
+            correct: "False",
+            explanation: "During the Morula stage, the 12-32 cells become 'tightly compacted', making individual blastomeres indistinguishable before cavitation begins."
+        },
+        {
+            q: "In traditional IVF, the embryologist uses a microinjection needle to penetrate the egg.",
+            correct: "False",
+            explanation: "Traditional IVF relies on natural penetration without direct intervention. The microinjection needle is specifically used in the ICSI procedure."
+        }
+    ];
+
+    const fitbData = [
+        {
+            q: "Each individual cell formed during the early cell divisions is called a ______.",
+            options: ["Blastomere", "TESA", "Morula", "Mitotic", "Zygote"],
+            correct: "Blastomere",
+            explanation: "During the cleavage stage, the embryo undergoes divisions, and each individual cell is referred to as a blastomere."
+        },
+        {
+            q: "Surgically retrieved sperm using techniques like ______ often requires ICSI due to the limited quantity of sperm available.",
+            options: ["Blastomere", "TESA", "Morula", "Mitotic", "Zygote"],
+            correct: "TESA",
+            explanation: "TESA/PESA provides a very limited quantity of sperm, making the precise single-sperm injection of ICSI necessary."
+        },
+        {
+            q: "The ______ stage occurs on Day 4 and consists of 12-32 tightly compacted cells.",
+            options: ["Blastomere", "TESA", "Morula", "Mitotic", "Zygote"],
+            correct: "Morula",
+            explanation: "The Morula is the critical transition stage before cavitation begins, representing a compacted ball of 12-32 cells on Day 4."
+        },
+        {
+            q: "During Day 2-3, the embryo undergoes ______ divisions to rapidly progress from 2 to 8 cells.",
+            options: ["Blastomere", "TESA", "Morula", "Mitotic", "Zygote"],
+            correct: "Mitotic",
+            explanation: "The rapid cell division during the cleavage stage occurs via mitotic divisions."
+        },
+        {
+            q: "A successfully fertilized oocyte, identified by two pronuclei on Day 1, is officially called a ______.",
+            options: ["Blastomere", "TESA", "Morula", "Mitotic", "Zygote"],
+            correct: "Zygote",
+            explanation: "Once fertilization is confirmed (2PN) on Day 1 post-fertilization, the oocyte becomes a zygote."
+        }
+    ];
+
+    const matchingData = [
+        { listA: "Zygote", correctAns: "A", explanation: "A Zygote is confirmed on Day 1 by the presence of two pronuclei (2PN)." },
+        { listA: "Cleavage", correctAns: "B", explanation: "The Cleavage stage (Day 2-3) involves 2 to 8 blastomeres that are assessed for symmetry and fragmentation." },
+        { listA: "PGT", correctAns: "C", explanation: "PGT stands for Preimplantation Genetic Testing, which involves biopsy of the blastocyst." },
+        { listA: "Male factor infertility", correctAns: "D", explanation: "Male factor infertility (like poor sperm motility) is a primary indication for performing ICSI." },
+        { listA: "Blastocyst", correctAns: "E", explanation: "The Blastocyst (Day 5) consists of the Inner Cell Mass (future foetus) and Trophectoderm (future placenta)." }
+    ];
+
+    const listB_options = {
+        "A": "Day 1: Presence of two pronuclei (2PN)",
+        "B": "Day 2-3: 2 to 8 blastomeres assessed for symmetry",
+        "C": "Preimplantation Genetic Testing",
+        "D": "An indication for performing ICSI",
+        "E": "Day 5: Contains Inner Cell Mass and Trophectoderm"
+    };
+
+    // --- Render Functions ---
+
+    function renderMCQ() {
+        const container = document.getElementById('mcq-container');
+        mcqData.forEach((item, index) => {
+            let optionsHTML = '';
+            for (const [key, value] of Object.entries(item.options)) {
+                optionsHTML += `<label><input type="radio" name="mcq${index}" value="${key}"> ${key}) ${value}</label>`;
+            }
+            
+            const html = `
+                <div class="question-card">
+                    <div class="question-text">${index + 1}. ${item.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button onclick="
+                        const selected = document.querySelector('input[name=mcq${index}]:checked');
+                        if(!selected) return alert('Please select an option');
+                        const isCorrect = selected.value === '${item.correct}';
+                        checkAnswer(this, isCorrect, '${item.correct}', '${item.explanation.replace(/'/g, "\\'")}');
+                    ">Check Answer</button>
+                    <div class="feedback"></div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function renderTF() {
+        const container = document.getElementById('tf-container');
+        tfData.forEach((item, index) => {
+            const html = `
+                <div class="question-card">
+                    <div class="question-text">${index + 6}. ${item.q}</div>
+                    <div class="options">
+                        <label><input type="radio" name="tf${index}" value="True"> True</label>
+                        <label><input type="radio" name="tf${index}" value="False"> False</label>
+                    </div>
+                    <button onclick="
+                        const selected = document.querySelector('input[name=tf${index}]:checked');
+                        if(!selected) return alert('Please select True or False');
+                        const isCorrect = selected.value === '${item.correct}';
+                        checkAnswer(this, isCorrect, '${item.correct}', '${item.explanation.replace(/'/g, "\\'")}');
+                    ">Check Answer</button>
+                    <div class="feedback"></div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function renderFITB() {
+        const container = document.getElementById('fitb-container');
+        fitbData.forEach((item, index) => {
+            let selectHTML = `<select id="fitb${index}"><option value="">--Select Word--</option>`;
+            item.options.forEach(opt => {
+                selectHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            selectHTML += `</select>`;
+            
+            const replacedQ = item.q.replace("______", selectHTML);
+
+            const html = `
+                <div class="question-card">
+                    <div class="question-text">${index + 11}. ${replacedQ}</div>
+                    <button onclick="
+                        const selected = document.getElementById('fitb${index}').value;
+                        if(selected === '') return alert('Please select a word');
+                        const isCorrect = selected === '${item.correct}';
+                        checkAnswer(this, isCorrect, '${item.correct}', '${item.explanation.replace(/'/g, "\\'")}');
+                    ">Check Answer</button>
+                    <div class="feedback"></div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function renderMatching() {
+        const container = document.getElementById('matching-container');
+        
+        let optionsHTML = `<option value="">--Select Match--</option>`;
+        for (const [key, value] of Object.entries(listB_options)) {
+            optionsHTML += `<option value="${key}">${key}) ${value}</option>`;
+        }
+
+        matchingData.forEach((item, index) => {
+            const html = `
+                <div class="question-card">
+                    <div class="question-text">${index + 16}. ${item.listA}</div>
+                    <select id="match${index}">
+                        ${optionsHTML}
+                    </select>
+                    <br>
+                    <button onclick="
+                        const selected = document.getElementById('match${index}').value;
+                        if(selected === '') return alert('Please select a match');
+                        const isCorrect = selected === '${item.correctAns}';
+                        checkAnswer(this, isCorrect, '${item.correctAns} (${listB_options[item.correctAns]})', '${item.explanation.replace(/'/g, "\\'")}');
+                    ">Check Answer</button>
+                    <div class="feedback"></div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    // Initialize all renders
+    window.onload = () => {
+        renderMCQ();
+        renderTF();
+        renderFITB();
+        renderMatching();
+    };
+</script>
+
+</body>
+</html>

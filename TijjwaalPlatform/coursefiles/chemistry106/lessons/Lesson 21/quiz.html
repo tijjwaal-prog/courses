@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Amines and related Nitrogen Compounds</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f9ff;
+            /* خلفية سماوية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #0284c7 0%, #3730a3 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-sky-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-network-wired text-sky-600"></i>
+                Organic Amines & Nitrogen Compounds
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (225 - 242): Properties, Basicity &
+                Reactions</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-sky-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-sky-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-sky-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-sky-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-sky-200">
+            <i class="fa-solid fa-graduation-cap text-7xl text-sky-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم كيمياء الأمينات والمركبات النيتروجينية.</p>
+
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-sky-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-sky-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-sky-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "How is an amine classified as primary (1°), secondary (2°), or tertiary (3°)?",
+                options: ["By the degree of the carbon atom attached to the nitrogen.", "By the number of carbon groups directly bonded to the nitrogen atom.", "By the number of lone pairs on the nitrogen atom.", "By the number of double bonds present in the molecule."],
+                a: "By the number of carbon groups directly bonded to the nitrogen atom.",
+                exp: "Unlike alcohols (which are classified by the carbon they attach to), amines are classified strictly by how many organic (alkyl/aryl) groups replace the hydrogens of ammonia directly on the Nitrogen."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following compounds is generally the strongest base in an aqueous solution?",
+                options: ["Ammonia (NH₃)", "Aniline (C₆H₅NH₂)", "Dimethylamine (CH₃)₂NH", "Pyridine (C₅H₅N)"],
+                a: "Dimethylamine (CH₃)₂NH",
+                exp: "Aliphatic amines (like dimethylamine) are stronger bases than ammonia due to the electron-donating inductive effect of the alkyl groups. Aromatic amines (like aniline) are much weaker because their lone pair is delocalized by resonance."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the systematic IUPAC name for CH₃-CH₂-CH₂-NH₂?",
+                options: ["Propanamide", "Propylamine", "1-Propanamine", "Azapropane"],
+                a: "1-Propanamine",
+                exp: "The longest chain is propane. Dropping the 'e' and adding 'amine' gives propanamine. The amino group is on the first carbon, so it is 1-propanamine."
+            },
+            {
+                type: "Multiple Choice",
+                q: "When a primary aromatic amine (like aniline) is treated with nitrous acid (NaNO₂ + HCl) at a cold temperature (0-5°C), what is the critically important intermediate formed?",
+                options: ["A nitro compound", "An aryldiazonium salt", "A secondary amine", "A phenol"],
+                a: "An aryldiazonium salt",
+                exp: "This is the diazotization reaction. It forms an aryldiazonium salt (Ar-N₂⁺ Cl⁻), which is remarkably stable at low temperatures and is a gateway to synthesizing many other aromatic compounds."
+            },
+            {
+                type: "Multiple Choice",
+                q: "The reduction of a nitrile (R-C≡N) using hydrogen gas and a metal catalyst (or LiAlH₄) directly yields which type of compound?",
+                options: ["A carboxylic acid", "A primary amine", "A secondary amine", "An amide"],
+                a: "A primary amine",
+                exp: "The strong reducing agent adds two equivalents of hydrogen across the carbon-nitrogen triple bond, fully saturating it to form a primary amine (R-CH₂-NH₂)."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Tertiary (3°) amines possess significantly higher boiling points than primary (1°) amines of comparable molecular weight.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Tertiary amines (R₃N) have NO hydrogen atoms directly bonded to the nitrogen, so they cannot form hydrogen bonds with each other. Thus, their boiling points are much lower than 1° and 2° amines."
+            },
+            {
+                type: "True / False",
+                q: "Aniline is a weaker base than cyclohexylamine because the lone pair of electrons on aniline's nitrogen is delocalized into the aromatic ring.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Resonance spreads the lone pair's electron density throughout the benzene ring, making it far less available to accept a proton (H⁺) compared to the localized lone pair in cyclohexylamine."
+            },
+            {
+                type: "True / False",
+                q: "A quaternary ammonium salt contains a nitrogen atom bearing a positive formal charge and is bonded to exactly four organic groups.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because nitrogen (Group 15) uses its lone pair to form a fourth covalent bond with a carbon, it ends up with a +1 formal charge (e.g., R₄N⁺ X⁻). These do not act as bases."
+            },
+            {
+                type: "True / False",
+                q: "Primary aliphatic amines react with nitrous acid (HNO₂) to form stable diazonium salts that can be stored at room temperature.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Aliphatic diazonium salts are extremely UNSTABLE. They rapidly and violently decompose even at low temperatures, releasing nitrogen gas (N₂) and leaving behind a carbocation (which typically becomes an alcohol)."
+            },
+            {
+                type: "True / False",
+                q: "Because amines are organic bases, they react readily with strong mineral acids (like HCl) to form water-soluble ammonium salts.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The lone pair on the nitrogen accepts a proton from the acid, forming an ionic ammonium salt (R-NH₃⁺ Cl⁻) which is highly soluble in polar solvents like water."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "In aqueous solutions, alkyl groups tend to increase the ________ of an amine due to their electron-donating inductive effects.",
+                options: ["Basicity", "Diazotization", "Resonance", "Quaternary", "Alkylation"],
+                a: "Basicity",
+                exp: "By pushing electron density toward the nitrogen, alkyl groups make the lone pair more negatively charged and therefore more attractive to protons (H⁺)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The reaction of ammonia with an alkyl halide to form a mixture of 1°, 2°, and 3° amines is known as exhaustive ________.",
+                options: ["Basicity", "Diazotization", "Resonance", "Quaternary", "Alkylation"],
+                a: "Alkylation",
+                exp: "Because the newly formed primary amine is still a good nucleophile, it continues to react with the alkyl halide in an SN2 reaction, making it hard to stop at just one substitution."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Aniline is a significantly weaker base than methylamine because its nitrogen lone pair is stabilized by ________ with the benzene pi system.",
+                options: ["Basicity", "Diazotization", "Resonance", "Quaternary", "Alkylation"],
+                a: "Resonance",
+                exp: "The ability to draw multiple resonance structures where the nitrogen's lone pair is shared with the ring carbons demonstrates this stabilizing, base-weakening effect."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The conversion of a primary aromatic amine into an Ar-N₂⁺ ion using cold nitrous acid is a crucial synthetic process called ________.",
+                options: ["Basicity", "Diazotization", "Resonance", "Quaternary", "Alkylation"],
+                a: "Diazotization",
+                exp: "This reaction is paramount in industrial chemistry, especially for the synthesis of vibrant 'azo dyes'."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "A nitrogen atom that has completely utilized its lone pair to bond to four alkyl groups forms a ________ ammonium salt.",
+                options: ["Basicity", "Diazotization", "Resonance", "Quaternary", "Alkylation"],
+                a: "Quaternary",
+                exp: "Quaternary (4°) ammonium salts are permanently charged regardless of the pH of the solution."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the description to the correct nitrogen-containing structure: \nA primary aliphatic amine.",
+                options: ["R-NH₂", "R₂NH", "R₃N", "R-C≡N", "Ar-N₂⁺ Cl⁻"],
+                a: "R-NH₂",
+                exp: "The nitrogen is attached to exactly one alkyl group and two hydrogen atoms, meaning it can participate in hydrogen bonding."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct nitrogen-containing structure: \nA secondary amine.",
+                options: ["R-NH₂", "R₂NH", "R₃N", "R-C≡N", "Ar-N₂⁺ Cl⁻"],
+                a: "R₂NH",
+                exp: "The nitrogen is attached to exactly two carbon groups and one hydrogen atom."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct nitrogen-containing structure: \nA tertiary amine.",
+                options: ["R-NH₂", "R₂NH", "R₃N", "R-C≡N", "Ar-N₂⁺ Cl⁻"],
+                a: "R₃N",
+                exp: "The nitrogen is attached to three carbon groups and zero hydrogen atoms. It cannot act as a hydrogen bond donor."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct nitrogen-containing structure: \nA nitrile (also known as a cyanide compound).",
+                options: ["R-NH₂", "R₂NH", "R₃N", "R-C≡N", "Ar-N₂⁺ Cl⁻"],
+                a: "R-C≡N",
+                exp: "Contains a carbon-nitrogen triple bond. Reduction of this group is a primary method for synthesizing 1° amines."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct nitrogen-containing structure: \nAn aryldiazonium salt.",
+                options: ["R-NH₂", "R₂NH", "R₃N", "R-C≡N", "Ar-N₂⁺ Cl⁻"],
+                a: "Ar-N₂⁺ Cl⁻",
+                exp: "Contains the highly reactive -N≡N⁺ group attached to an aromatic ring. It is an excellent leaving group in substitution reactions."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-indigo-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Basicity, Diazotization, Resonance, Quaternary, Alkylation";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-indigo-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> R-NH₂, R₂NH, R₃N, R-C≡N, Ar-N₂⁺ Cl⁻";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-sky-600 hover:bg-sky-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-sky-600', 'hover:bg-sky-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-sky-600', 'hover:bg-sky-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء استثنائي ومثالي! 🌟 استيعابك لقاعدية الأمينات وتفاعلات أملاح الديازونيوم صلب جداً.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع! 👏 تذكر دائماً كيف يؤثر الرنين على قاعدية الأنيلين للوصول للعلامة الكاملة.";
+            } else {
+                msgEl.textContent = "كيمياء النيتروجين تتطلب ربط الهياكل بخواصها. راجع التفسيرات وأعد الاختبار لتثبيت المعرفة! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

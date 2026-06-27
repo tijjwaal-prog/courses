@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ethic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .word-bank-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .word-bank-btn:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white text-center">
+            <h1 class="text-3xl font-bold tracking-wide">AI Ethic</h1>
+            <p class="text-blue-100 mt-2 text-sm">Interactive Quiz based on Lecture 10</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 h-2">
+            <div id="progress-bar" class="bg-green-500 h-2 transition-all duration-500 ease-out" style="width: 0%;"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="p-6 md:p-10">
+            
+            <!-- Start Screen -->
+            <div id="start-screen" class="text-center fade-in">
+                <div class="bg-blue-50 p-6 rounded-2xl mb-6 inline-block">
+                    <svg class="w-16 h-16 text-blue-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Test Your Knowledge on AI Ethics</h2>
+                <p class="text-gray-600 mb-8 max-w-lg mx-auto">This test contains 20 interactive questions (MCQs, True/False, Fill in the blanks, and Matching). You will get immediate feedback and explanations for every answer.</p>
+                <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transition transform hover:-translate-y-1">
+                    Start Quiz
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="hidden fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-counter" class="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Question 1/20</span>
+                    <span id="score-display" class="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Score: 0</span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-xl md:text-2xl font-bold text-gray-800 mb-2 leading-snug"></h3>
+                <p id="question-instruction" class="text-sm text-gray-500 mb-6 italic"></p>
+
+                <!-- Dynamic Input Area (Buttons, Word Bank, etc.) -->
+                <div id="options-container" class="space-y-3 mb-8">
+                    <!-- Options will be injected here -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="feedback-container" class="hidden rounded-xl p-5 mb-6 fade-in border-l-4">
+                    <div class="flex items-start">
+                        <div id="feedback-icon" class="mr-3 mt-1"></div>
+                        <div>
+                            <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
+                            <p id="feedback-explanation" class="text-sm leading-relaxed text-gray-700"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="text-right">
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-xl shadow transition">
+                        Next Question &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="hidden text-center fade-in py-8">
+                <div id="result-icon" class="mx-auto w-24 h-24 mb-6 rounded-full flex items-center justify-center text-4xl"></div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
+                <p class="text-gray-600 mb-6">Here is your final score:</p>
+                <div class="text-5xl font-extrabold text-blue-600 mb-8" id="final-score"></div>
+                <p id="result-message" class="text-lg text-gray-700 mb-8 max-w-md mx-auto"></p>
+                <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">
+                    Retake Quiz
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Part 1: Multiple Choice (1-5) ---
+            {
+                type: 'mcq',
+                question: "Why is Transparency important in AI models?",
+                instruction: "Select the most accurate option.",
+                options: [
+                    "A) It makes AI models process data much faster.",
+                    "B) It helps users understand and trust AI decisions.",
+                    "C) It completely removes all bias from the AI system.",
+                    "D) It ensures that the AI never makes any mistakes."
+                ],
+                correct: 1, // Index 1 is B
+                explanation: "Transparency means making AI explainable. While people often think AI is perfectly objective, it isn't. Transparency builds trust by showing how decisions are made, not by guaranteeing perfection or speed."
+            },
+            {
+                type: 'mcq',
+                question: "What is a major ethical concern when using AI in Medicine?",
+                instruction: "Select the correct option based on the lecture.",
+                options: [
+                    "A) AI performing better for certain demographic groups than others.",
+                    "B) Hospitals no longer needing doctors.",
+                    "C) AI generating fake medical licenses.",
+                    "D) The inability of AI to read digital records."
+                ],
+                correct: 0,
+                explanation: "Bias is a massive concern in medical AI. If trained on limited data, AI might diagnose certain races or genders accurately while failing others. AI should assist doctors, not replace them."
+            },
+            {
+                type: 'mcq',
+                question: "In the context of NLP and Large Language Models (LLMs), what does 'Hallucination' mean?",
+                instruction: "Select the correct definition.",
+                options: [
+                    "A) The AI model visualizing images internally.",
+                    "B) The AI refusing to answer questions due to safety limits.",
+                    "C) The AI generating false information and presenting it as facts.",
+                    "D) The AI translating text into multiple languages simultaneously."
+                ],
+                correct: 2,
+                explanation: "Hallucination in AI occurs when models confidently generate false or entirely made-up information, which is a major ethical challenge in spreading misinformation."
+            },
+            {
+                type: 'mcq',
+                question: "Which regulation specifically ensures that healthcare AI adheres to strict privacy rules in the USA?",
+                instruction: "Choose the correct law.",
+                options: [
+                    "A) GDPR (General Data Protection Regulation)",
+                    "B) EU AI Act",
+                    "C) HIPAA (Health Insurance Portability and Accountability Act)",
+                    "D) AI Copyright Law"
+                ],
+                correct: 2,
+                explanation: "HIPAA is the specific US law for healthcare privacy. GDPR is the European data protection law, and the EU AI Act regulates high-risk AI generally in Europe."
+            },
+            {
+                type: 'mcq',
+                question: "How do AI recommendation systems in Social Media potentially harm users ethically?",
+                instruction: "Select the primary ethical concern.",
+                options: [
+                    "A) By consuming too much device battery.",
+                    "B) By deleting user data without permission.",
+                    "C) By limiting internet bandwidth.",
+                    "D) By creating 'filter bubbles' and spreading misinformation."
+                ],
+                correct: 3,
+                explanation: "AI on social media learns what you like and creates a 'filter bubble' (فقاعة ترشيح), isolating you from diverse viewpoints and easily spreading fake news."
+            },
+
+            // --- Part 2: True/False (6-10) ---
+            {
+                type: 'tf',
+                question: "AI should eventually replace human teachers to ensure perfect grading and eliminate all bias.",
+                instruction: "True or False?",
+                options: ["True", "False"],
+                correct: 1,
+                explanation: "False! The lecture explicitly states that AI should *assist* teachers, not replace them. AI itself can have grading biases, and relying solely on it raises ethical tracking and privacy issues."
+            },
+            {
+                type: 'tf',
+                question: "People often mistakenly assume that AI makes decisions without bias and is more objective than human judgment.",
+                instruction: "True or False?",
+                options: ["True", "False"],
+                correct: 0,
+                explanation: "True. People blindly trust AI thinking it's purely mathematical. In reality, AI reflects and amplifies the human biases present in the data it was trained on."
+            },
+            {
+                type: 'tf',
+                question: "AI-driven algorithmic trading in Finance completely stabilizes the market and eliminates risks.",
+                instruction: "True or False?",
+                options: ["True", "False"],
+                correct: 1,
+                explanation: "False. The lecture warns that AI-managed trading can actually *cause* financial instability. Therefore, explainable AI and strict financial regulations are required."
+            },
+            {
+                type: 'tf',
+                question: "The principle of 'Inclusiveness' means developing AI that is accessible to everyone, including marginalized groups.",
+                instruction: "True or False?",
+                options: ["True", "False"],
+                correct: 0,
+                explanation: "True. Inclusiveness (الشمولية) is a core pillar of Responsible AI, ensuring that AI benefits all of society and no demographic is left behind."
+            },
+            {
+                type: 'tf',
+                question: "To solve bias in AI recruitment (HR), companies should completely remove human involvement from the hiring process.",
+                instruction: "True or False?",
+                options: ["True", "False"],
+                correct: 1,
+                explanation: "False. The lecture recommends regular bias audits and *involving* humans in the hiring process (إشراك الإنسان في التوظيف) to prevent the AI from discriminating based on race or gender."
+            },
+
+            // --- Part 3: Fill in the Blanks (11-15) ---
+            {
+                type: 'fitb',
+                question: "In computer vision, the creation of highly realistic but fabricated videos used to manipulate truth is known as [BLANK].",
+                instruction: "Select the correct term to fill the blank.",
+                options: ["Deepfakes", "Black Box", "GDPR", "Accountability", "Transparency"],
+                correct: 0,
+                explanation: "Deepfakes (التزييف العميق) utilize advanced computer vision to swap faces or alter media, creating severe ethical risks regarding manipulation and consent."
+            },
+            {
+                type: 'fitb',
+                question: "Determining who is legally and morally responsible for the outcomes of AI systems is called [BLANK].",
+                instruction: "Select the correct term to fill the blank.",
+                options: ["Deepfakes", "Accountability", "GDPR", "Black Box", "Transparency"],
+                correct: 1,
+                explanation: "Accountability (المساءلة) is a crucial Responsible AI principle. It establishes governance frameworks to decide who takes the blame when AI causes harm (like self-driving car crashes)."
+            },
+            {
+                type: 'fitb',
+                question: "Complex AI models where the internal decision-making process is hidden and hard for humans to understand are often referred to as [BLANK] models.",
+                instruction: "Select the correct term to fill the blank.",
+                options: ["Accountability", "Deepfakes", "GDPR", "Black Box", "Transparency"],
+                correct: 3,
+                explanation: "Black Box (الصندوق الأسود) models lack interpretability. Because we cannot see how they make decisions, it is difficult to trust them in high-stakes areas like medicine or law."
+            },
+            {
+                type: 'fitb',
+                question: "The [BLANK] is a strict European regulation designed to protect personal data from misuse by AI systems.",
+                instruction: "Select the correct term to fill the blank.",
+                options: ["Transparency", "Black Box", "Accountability", "GDPR", "Deepfakes"],
+                correct: 3,
+                explanation: "GDPR (اللائحة العامة لحماية البيانات) is the EU's main data privacy law, ensuring AI systems protect user confidentiality."
+            },
+            {
+                type: 'fitb',
+                question: "The principle of [BLANK] involves making AI systems explainable and communicating clearly how decisions are made to the user.",
+                instruction: "Select the correct term to fill the blank.",
+                options: ["Deepfakes", "GDPR", "Transparency", "Black Box", "Accountability"],
+                correct: 2,
+                explanation: "Transparency (الشفافية) directly counters the 'Black Box' problem by ensuring users understand why an AI recommended a certain action."
+            },
+
+            // --- Part 4: Matching-style concepts (16-20) ---
+            {
+                type: 'mcq', // Presented as matching definitions
+                question: "Match the field 'AI in Creativity' with its primary ethical concern.",
+                instruction: "Which concern belongs to this field?",
+                options: [
+                    "A) Loss of anonymity in public spaces.",
+                    "B) Who owns the copyright of generated content?",
+                    "C) Creating filter bubbles for users.",
+                    "D) Misdiagnosing patient symptoms."
+                ],
+                correct: 1,
+                explanation: "In Creativity and Copyright, the main ethical dilemmas are who owns the rights to AI-generated art/music, and the rise of fake AI influencers replacing real human creators."
+            },
+            {
+                type: 'mcq',
+                question: "Match the 'EU AI Act' with its specific legal purpose.",
+                instruction: "What does this regulation do?",
+                options: [
+                    "A) Regulates high-risk AI applications to ensure safety.",
+                    "B) Protects medical records in the United States.",
+                    "C) Gives AI developers immunity from prosecution.",
+                    "D) Forces all AI to be open-source."
+                ],
+                correct: 0,
+                explanation: "The EU AI Act classifies AI systems by risk and specifically regulates 'high-risk' applications (like hiring or policing AI) to protect citizens."
+            },
+            {
+                type: 'mcq',
+                question: "Match the Responsible AI Principle 'Fairness' with its correct definition.",
+                instruction: "Select the matching definition.",
+                options: [
+                    "A) Securing AI from adversarial cyber attacks.",
+                    "B) Preventing personal data leaks.",
+                    "C) Avoiding bias and ensuring equal outcomes across different genders and races.",
+                    "D) Developing AI that everyone can access cheaply."
+                ],
+                correct: 2,
+                explanation: "Fairness (العدالة) is all about preventing discrimination. It ensures the AI doesn't favor one demographic over another."
+            },
+            {
+                type: 'mcq',
+                question: "Match the field 'Computer Vision' with a specific ethical risk associated with it.",
+                instruction: "Which risk is most tied to computer vision cameras/systems?",
+                options: [
+                    "A) Hallucinating text facts.",
+                    "B) Loss of anonymity in public spaces.",
+                    "C) Rejecting bank loan applications.",
+                    "D) Grading student essays unfairly."
+                ],
+                correct: 1,
+                explanation: "Computer Vision involves cameras and facial recognition. This leads to mass surveillance, loss of public anonymity, and potential racial profiling by police."
+            },
+            {
+                type: 'mcq',
+                question: "Match the concept 'Security & Safety' (in Responsible AI) with its goal.",
+                instruction: "Select the matching goal.",
+                options: [
+                    "A) Ensuring AI models never output text.",
+                    "B) Replacing human police officers completely.",
+                    "C) Protecting AI systems from adversarial attacks and preventing system failures.",
+                    "D) Making AI algorithms public for everyone."
+                ],
+                correct: 2,
+                explanation: "Safety and Security (السلامة والأمن) ensure that an AI system cannot be hacked or manipulated (adversarial attacks) and that it operates safely without causing physical or digital harm."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const questionInstruction = document.getElementById('question-instruction');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExplanation = document.getElementById('feedback-explanation');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreDisplay = document.getElementById('score-display');
+        const questionCounter = document.getElementById('question-counter');
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            feedbackContainer.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            optionsContainer.innerHTML = '';
+            
+            const q = quizData[currentQuestionIndex];
+            questionText.innerHTML = q.question.replace('[BLANK]', '<span class="inline-block border-b-2 border-blue-600 text-blue-600 px-2 min-w-[100px]">_____</span>');
+            questionInstruction.innerText = q.instruction;
+            
+            questionCounter.innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            updateProgress();
+
+            if (q.type === 'mcq' || q.type === 'tf') {
+                q.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn w-full text-left bg-white border-2 border-gray-200 hover:border-blue-500 text-gray-700 font-medium py-4 px-6 rounded-xl block';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkAnswer(index, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            } else if (q.type === 'fitb') {
+                const wordsGrid = document.createElement('div');
+                wordsGrid.className = 'flex flex-wrap gap-3 justify-center mt-6';
+                
+                // Shuffle options for display
+                const displayOptions = [...q.options].map((val, ind) => ({val, ind})).sort(() => Math.random() - 0.5);
+
+                displayOptions.forEach((item) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'word-bank-btn bg-white border border-gray-300 text-indigo-700 font-semibold py-2 px-5 rounded-full shadow-sm';
+                    btn.innerText = item.val;
+                    btn.onclick = () => {
+                        questionText.innerHTML = q.question.replace('[BLANK]', `<span class="inline-block border-b-2 border-blue-600 text-blue-600 px-2 font-bold">${item.val}</span>`);
+                        checkAnswer(item.ind, btn, true);
+                    };
+                    wordsGrid.appendChild(btn);
+                });
+                optionsContainer.appendChild(wordsGrid);
+            }
+        }
+
+        function checkAnswer(selectedIndex, selectedElement, isFitb = false) {
+            if (answered) return;
+            answered = true;
+
+            const q = quizData[currentQuestionIndex];
+            const isCorrect = selectedIndex === q.correct;
+
+            // Disable all buttons
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+
+            if (isCorrect) {
+                score++;
+                scoreDisplay.innerText = `Score: ${score}`;
+                if(!isFitb) {
+                    selectedElement.classList.replace('border-gray-200', 'border-green-500');
+                    selectedElement.classList.add('bg-green-50');
+                } else {
+                     selectedElement.classList.replace('border-gray-300', 'border-green-500');
+                     selectedElement.classList.add('bg-green-100');
+                }
+                showFeedback(true, q.explanation);
+            } else {
+                if(!isFitb) {
+                    selectedElement.classList.replace('border-gray-200', 'border-red-500');
+                    selectedElement.classList.add('bg-red-50');
+                    // Highlight correct answer
+                    allBtns[q.correct].classList.replace('border-gray-200', 'border-green-500');
+                    allBtns[q.correct].classList.add('bg-green-50', 'opacity-100');
+                } else {
+                    selectedElement.classList.replace('border-gray-300', 'border-red-500');
+                    selectedElement.classList.add('bg-red-100');
+                    // Show correct word in red text or just explain it
+                }
+                showFeedback(false, q.explanation);
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        function showFeedback(isCorrect, text) {
+            feedbackContainer.classList.remove('hidden');
+            feedbackContainer.classList.remove('bg-green-50', 'border-green-400', 'text-green-800', 'bg-red-50', 'border-red-400', 'text-red-800');
+            
+            if (isCorrect) {
+                feedbackContainer.classList.add('bg-green-50', 'border-green-400', 'text-green-800');
+                feedbackTitle.innerText = "Correct! ✔️";
+                feedbackIcon.innerHTML = `<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            } else {
+                feedbackContainer.classList.add('bg-red-50', 'border-red-400', 'text-red-800');
+                feedbackTitle.innerText = "Incorrect ❌";
+                feedbackIcon.innerHTML = `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+            feedbackExplanation.innerHTML = `<strong>Explanation:</strong> ${text}`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const percentage = (currentQuestionIndex / quizData.length) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+            
+            const resultMsg = document.getElementById('result-message');
+            const resultIcon = document.getElementById('result-icon');
+            
+            const percentage = score / quizData.length;
+            
+            if (percentage >= 0.8) {
+                resultMsg.innerText = "Excellent! You have a deep understanding of AI Ethics based on the lecture.";
+                resultIcon.innerHTML = "🏆";
+                resultIcon.className = "mx-auto w-24 h-24 mb-6 rounded-full flex items-center justify-center text-5xl bg-yellow-100 border-4 border-yellow-400";
+            } else if (percentage >= 0.5) {
+                resultMsg.innerText = "Good job! You know the basics, but reviewing the lecture notes on specific regulations might help.";
+                resultIcon.innerHTML = "👍";
+                resultIcon.className = "mx-auto w-24 h-24 mb-6 rounded-full flex items-center justify-center text-5xl bg-blue-100 border-4 border-blue-400";
+            } else {
+                resultMsg.innerText = "Keep learning! AI Ethics is a complex topic. Review the lecture and try again!";
+                resultIcon.innerHTML = "📚";
+                resultIcon.className = "mx-auto w-24 h-24 mb-6 rounded-full flex items-center justify-center text-5xl bg-gray-100 border-4 border-gray-400";
+            }
+            
+            progressBar.style.width = '100%';
+        }
+    </script>
+</body>
+</html>

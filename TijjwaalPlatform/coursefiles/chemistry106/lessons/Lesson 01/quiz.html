@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الكيمياء التفاعلي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo for Arabic, Inter for English -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .en-text {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center py-10 px-4 text-gray-800">
+
+    <!-- Main App Container -->
+    <div id="app-container" class="max-w-3xl w-full">
+
+        <!-- ======================= QUIZ SECTION ======================= -->
+        <div id="quiz-section" class="w-full fade-in">
+            <!-- Header & Progress -->
+            <div class="mb-6">
+                <div class="flex justify-between items-end mb-3">
+                    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-blue-600"></i>
+                        اختبار الكيمياء التدريبي
+                    </h1>
+                    <span id="progress-text"
+                        class="text-sm font-semibold text-gray-600 bg-gray-200 px-3 py-1 rounded-full">
+                        السؤال 1 من 20
+                    </span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden flex justify-end">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 md:p-8">
+
+                    <!-- Question Type Badge -->
+                    <span id="question-type-badge"
+                        class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider rounded mb-4 en-text"
+                        dir="ltr">
+                        Multiple Choice
+                    </span>
+
+                    <!-- Question Text -->
+                    <h2 id="question-text"
+                        class="text-xl md:text-2xl font-semibold text-gray-800 mb-6 whitespace-pre-line leading-relaxed en-text"
+                        dir="ltr">
+                        <!-- Question goes here -->
+                    </h2>
+
+                    <!-- Dynamic Instructions for FIB and MATCH -->
+                    <div id="hint-box" class="hidden mb-6 p-4 rounded-lg text-sm en-text text-left" dir="ltr">
+                        <span id="hint-title" class="font-bold"></span>
+                        <span id="hint-content"></span>
+                    </div>
+
+                    <!-- Options Container -->
+                    <div id="options-container" class="space-y-3 mb-6 en-text" dir="ltr">
+                        <!-- Buttons injected via JS -->
+                    </div>
+
+                    <!-- Feedback Box (Hidden by default) -->
+                    <div id="feedback-box" class="hidden p-5 rounded-xl border mt-6 fade-in text-left" dir="ltr">
+                        <div class="flex items-start gap-3">
+                            <div id="feedback-icon" class="mt-1 text-2xl">
+                                <!-- Icon injected via JS -->
+                            </div>
+                            <div>
+                                <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                                <p id="feedback-subtitle" class="text-red-700 mb-2 font-medium hidden">
+                                    You chose <span id="user-wrong-choice" class="line-through opacity-75"></span>. The
+                                    correct answer is <strong id="correct-choice"></strong>.
+                                </p>
+                                <div class="text-sm leading-relaxed">
+                                    <strong>Explanation:</strong> <span id="explanation-text"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Footer -->
+                <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+                    <button id="btn-check"
+                        class="py-2 px-6 rounded-lg font-semibold transition-all bg-gray-300 text-gray-500 cursor-not-allowed"
+                        disabled>
+                        تحقق من الإجابة
+                    </button>
+                    <button id="btn-next"
+                        class="hidden bg-gray-800 hover:bg-gray-900 text-white py-2 px-6 rounded-lg font-semibold transition-all flex items-center gap-2 shadow-md">
+                        <span>السؤال التالي</span>
+                        <i class="fa-solid fa-arrow-left text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= RESULTS SECTION ======================= -->
+        <div id="results-section" class="hidden w-full fade-in flex items-center justify-center py-10">
+            <div class="bg-white p-8 rounded-2xl shadow-lg max-w-lg w-full text-center">
+                <i class="fa-solid fa-award text-blue-600 text-7xl mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">تم إكمال الاختبار!</h2>
+                <p class="text-gray-600 mb-6">لقد أنهيت التقييم التفاعلي للكيمياء العضوية بنجاح.</p>
+
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-6 mb-8">
+                    <div class="text-5xl font-black text-blue-700 en-text" dir="ltr">
+                        <span id="final-score">0</span> <span class="text-2xl text-blue-500">/ 20</span>
+                    </div>
+                    <p id="score-message" class="text-sm text-blue-600 mt-4 font-medium">
+                        <!-- Message injected via JS -->
+                    </p>
+                </div>
+
+                <button onclick="restartQuiz()"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> إعادة الاختبار
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const quizData = [
+            // ---------------- MULTIPLE CHOICE (1-5) ----------------
+            {
+                id: 1, type: "mcq",
+                question: "Which of the following statements best describes an SN2 reaction mechanism?",
+                options: [
+                    "It proceeds via a carbocation intermediate.",
+                    "It results in an inversion of stereochemistry.",
+                    "It is a two-step process.",
+                    "It favors tertiary substrates over primary ones."
+                ],
+                answer: "It results in an inversion of stereochemistry.",
+                explanation: "An SN2 reaction is a concerted (one-step) process where the nucleophile attacks from the backside of the leaving group, causing a complete inversion of stereochemistry (Walden inversion). It does NOT form a carbocation (that's SN1) and heavily favors primary substrates due to less steric hindrance."
+            },
+            {
+                id: 2, type: "mcq",
+                question: "According to Markovnikov's Rule, when HBr is added to an unsymmetrical alkene (e.g., propene), where does the hydrogen atom attach?",
+                options: [
+                    "To the carbon with fewer hydrogen atoms.",
+                    "To the carbon with more hydrogen atoms.",
+                    "To the most substituted carbon.",
+                    "Equally to both carbon atoms."
+                ],
+                answer: "To the carbon with more hydrogen atoms.",
+                explanation: "Markovnikov's rule states that the hydrogen atom adds to the carbon of the double bond that already has more hydrogen atoms. This forms the most stable carbocation intermediate on the adjacent, more substituted carbon, to which the bromide ion then attaches."
+            },
+            {
+                id: 3, type: "mcq",
+                question: "Which of the following is a requirement for a molecule to be considered aromatic according to Hückel's Rule?",
+                options: [
+                    "It must be completely linear.",
+                    "It must have 4n pi electrons.",
+                    "It must have (4n + 2) pi electrons.",
+                    "It must contain only single bonds."
+                ],
+                answer: "It must have (4n + 2) pi electrons.",
+                explanation: "For a molecule to be aromatic, it must be cyclic, planar, fully conjugated (unhybridized p-orbital on every atom in the ring), and obey Hückel's rule by having (4n + 2) π electrons, where n is an integer (0, 1, 2...). 4n π electrons would make it antiaromatic."
+            },
+            {
+                id: 4, type: "mcq",
+                question: "What is the relationship between two stereoisomers that are non-superimposable mirror images of each other?",
+                options: [
+                    "Diastereomers",
+                    "Constitutional isomers",
+                    "Enantiomers",
+                    "Conformational isomers"
+                ],
+                answer: "Enantiomers",
+                explanation: "Enantiomers are chiral molecules that are exact, non-superimposable mirror images of one another (like your left and right hands). Diastereomers are stereoisomers that are NOT mirror images. Constitutional isomers have different atomic connectivity entirely."
+            },
+            {
+                id: 5, type: "mcq",
+                question: "Which reagent is commonly used as a strong reducing agent to convert carboxylic acids directly into primary alcohols?",
+                options: [
+                    "Sodium borohydride (NaBH₄)",
+                    "Lithium aluminum hydride (LiAlH₄)",
+                    "Potassium permanganate (KMnO₄)",
+                    "Pyridinium chlorochromate (PCC)"
+                ],
+                answer: "Lithium aluminum hydride (LiAlH₄)",
+                explanation: "LiAlH₄ is a very strong reducing agent capable of reducing carboxylic acids and esters all the way to primary alcohols. NaBH₄ is milder and can only reduce aldehydes and ketones. KMnO₄ and PCC are oxidizing agents, not reducing agents."
+            },
+
+            // ---------------- TRUE / FALSE (6-10) ----------------
+            {
+                id: 6, type: "tf",
+                question: "Enantiomers have identical physical properties such as boiling point, melting point, and density.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "True. Because enantiomers have the exact same types of bonds and intermolecular forces, all their scalar physical properties are identical. The only physical difference is the direction in which they rotate plane-polarized light."
+            },
+            {
+                id: 7, type: "tf",
+                question: "Benzene undergoes electrophilic addition reactions just as easily as standard alkenes do.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "False. Benzene is highly stable due to aromatic resonance. Undergoing an addition reaction would destroy this aromaticity. Therefore, benzene prefers Electrophilic Aromatic Substitution (EAS) to preserve its stable aromatic ring."
+            },
+            {
+                id: 8, type: "tf",
+                question: "Tertiary alcohols cannot be easily oxidized because the carbon atom bonded to the hydroxyl group has no hydrogen atoms attached to it.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "True. Oxidation of an alcohol requires the removal of a hydrogen atom from the carbon bearing the -OH group. Since a tertiary alcohol's carbon is bonded to three other carbons and zero hydrogens, it resists oxidation under normal conditions."
+            },
+            {
+                id: 9, type: "tf",
+                question: "A meso compound is a molecule that contains multiple chiral centers but is entirely chiral overall.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "False. A meso compound contains multiple chiral centers but has an internal plane of symmetry, making the overall molecule ACHIRAL (superimposable on its mirror image) and optically inactive."
+            },
+            {
+                id: 10, type: "tf",
+                question: "The E2 elimination mechanism requires a strong base and proceeds via a single-step (concerted) anti-periplanar transition state.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "True. The E2 mechanism is bimolecular and concerted. The strong base removes a proton at the same time the leaving group departs. For optimal orbital overlap, the proton and leaving group must be anti-periplanar (180° apart) to each other."
+            },
+
+            // ---------------- FILL IN THE BLANKS (11-15) ----------------
+            {
+                id: 11, type: "fib",
+                question: "Molecules that possess the exact same molecular formula but have different connectivity of their atoms are known as constitutional ________.",
+                options: ["Isomers", "Electrophile", "Catalyst", "Tautomerization", "Resonance"],
+                answer: "Isomers",
+                explanation: "Constitutional isomers (or structural isomers) share the same formula (e.g., C4H10) but are connected differently (e.g., n-butane vs. isobutane), leading to different chemical and physical properties."
+            },
+            {
+                id: 12, type: "fib",
+                question: "An electron-deficient species that is attracted to electron-rich regions and accepts a pair of electrons to form a new bond is called an ________.",
+                options: ["Isomers", "Electrophile", "Catalyst", "Tautomerization", "Resonance"],
+                answer: "Electrophile",
+                explanation: "Electrophiles ('electron-lovers') have a positive charge or a partial positive charge. They act as Lewis acids by accepting an electron pair from a nucleophile."
+            },
+            {
+                id: 13, type: "fib",
+                question: "A ________ is a substance that lowers the activation energy of a chemical reaction without being consumed in the process.",
+                options: ["Isomers", "Electrophile", "Catalyst", "Tautomerization", "Resonance"],
+                answer: "Catalyst",
+                explanation: "Catalysts work by providing an alternative reaction pathway with a lower activation energy, speeding up both the forward and reverse reactions without being permanently altered themselves."
+            },
+            {
+                id: 14, type: "fib",
+                question: "Keto-enol ________ is a chemical equilibrium between a ketone (or aldehyde) and its enol form, involving the migration of an alpha-hydrogen.",
+                options: ["Isomers", "Electrophile", "Catalyst", "Tautomerization", "Resonance"],
+                answer: "Tautomerization",
+                explanation: "Tautomers are distinct chemical species that readily interconvert. In keto-enol tautomerization, the keto form (C=O) is generally more thermodynamically stable than the enol form (C=C-OH)."
+            },
+            {
+                id: 15, type: "fib",
+                question: "The concept of ________ describes the delocalization of pi electrons over several atoms, providing extra stability to molecules like benzene or the acetate ion.",
+                options: ["Isomers", "Electrophile", "Catalyst", "Tautomerization", "Resonance"],
+                answer: "Resonance",
+                explanation: "Resonance stabilizes a molecule by spreading out electron density. The true structure is a 'hybrid' of all valid resonance structures, making it lower in energy and more stable than any single structural representation."
+            },
+
+            // ---------------- MATCHING (16-20) ----------------
+            {
+                id: 16, type: "match",
+                question: "Match the description to the correct organic compound class:\nSweet-smelling compounds often used in perfumes and flavorings, formed by the condensation reaction of a carboxylic acid and an alcohol.",
+                options: ["Ester", "Alkyne", "Alcohol", "Alkane", "Alkene"],
+                answer: "Ester",
+                explanation: "Esters have the general formula R-CO-O-R'. They are synthesized via Fischer esterification (acid + alcohol) and are responsible for many natural fruit scents."
+            },
+            {
+                id: 17, type: "match",
+                question: "Match the description to the correct organic compound class:\nAn unsaturated hydrocarbon that contains at least one carbon-carbon triple bond.",
+                options: ["Ester", "Alkyne", "Alcohol", "Alkane", "Alkene"],
+                answer: "Alkyne",
+                explanation: "Alkynes feature a C≡C triple bond, which consists of one sigma bond and two pi bonds. The carbons are sp-hybridized, giving a linear geometry of 180°."
+            },
+            {
+                id: 18, type: "match",
+                question: "Match the description to the correct organic compound class:\nAn organic compound containing a hydroxyl (-OH) functional group bonded to a saturated carbon atom.",
+                options: ["Ester", "Alkyne", "Alcohol", "Alkane", "Alkene"],
+                answer: "Alcohol",
+                explanation: "Alcohols (like ethanol or methanol) contain an -OH group. Because of the electronegative oxygen, they can participate in hydrogen bonding, giving them higher boiling points than similarly sized alkanes."
+            },
+            {
+                id: 19, type: "match",
+                question: "Match the description to the correct organic compound class:\nA completely saturated hydrocarbon containing only single carbon-carbon bonds.",
+                options: ["Ester", "Alkyne", "Alcohol", "Alkane", "Alkene"],
+                answer: "Alkane",
+                explanation: "Alkanes follow the formula CnH2n+2. Because they have no double or triple bonds, they are saturated with hydrogen and are generally quite unreactive compared to other functional groups."
+            },
+            {
+                id: 20, type: "match",
+                question: "Match the description to the correct organic compound class:\nAn unsaturated hydrocarbon containing at least one carbon-carbon double bond.",
+                options: ["Ester", "Alkyne", "Alcohol", "Alkane", "Alkene"],
+                answer: "Alkene",
+                explanation: "Alkenes contain a C=C double bond (one sigma, one pi bond). The presence of the pi bond makes them nucleophilic, allowing them to undergo various electrophilic addition reactions."
+            }
+        ];
+
+        // State Variables
+        let currentIndex = 0;
+        let selectedAnswer = null;
+        let isSubmitted = false;
+        let score = 0;
+
+        // DOM Elements
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTypeBadge = document.getElementById('question-type-badge');
+        const questionText = document.getElementById('question-text');
+        const hintBox = document.getElementById('hint-box');
+        const hintTitle = document.getElementById('hint-title');
+        const hintContent = document.getElementById('hint-content');
+        const optionsContainer = document.getElementById('options-container');
+
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackSubtitle = document.getElementById('feedback-subtitle');
+        const userWrongChoice = document.getElementById('user-wrong-choice');
+        const correctChoice = document.getElementById('correct-choice');
+        const explanationText = document.getElementById('explanation-text');
+
+        const btnCheck = document.getElementById('btn-check');
+        const btnNext = document.getElementById('btn-next');
+
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+        const finalScore = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        // Initialize App
+        function init() {
+            loadQuestion(currentIndex);
+
+            // Event Listeners
+            btnCheck.addEventListener('click', handleSubmit);
+            btnNext.addEventListener('click', handleNext);
+        }
+
+        // Load Question Data
+        function loadQuestion(index) {
+            const q = quizData[index];
+
+            // Update Progress
+            progressText.innerText = `السؤال ${index + 1} من ${quizData.length}`;
+            progressBar.style.width = `${((index + 1) / quizData.length) * 100}%`;
+
+            // Setup Text
+            questionTypeBadge.innerText = getQuestionTypeLabel(q.type);
+            questionText.innerText = q.question;
+
+            // Hints logic
+            if (q.type === 'fib') {
+                hintBox.className = "mb-6 p-4 rounded-lg text-sm en-text text-left bg-yellow-50 border border-yellow-200 text-yellow-800 block";
+                hintTitle.innerText = "Word Bank: ";
+                hintContent.innerText = q.options.join(' • ');
+            } else if (q.type === 'match') {
+                hintBox.className = "mb-6 p-4 rounded-lg text-sm en-text text-left bg-purple-50 border border-purple-200 text-purple-800 block";
+                hintTitle.innerText = "List B (Select the correct match below): ";
+                hintContent.innerText = q.options.join(' • ');
+            } else {
+                hintBox.className = "hidden";
+            }
+
+            // Render Options
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                // Base styles
+                btn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 font-medium";
+
+                const span = document.createElement('span');
+                span.innerText = opt;
+                btn.appendChild(span);
+
+                // Icon placeholder (empty by default)
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-container";
+                btn.appendChild(iconSpan);
+
+                // Click event
+                btn.addEventListener('click', () => handleSelect(opt, btn));
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reset UI states
+            selectedAnswer = null;
+            isSubmitted = false;
+
+            feedbackBox.classList.add('hidden');
+            feedbackBox.classList.remove('fade-in');
+
+            btnCheck.classList.remove('hidden');
+            btnCheck.disabled = true;
+            btnCheck.className = "py-2 px-6 rounded-lg font-semibold transition-all bg-gray-300 text-gray-500 cursor-not-allowed";
+
+            btnNext.classList.add('hidden');
+
+            // Re-trigger animation for the card content
+            optionsContainer.classList.remove('fade-in');
+            void optionsContainer.offsetWidth; // trigger reflow
+            optionsContainer.classList.add('fade-in');
+        }
+
+        // Handle Option Selection
+        function handleSelect(option, clickedBtn) {
+            if (isSubmitted) return;
+
+            selectedAnswer = option;
+
+            // Reset all buttons styling
+            const buttons = optionsContainer.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 font-medium";
+            });
+
+            // Highlight selected button
+            clickedBtn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-blue-500 bg-blue-50 ring-1 ring-blue-500 text-gray-800 font-medium";
+
+            // Enable check button
+            btnCheck.disabled = false;
+            btnCheck.className = "py-2 px-6 rounded-lg font-semibold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-md cursor-pointer";
+        }
+
+        // Handle Submission / Check Answer
+        function handleSubmit() {
+            if (!selectedAnswer || isSubmitted) return;
+
+            isSubmitted = true;
+            const q = quizData[currentIndex];
+            const isCorrect = selectedAnswer === q.answer;
+
+            if (isCorrect) score++;
+
+            // Update UI for all buttons
+            const buttons = optionsContainer.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                const optText = btn.querySelector('span').innerText;
+                const iconContainer = btn.querySelector('.icon-container');
+
+                // Disable all
+                btn.disabled = true;
+                btn.style.cursor = "default";
+
+                if (optText === q.answer) {
+                    btn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-green-500 bg-green-50 text-green-800 font-medium";
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-xl"></i>';
+                } else if (optText === selectedAnswer && !isCorrect) {
+                    btn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-red-500 bg-red-50 text-gray-700 font-medium";
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>';
+                } else {
+                    btn.className = "option-btn w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between border-gray-200 opacity-50 text-gray-700 font-medium";
+                }
+            });
+
+            // Setup Feedback Box
+            feedbackBox.classList.remove('hidden');
+            feedbackBox.classList.add('fade-in');
+
+            if (isCorrect) {
+                feedbackBox.className = "p-5 rounded-xl border mt-6 fade-in text-left bg-green-50 border-green-200";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-check text-green-600"></i>';
+                feedbackTitle.innerText = "Correct!";
+                feedbackTitle.className = "font-bold text-lg mb-1 text-green-800";
+                feedbackSubtitle.classList.add('hidden');
+                explanationText.parentElement.className = "text-sm leading-relaxed text-green-800";
+            } else {
+                feedbackBox.className = "p-5 rounded-xl border mt-6 fade-in text-left bg-red-50 border-red-200";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600"></i>';
+                feedbackTitle.innerText = "Incorrect";
+                feedbackTitle.className = "font-bold text-lg mb-1 text-red-800";
+
+                feedbackSubtitle.classList.remove('hidden');
+                userWrongChoice.innerText = selectedAnswer;
+                correctChoice.innerText = q.answer;
+
+                explanationText.parentElement.className = "text-sm leading-relaxed text-red-800 mt-2";
+            }
+
+            explanationText.innerText = q.explanation;
+
+            // Toggle Action Buttons
+            btnCheck.classList.add('hidden');
+            btnNext.classList.remove('hidden');
+
+            if (currentIndex === quizData.length - 1) {
+                btnNext.querySelector('span').innerText = "عرض النتائج";
+                btnNext.classList.replace('bg-gray-800', 'bg-blue-600');
+                btnNext.classList.replace('hover:bg-gray-900', 'hover:bg-blue-700');
+            }
+        }
+
+        // Handle Next Question
+        function handleNext() {
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                loadQuestion(currentIndex);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show Final Results
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+
+            finalScore.innerText = score;
+
+            if (score >= 15) {
+                scoreMessage.innerText = 'أداء ممتاز! لديك فهم قوي جداً لهذه المفاهيم.';
+                scoreMessage.className = "text-sm text-green-600 mt-4 font-bold text-lg";
+            } else if (score >= 10) {
+                scoreMessage.innerText = 'مجهود جيد! القليل من المراجعة الإضافية ستجعلك خبيراً.';
+                scoreMessage.className = "text-sm text-blue-600 mt-4 font-bold text-lg";
+            } else {
+                scoreMessage.innerText = 'استمر في الدراسة! راجع الشروحات لتقوية أساسياتك.';
+                scoreMessage.className = "text-sm text-orange-600 mt-4 font-bold text-lg";
+            }
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            currentIndex = 0;
+            score = 0;
+
+            resultsSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+
+            // Reset next button style in case it was changed to "See results"
+            btnNext.querySelector('span').innerText = "السؤال التالي";
+            btnNext.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            btnNext.classList.add('bg-gray-800', 'hover:bg-gray-900');
+
+            loadQuestion(currentIndex);
+        }
+
+        // Helper: Convert type to display label
+        function getQuestionTypeLabel(type) {
+            switch (type) {
+                case 'mcq': return 'Multiple Choice';
+                case 'tf': return 'True / False';
+                case 'fib': return 'Fill in the Blank';
+                case 'match': return 'Matching';
+                default: return 'Question';
+            }
+        }
+
+        // Start App
+        init();
+    </script>
+</body>
+
+</html>

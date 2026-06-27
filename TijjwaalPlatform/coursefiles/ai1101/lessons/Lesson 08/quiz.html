@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معالجة اللغات الطبيعية NLP - Interactive Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .en-text {
+            font-family: 'Inter', sans-serif;
+            direction: ltr;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .option-card {
+            transition: all 0.2s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        .fib-blank {
+            display: inline-block;
+            min-width: 120px;
+            height: 32px;
+            border-bottom: 2px solid #3b82f6;
+            margin: 0 8px;
+            text-align: center;
+            color: #2563eb;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .fib-blank:empty::before {
+            content: "Select a word";
+            color: #9ca3af;
+            font-weight: normal;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">معالجة اللغات الطبيعية NLP</h1>
+            <div class="text-sm bg-blue-800 px-3 py-1 rounded-full">
+                السؤال: <span id="q-counter">1</span> / 20
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow flex justify-center items-start">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden fade-in" id="quiz-container">
+            
+            <!-- Progress Bar -->
+            <div class="h-2 bg-gray-200 w-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 transition-all duration-300" style="width: 5%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- Question Header -->
+                <div class="mb-6 flex justify-between items-center border-b pb-4">
+                    <span id="question-type" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full en-text">Multiple Choice</span>
+                    <span class="text-gray-500 font-bold">Points: <span id="score">0</span></span>
+                </div>
+
+                <!-- Question Text -->
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 en-text text-gray-800"></h2>
+
+                <!-- Options Container -->
+                <div id="options-container" class="space-y-3 en-text">
+                    <!-- Options injected here via JS -->
+                </div>
+
+                <!-- Fill in the Blanks Word Bank (Hidden by default) -->
+                <div id="word-bank-container" class="hidden mt-6 en-text border border-dashed border-gray-300 p-4 rounded-lg bg-gray-50">
+                    <p class="text-sm text-gray-500 mb-2 font-semibold">Word Bank (Click to fill the blank):</p>
+                    <div id="word-bank" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div id="feedback-section" class="hidden mt-6 p-4 rounded-lg en-text fade-in">
+                    <div class="flex items-start gap-3">
+                        <div id="feedback-icon" class="mt-1 flex-shrink-0"></div>
+                        <div>
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-desc" class="text-gray-700 text-sm md:text-base"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex justify-end gap-3 border-t pt-4">
+                    <button id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        إرسال الإجابة (Submit)
+                    </button>
+                    <button id="next-btn" class="hidden bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                        السؤال التالي (Next)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 text-center fade-in">
+            <svg class="w-20 h-20 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+            <h2 class="text-3xl font-bold mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6">لقد أتممت اختبار معالجة اللغات الطبيعية.</p>
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <span class="block text-sm text-blue-600 font-bold mb-1">النتيجة النهائية</span>
+                <span class="text-4xl font-black text-blue-800" id="final-score">0 / 20</span>
+            </div>
+            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg w-full transition-colors">
+                إعادة الاختبار (Retake Quiz)
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Quiz Data generated strictly from the attached PDF
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "What is the main goal of Natural Language Processing (NLP)?",
+                options: [
+                    "To build faster computer hardware components.",
+                    "To enable computers to interpret, generate, and deal with human language.",
+                    "To create advanced graphical user interfaces for websites.",
+                    "To manage relational databases more efficiently."
+                ],
+                answer: 1,
+                explanation: "NLP is a field that aims to enable computers to interact with human language, interpreting text or speech and generating it to facilitate smooth human-machine interaction."
+            },
+            {
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which step in NLP involves removing punctuation, special characters, and stop words?",
+                options: ["Tokenization", "Model Training", "Preprocessing", "Sentiment Analysis"],
+                answer: 2,
+                explanation: "Preprocessing is the step where raw text is cleaned. It includes lowercasing, removing punctuation, and removing stop words (like 'the', 'is') before computers can process it."
+            },
+            {
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "What is a key difference between Large Language Models (LLMs) and traditional NLP models?",
+                options: [
+                    "LLMs rely on very small datasets to operate.",
+                    "Traditional models require thousands of GPUs to function.",
+                    "LLMs are trained on massive datasets and require huge computational power.",
+                    "LLMs can only perform basic spell-checking tasks."
+                ],
+                answer: 2,
+                explanation: "LLMs require massive datasets (billions of words) and huge computational resources (GPUs) trained over weeks or months, unlike traditional statistical models."
+            },
+            {
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "In real-world applications, what is Sentiment Analysis used for?",
+                options: [
+                    "Translating a document from English to Arabic.",
+                    "Summarizing long legal documents into a few sentences.",
+                    "Converting spoken audio recordings into written text.",
+                    "Analyzing public mood from reviews and social media to see if users are happy or frustrated."
+                ],
+                answer: 3,
+                explanation: "Companies and governments use Sentiment Analysis to evaluate public emotion and opinions from social media, reviews, and surveys."
+            },
+            {
+                type: 'mcq', typeLabel: 'Multiple Choice',
+                q: "Which Azure AI capability is used to extract structured data (like Merchant Name, Tax, and Total) from images of receipts?",
+                options: ["Language Playground", "Text Summarization", "Document Intelligence", "Speech Recognition"],
+                answer: 2,
+                explanation: "Azure AI Document Intelligence uses AI to extract text, tables, and key structured fields from documents such as PDFs, invoices, and receipts."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: 'tf', typeLabel: 'True / False',
+                q: "Tokenization is the process of combining short phrases into one large, complex paragraph.",
+                options: ["True", "False"],
+                answer: 1, // False
+                explanation: "False! Tokenization is the exact opposite. It is the process of breaking down raw text into smaller units called tokens (words, phrases, or characters)."
+            },
+            {
+                type: 'tf', typeLabel: 'True / False',
+                q: "Stop words like 'the', 'is', and 'and' are usually removed during preprocessing because they do not add significant meaning to the text.",
+                options: ["True", "False"],
+                answer: 0, // True
+                explanation: "True. Removing stop words cleans the data and allows the NLP model to focus on the core words that carry the actual meaning."
+            },
+            {
+                type: 'tf', typeLabel: 'True / False',
+                q: "Stemming and Lemmatization are techniques used to convert a word back to its base or root form, such as converting 'running' to 'run'.",
+                options: ["True", "False"],
+                answer: 0, // True
+                explanation: "True. These techniques are part of text preprocessing to ensure that similar words are treated the same way by the model."
+            },
+            {
+                type: 'tf', typeLabel: 'True / False',
+                q: "Traditional NLP models are better at generating creative content and translating languages compared to Large Language Models (LLMs).",
+                options: ["True", "False"],
+                answer: 1, // False
+                explanation: "False. Traditional models are usually limited in understanding and generation, mostly used for specific tasks like spell check. LLMs excel at creative generation and translation."
+            },
+            {
+                type: 'tf', typeLabel: 'True / False',
+                q: "NLP models are actively used by email providers like Gmail to automatically filter spam messages.",
+                options: ["True", "False"],
+                answer: 0, // True
+                explanation: "True. NLP is used to detect spam, fake news, and hate speech by analyzing the text content."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "In the first step of NLP, we deal with [BLANK] text, which is unstructured content like documents, articles, or conversations.",
+                options: ["Foundation", "Raw", "Entities", "Summarization", "Deep"],
+                answer: "Raw",
+                explanation: "Raw Text (النص الخام) is the initial, unstructured content that needs to be preprocessed before a computer can understand it."
+            },
+            {
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "Large Language Models belong to the category of [BLANK] Models, meaning they are trained on diverse data and can be adapted for a wide range of different tasks.",
+                options: ["Foundation", "Raw", "Entities", "Summarization", "Deep"],
+                answer: "Foundation",
+                explanation: "LLMs fall under Foundation Models (نماذج الأساس) because they provide a foundational understanding of language that can be fine-tuned for many specific uses."
+            },
+            {
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "When using the Azure AI Language playground, extracting specific data like hotel names, cities, and dates is known as extracting Named [BLANK].",
+                options: ["Foundation", "Raw", "Entities", "Summarization", "Deep"],
+                answer: "Entities",
+                explanation: "Named Entities (الكيانات المسماة) refer to real-world objects, such as people, locations, organizations, and dates extracted from text."
+            },
+            {
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "Text [BLANK] is an NLP application used to condense a long scientific research paper or news article into just a few meaningful sentences.",
+                options: ["Foundation", "Raw", "Entities", "Summarization", "Deep"],
+                answer: "Summarization",
+                explanation: "Text Summarization (تلخيص النصوص) extracts the main points to create short, targeted summaries for quick reading."
+            },
+            {
+                type: 'fib', typeLabel: 'Fill in the Blank',
+                q: "LLMs are built using [BLANK] Learning techniques and are trained on massive datasets to understand complex word relationships.",
+                options: ["Foundation", "Raw", "Entities", "Summarization", "Deep"],
+                answer: "Deep",
+                explanation: "Deep Learning (التعلم العميق) is the AI technique used to train Large Language Models on billions of words."
+            },
+
+            // --- Matching Concepts to Definitions (16-20) ---
+            // Represented as finding the correct definition for a given concept (List A -> List B)
+            {
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Speech Recognition</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct definition from List B below:</span>",
+                options: [
+                    "Converting spoken language into written text.",
+                    "Extracting the most important words contributing to the text's meaning.",
+                    "Automatically converting text from one human language to another.",
+                    "Testing the AI model on unseen data to ensure its performance.",
+                    "Suggesting words while typing and fixing spelling mistakes."
+                ],
+                answer: 0,
+                explanation: "Speech Recognition (التعرف على الكلام) transforms audio/voice input into readable text (e.g., Voice typing)."
+            },
+            {
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Key Phrases</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct definition from List B below:</span>",
+                options: [
+                    "Converting spoken language into written text.",
+                    "Extracting the most important words contributing to the text's meaning.",
+                    "Automatically converting text from one human language to another.",
+                    "Testing the AI model on unseen data to ensure its performance.",
+                    "Suggesting words while typing and fixing spelling mistakes."
+                ],
+                answer: 1,
+                explanation: "Key Phrases (العبارات الرئيسة) are the most significant words or terms that summarize the main idea of a document."
+            },
+            {
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Machine Translation</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct definition from List B below:</span>",
+                options: [
+                    "Converting spoken language into written text.",
+                    "Extracting the most important words contributing to the text's meaning.",
+                    "Automatically converting text from one human language to another.",
+                    "Testing the AI model on unseen data to ensure its performance.",
+                    "Suggesting words while typing and fixing spelling mistakes."
+                ],
+                answer: 2,
+                explanation: "Machine Translation (الترجمة الآلية) uses NLP to translate text seamlessly across different cultures (e.g., Google Translate)."
+            },
+            {
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Model Evaluation</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct definition from List B below:</span>",
+                options: [
+                    "Converting spoken language into written text.",
+                    "Extracting the most important words contributing to the text's meaning.",
+                    "Automatically converting text from one human language to another.",
+                    "Testing the AI model on unseen data to ensure its performance.",
+                    "Suggesting words while typing and fixing spelling mistakes."
+                ],
+                answer: 3,
+                explanation: "Model Evaluation (اختبار النموذج وتقييمه) is the final step in creating an LLM, where it is tested on new data to verify its capability."
+            },
+            {
+                type: 'match', typeLabel: 'Matching (List A → List B)',
+                q: "Match the Concept from List A: <strong>Autocorrect & Predictive Text</strong> <br> <span class='text-sm font-normal text-gray-500'>Select its correct definition from List B below:</span>",
+                options: [
+                    "Converting spoken language into written text.",
+                    "Extracting the most important words contributing to the text's meaning.",
+                    "Automatically converting text from one human language to another.",
+                    "Testing the AI model on unseen data to ensure its performance.",
+                    "Suggesting words while typing and fixing spelling mistakes."
+                ],
+                answer: 4,
+                explanation: "Autocorrect and Predictive Text (التصحيح التلقائي والنص التنبؤي) like Smart Compose in Gmail help speed up typing and reduce errors."
+            }
+        ];
+
+        // App State
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null; // Can be index (MCQ/TF/Match) or string (FIB)
+        let isAnswerSubmitted = false;
+
+        // DOM Elements
+        const qCounter = document.getElementById('q-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreDisplay = document.getElementById('score');
+        const questionType = document.getElementById('question-type');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const wordBankContainer = document.getElementById('word-bank-container');
+        const wordBank = document.getElementById('word-bank');
+        const feedbackSection = document.getElementById('feedback-section');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        const icons = {
+            success: `<svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            error: `<svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+        };
+
+        function initQuiz() {
+            loadQuestion();
+            submitBtn.addEventListener('click', checkAnswer);
+            nextBtn.addEventListener('click', nextQuestion);
+        }
+
+        function loadQuestion() {
+            const qData = quizData[currentQuestion];
+            isAnswerSubmitted = false;
+            selectedAnswer = null;
+
+            // Reset UI
+            feedbackSection.classList.add('hidden');
+            feedbackSection.className = 'hidden mt-6 p-4 rounded-lg en-text fade-in'; // Reset classes
+            nextBtn.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+            submitBtn.disabled = true;
+            optionsContainer.innerHTML = '';
+            wordBank.innerHTML = '';
+            wordBankContainer.classList.add('hidden');
+
+            // Update Header info
+            qCounter.innerText = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+            questionType.innerText = qData.typeLabel;
+
+            // Render based on type
+            if (qData.type === 'fib') {
+                // Render Fill in the blank
+                const parts = qData.q.split('[BLANK]');
+                questionText.innerHTML = `${parts[0]}<span id="fib-spot" class="fib-blank" onclick="clearFib()"></span>${parts[1]}`;
+                
+                // Render Word Bank
+                wordBankContainer.classList.remove('hidden');
+                qData.options.forEach(word => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 font-medium transition-colors shadow-sm';
+                    btn.innerText = word;
+                    btn.onclick = () => selectFibWord(word);
+                    wordBank.appendChild(btn);
+                });
+            } else {
+                // Render MCQ, TF, Match
+                questionText.innerHTML = qData.q;
+                qData.options.forEach((opt, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 bg-white flex items-center gap-3';
+                    optionDiv.onclick = () => selectOption(index, optionDiv);
+                    
+                    const radioCircle = document.createElement('div');
+                    radioCircle.className = 'w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center';
+                    
+                    const innerDot = document.createElement('div');
+                    innerDot.className = 'w-2.5 h-2.5 rounded-full bg-blue-600 hidden';
+                    radioCircle.appendChild(innerDot);
+
+                    const optText = document.createElement('span');
+                    optText.className = 'text-gray-700 font-medium';
+                    optText.innerText = opt;
+
+                    optionDiv.appendChild(radioCircle);
+                    optionDiv.appendChild(optText);
+                    optionsContainer.appendChild(optionDiv);
+                });
+            }
+        }
+
+        function selectOption(index, element) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = index;
+            submitBtn.disabled = false;
+
+            // Visual update
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('border-blue-500', 'bg-blue-50');
+                card.classList.add('border-gray-200');
+                card.querySelector('.w-2\\.5').classList.add('hidden');
+                card.querySelector('.w-5').classList.remove('border-blue-500');
+            });
+
+            element.classList.remove('border-gray-200');
+            element.classList.add('border-blue-500', 'bg-blue-50');
+            element.querySelector('.w-5').classList.add('border-blue-500');
+            element.querySelector('.w-2\\.5').classList.remove('hidden');
+        }
+
+        function selectFibWord(word) {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = word;
+            const spot = document.getElementById('fib-spot');
+            spot.innerText = word;
+            submitBtn.disabled = false;
+        }
+
+        function clearFib() {
+            if (isAnswerSubmitted) return;
+            selectedAnswer = null;
+            document.getElementById('fib-spot').innerText = "";
+            submitBtn.disabled = true;
+        }
+
+        function checkAnswer() {
+            isAnswerSubmitted = true;
+            submitBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            
+            const qData = quizData[currentQuestion];
+            let isCorrect = false;
+
+            if (qData.type === 'fib') {
+                // Disable word bank
+                Array.from(wordBank.children).forEach(btn => btn.disabled = true);
+                const spot = document.getElementById('fib-spot');
+                
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    spot.classList.add('text-green-600', 'border-green-600');
+                } else {
+                    spot.classList.add('text-red-600', 'border-red-600', 'line-through');
+                    // Show correct answer inline
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = "text-green-600 font-bold ml-2";
+                    correctSpan.innerText = `(${qData.answer})`;
+                    spot.parentNode.insertBefore(correctSpan, spot.nextSibling);
+                }
+            } else {
+                const options = document.querySelectorAll('.option-card');
+                // Disable options
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+
+                if (selectedAnswer === qData.answer) {
+                    isCorrect = true;
+                    options[selectedAnswer].classList.add('bg-green-100', 'border-green-500');
+                } else {
+                    options[selectedAnswer].classList.add('bg-red-100', 'border-red-500');
+                    options[qData.answer].classList.add('bg-green-100', 'border-green-500');
+                }
+            }
+
+            if (isCorrect) {
+                score++;
+                scoreDisplay.innerText = score;
+                showFeedback(true, "Correct Answer!", qData.explanation);
+            } else {
+                showFeedback(false, "Incorrect", qData.explanation);
+            }
+        }
+
+        function showFeedback(isCorrect, title, explanation) {
+            feedbackSection.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackSection.classList.add('bg-green-50', 'border', 'border-green-200');
+                feedbackIcon.innerHTML = icons.success;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-green-800';
+            } else {
+                feedbackSection.classList.add('bg-red-50', 'border', 'border-red-200');
+                feedbackIcon.innerHTML = icons.error;
+                feedbackTitle.className = 'font-bold text-lg mb-1 text-red-800';
+            }
+            feedbackTitle.innerText = title;
+            feedbackDesc.innerHTML = `<strong>Explanation:</strong> ${explanation}`;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('results-container');
+            results.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+            document.getElementById('q-counter').innerText = 20; // Max out
+        }
+
+        // Start Quiz
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparation and Reactions of Alcohols, Phenols and Ethers</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fff1f2;
+            /* خلفية وردية/حمراء فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #be123c 0%, #881337 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-rose-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-flask text-rose-600"></i>
+                Reactions of Alcohols, Phenols & Ethers
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (156 - 165): Preparations & Chemical
+                Properties</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-rose-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-rose-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-pink-50 border-l-4 border-pink-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-rose-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-rose-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-rose-200">
+            <i class="fa-solid fa-medal text-7xl text-rose-700 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تفاعلات الكحولات والفينولات والإيثرات.</p>
+
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-rose-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-rose-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-rose-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the expected major product when a secondary (2°) alcohol, like 2-propanol, is oxidized using a strong oxidizing agent (e.g., K₂Cr₂O₇/H⁺)?",
+                options: ["Aldehyde", "Ketone", "Carboxylic Acid", "No reaction occurs"],
+                a: "Ketone",
+                exp: "Secondary alcohols oxidize to form ketones. Because there is no hydrogen atom attached to the carbonyl carbon in the resulting ketone, it cannot be oxidized any further."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Phenol is significantly more acidic than typical aliphatic alcohols (like ethanol). What is the primary reason for this?",
+                options: ["Phenol has a higher molecular weight.", "The benzene ring pushes electron density toward the oxygen.", "The phenoxide ion is stabilized by resonance.", "Phenol cannot form hydrogen bonds."],
+                a: "The phenoxide ion is stabilized by resonance.",
+                exp: "When phenol loses a proton (H⁺), the resulting negative charge on the phenoxide ion is delocalized into the benzene ring via resonance, greatly stabilizing the conjugate base and increasing acidity."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which set of reagents and conditions is typically used to dehydrate an alcohol to form an alkene?",
+                options: ["Dilute NaOH, cold", "Concentrated H₂SO₄, heat", "H₂ gas with Pt catalyst", "NaBH₄ in water"],
+                a: "Concentrated H₂SO₄, heat",
+                exp: "Dehydration (loss of water) is an elimination reaction that requires a strong acid catalyst (to protonate the -OH making it a good leaving group) and heat to favor elimination over substitution."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What are the primary starting materials required for a Williamson ether synthesis?",
+                options: ["Two alcohols and an acid catalyst.", "An alkene and water.", "A sodium alkoxide (or phenoxide) and an alkyl halide.", "An aldehyde and a Grignard reagent."],
+                a: "A sodium alkoxide (or phenoxide) and an alkyl halide.",
+                exp: "The Williamson ether synthesis is an SN2 reaction where a strong nucleophile (alkoxide ion, RO⁻) attacks an unhindered alkyl halide (R'X) to form an ether (R-O-R')."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which reducing agent is commonly used to convert a ketone back into a secondary alcohol?",
+                options: ["KMnO₄ (Potassium permanganate)", "PCC (Pyridinium chlorochromate)", "NaBH₄ (Sodium borohydride) or LiAlH₄", "H₂SO₄ (Sulfuric acid)"],
+                a: "NaBH₄ (Sodium borohydride) or LiAlH₄",
+                exp: "NaBH₄ and LiAlH₄ are hydride (H⁻) donors. They act as reducing agents, attacking the carbonyl carbon to convert aldehydes and ketones into primary and secondary alcohols, respectively."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Ethers are highly reactive compounds and are commonly oxidized or reduced at room temperature.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Ethers are generally very unreactive (inert) towards bases, oxidizing agents, and reducing agents. This makes them excellent solvents for organic reactions (like Grignard reactions)."
+            },
+            {
+                type: "True / False",
+                q: "When an alcohol reacts with active metals like Sodium (Na) or Potassium (K), hydrogen gas (H₂) is liberated and an alkoxide salt is formed.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Alcohols act as weak acids when reacting with highly active alkali metals: 2 R-OH + 2 Na → 2 R-O⁻Na⁺ (Sodium alkoxide) + H₂ (gas)."
+            },
+            {
+                type: "True / False",
+                q: "Tertiary (3°) alcohols are easily oxidized to carboxylic acids using potassium permanganate (KMnO₄).",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Tertiary alcohols cannot be oxidized under normal conditions because the carbon atom bearing the -OH group has no hydrogen atoms attached to it to be removed."
+            },
+            {
+                type: "True / False",
+                q: "The acid-catalyzed hydration of an alkene (adding H₂O) follows Markovnikov's rule.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The electrophile (H⁺) adds to the carbon with more hydrogens, creating the most stable carbocation, which is then attacked by water to place the -OH group on the more substituted carbon."
+            },
+            {
+                type: "True / False",
+                q: "Because phenol is weakly acidic, it dissolves in strong aqueous bases like NaOH to form a water-soluble salt.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Phenol (pKa ~10) is acidic enough to react completely with NaOH, forming sodium phenoxide, which is ionic and highly soluble in water. (Most aliphatic alcohols do not react with NaOH)."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The unusually high boiling points of alcohols, compared to ethers or alkanes of similar mass, are due to strong intermolecular ________ bonding.",
+                options: ["Hydrogen", "Williamson", "Ketone", "Dehydration", "Phenoxide"],
+                a: "Hydrogen",
+                exp: "The highly polar O-H bond allows the partially positive hydrogen of one molecule to be strongly attracted to the lone pairs on the oxygen of an adjacent molecule."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The ________ ether synthesis is the most reliable method for making asymmetrical ethers using an SN2 mechanism.",
+                options: ["Hydrogen", "Williamson", "Ketone", "Dehydration", "Phenoxide"],
+                a: "Williamson",
+                exp: "Named after Alexander Williamson, this synthesis relies on reacting an alkoxide ion with a primary alkyl halide."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The oxidation of any secondary alcohol will predictably yield a ________ as the final product.",
+                options: ["Hydrogen", "Williamson", "Ketone", "Dehydration", "Phenoxide"],
+                a: "Ketone",
+                exp: "Secondary alcohols (R-CH(OH)-R') lose two hydrogen atoms during oxidation to form a C=O double bond flanked by two R groups."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The elimination reaction where an alcohol loses a molecule of water to form an alkene is referred to as ________.",
+                options: ["Hydrogen", "Williamson", "Ketone", "Dehydration", "Phenoxide"],
+                a: "Dehydration",
+                exp: "Dehydration usually requires an acid catalyst (H₂SO₄ or H₃PO₄) and heat, often yielding the most substituted alkene (Zaitsev's rule) as the major product."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When phenol reacts with an aqueous solution of sodium hydroxide, it forms the water-soluble sodium ________ salt.",
+                options: ["Hydrogen", "Williamson", "Ketone", "Dehydration", "Phenoxide"],
+                a: "Phenoxide",
+                exp: "The phenoxide ion (C₆H₅O⁻) is the conjugate base of phenol, stabilized by the delocalization of its negative charge around the aromatic ring."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the starting material and reagent to the correct Organic Product: \nPrimary Alcohol + KMnO₄ (strong oxidizer)",
+                options: ["Carboxylic Acid", "Aldehyde", "Alcohol (via Hydration)", "Alcohol (via Reduction)", "Ester"],
+                a: "Carboxylic Acid",
+                exp: "Strong oxidizers like KMnO₄ or Chromic acid (Jones reagent) will oxidize a 1° alcohol completely past the aldehyde stage directly to a carboxylic acid."
+            },
+            {
+                type: "Matching",
+                q: "Match the starting material and reagent to the correct Organic Product: \nPrimary Alcohol + PCC (mild oxidizer)",
+                options: ["Carboxylic Acid", "Aldehyde", "Alcohol (via Hydration)", "Alcohol (via Reduction)", "Ester"],
+                a: "Aldehyde",
+                exp: "Pyridinium chlorochromate (PCC) is a mild, anhydrous oxidant that specifically stops the oxidation of a 1° alcohol at the aldehyde stage."
+            },
+            {
+                type: "Matching",
+                q: "Match the starting material and reagent to the correct Organic Product: \nAlkene + H₂O (with H⁺ catalyst)",
+                options: ["Carboxylic Acid", "Aldehyde", "Alcohol (via Hydration)", "Alcohol (via Reduction)", "Ester"],
+                a: "Alcohol (via Hydration)",
+                exp: "This is the classic hydration of an alkene, following Markovnikov's rule to produce a more substituted alcohol."
+            },
+            {
+                type: "Matching",
+                q: "Match the starting material and reagent to the correct Organic Product: \nKetone + LiAlH₄ (or NaBH₄)",
+                options: ["Carboxylic Acid", "Aldehyde", "Alcohol (via Hydration)", "Alcohol (via Reduction)", "Ester"],
+                a: "Alcohol (via Reduction)",
+                exp: "Reducing agents add hydride (H⁻) to the carbonyl group of a ketone, converting it back into a secondary alcohol."
+            },
+            {
+                type: "Matching",
+                q: "Match the starting material and reagent to the correct Organic Product: \nAlcohol + Carboxylic Acid (with H⁺ catalyst)",
+                options: ["Carboxylic Acid", "Aldehyde", "Alcohol (via Hydration)", "Alcohol (via Reduction)", "Ester"],
+                a: "Ester",
+                exp: "This is Fischer esterification. The alcohol and carboxylic acid condense (losing a molecule of water) to form a fragrant ester."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-rose-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Hydrogen, Williamson, Ketone, Dehydration, Phenoxide";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-rose-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Carboxylic Acid, Aldehyde, Alcohol (via Hydration), Alcohol (via Reduction), Ester";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-rose-600 hover:bg-rose-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-rose-600', 'hover:bg-rose-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-rose-600', 'hover:bg-rose-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء كيميائي مثالي! 🌟 استيعابك لتفاعلات الأكسدة والاختزال صلب جداً.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع! 👏 تذكر الفرق بين تفاعل الكحول الأولي (PCC مقابل KMnO4) لتصل للكمال.";
+            } else {
+                msgEl.textContent = "هذا الفصل مليء بالكواشف الكيميائية. راجع التفسيرات لكل تفاعل وحاول مجدداً! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Organic Reactions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fff7ed;
+            /* خلفية برتقالية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-orange-800 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-fire-flame-curved text-orange-600"></i>
+                Types of Organic Reactions
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (56 - 60): Reactions & Bond Cleavage
+            </p>
+        </div>
+
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-orange-200">
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-center border-b border-orange-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-orange-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-orange-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-orange-200">
+            <i class="fa-solid fa-ranking-star text-7xl text-orange-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم أنواع التفاعلات العضوية بنجاح.</p>
+
+            <div class="bg-orange-50 border border-orange-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-orange-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-orange-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-orange-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "Which notation represents the heterolytic cleavage (Heterolysis) of a covalent bond?",
+                options: ["A—B → A• + B•", "A:B → A⁺ + :B⁻", "A + B → A—B", "A:B → A⁻ + B⁻"],
+                a: "A:B → A⁺ + :B⁻",
+                exp: "In heterolysis, the covalent bond breaks unevenly, and one atom takes both electrons, generating ions (a cation A⁺ and an anion :B⁻)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What type of reaction is characteristic of saturated compounds such as alkanes and alkyl halides?",
+                options: ["Addition Reactions", "Elimination Reactions", "Substitution Reactions", "Oxidation Reactions"],
+                a: "Substitution Reactions",
+                exp: "In saturated compounds, all valences are full. Therefore, they typically react by substituting (replacing) one group for another."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In which reaction do all parts of the adding reagent appear in the product, making two molecules become one?",
+                options: ["Addition Reactions", "Substitution Reactions", "Elimination Reactions", "Homolysis"],
+                a: "Addition Reactions",
+                exp: "This is the definition of an addition reaction, which is characteristic of compounds with multiple bonds (like alkenes or alkynes)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In organic chemistry, oxidation is generally defined as:",
+                options: ["The addition of Hydrogen to a compound.", "The removal of Hydrogen and/or the addition of Oxygen to a compound.", "The elimination of Oxygen from a compound.", "The homolytic cleavage of a bond."],
+                a: "The removal of Hydrogen and/or the addition of Oxygen to a compound.",
+                exp: "Oxidation increases the oxygen content or decreases the hydrogen content of a molecule, while reduction does the opposite."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which reaction provides a useful method for preparing compounds with double and triple bonds?",
+                options: ["Addition Reactions", "Substitution Reactions", "Elimination Reactions", "Heterolysis"],
+                a: "Elimination Reactions",
+                exp: "In an elimination reaction, a molecule loses the elements of a smaller molecule (like H₂O or HBr) to form a new pi bond (double or triple bond)."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "Homolysis is the cleavage of a covalent bond that produces two radicals (A• and B•).",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. In homolytic cleavage, the electron pair is split evenly, giving one electron to each atom and creating neutral free radicals."
+            },
+            {
+                type: "True / False",
+                q: "In a substitution reaction, two molecules combine to form a single, larger product molecule.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. That describes an Addition reaction. In a Substitution reaction, one group simply replaces another group without combining the whole molecules into one."
+            },
+            {
+                type: "True / False",
+                q: "Reduction is the addition of Hydrogen to a compound and/or the elimination of Oxygen from a compound.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. This is the exact opposite of oxidation. Adding hydrogen (like hydrogenating an alkene) is a classic reduction."
+            },
+            {
+                type: "True / False",
+                q: "Addition reactions are characteristic of compounds that contain multiple bonds.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Molecules with double or triple (pi) bonds can undergo addition reactions by breaking the weak pi bond to add new atoms."
+            },
+            {
+                type: "True / False",
+                q: "Heterolysis involves the symmetrical sharing of electrons when a bond breaks.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Heterolysis is asymmetrical. One atom leaves with both electrons (becoming an anion), leaving the other atom deficient (a cation)."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "________ is a homolytic cleavage of a covalent bond that produces A• and B• radicals.",
+                options: ["Homolysis", "Substitution", "Elimination", "Addition", "Heterolysis"],
+                a: "Homolysis",
+                exp: "Homo- means same/equal. The bond electrons are distributed equally, forming radicals."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In a ________ reaction, one group replaces another one, such as: \nH₃C-Br + NaOMe → H₃C-OMe + NaBr",
+                options: ["Homolysis", "Substitution", "Elimination", "Addition", "Heterolysis"],
+                a: "Substitution",
+                exp: "Notice how the '-OMe' group substituted (took the place of) the '-Br' atom on the carbon chain."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In an ________ reaction, one molecule loses the elements of another small molecule, often forming a double bond.",
+                options: ["Homolysis", "Substitution", "Elimination", "Addition", "Heterolysis"],
+                a: "Elimination",
+                exp: "By eliminating atoms from adjacent carbons, a pi bond must form to satisfy carbon's valency."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "________ reactions are characteristic of compounds with multiple bonds.",
+                options: ["Homolysis", "Substitution", "Elimination", "Addition", "Heterolysis"],
+                a: "Addition",
+                exp: "The pi bond breaks and allows new atoms to be added to the molecule."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "________ is a cleavage where one atom retains both electrons, generating ions (A⁺ and :B⁻).",
+                options: ["Homolysis", "Substitution", "Elimination", "Addition", "Heterolysis"],
+                a: "Heterolysis",
+                exp: "Hetero- means different/unequal. The electron pair goes entirely to the more electronegative atom."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the term to its definition: \nOxidation",
+                options: ["Removal of Hydrogen/Addition of Oxygen", "Addition of Hydrogen/Removal of Oxygen", "Reaction to form multiple bonds", "Replacement of one group by another", "Breaking a bond to form radicals"],
+                a: "Removal of Hydrogen/Addition of Oxygen",
+                exp: "Oxidation generally involves increasing the oxygen content or decreasing the hydrogen content in an organic molecule."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its definition: \nReduction",
+                options: ["Removal of Hydrogen/Addition of Oxygen", "Addition of Hydrogen/Removal of Oxygen", "Reaction to form multiple bonds", "Replacement of one group by another", "Breaking a bond to form radicals"],
+                a: "Addition of Hydrogen/Removal of Oxygen",
+                exp: "Reduction decreases the oxidation state by adding hydrogen atoms or removing oxygen atoms."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its definition: \nElimination Reaction",
+                options: ["Removal of Hydrogen/Addition of Oxygen", "Addition of Hydrogen/Removal of Oxygen", "Reaction to form multiple bonds", "Replacement of one group by another", "Breaking a bond to form radicals"],
+                a: "Reaction to form multiple bonds",
+                exp: "Elimination involves the loss of a small molecule to create unsaturation (a double or triple bond)."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its definition: \nSubstitution Reaction",
+                options: ["Removal of Hydrogen/Addition of Oxygen", "Addition of Hydrogen/Removal of Oxygen", "Reaction to form multiple bonds", "Replacement of one group by another", "Breaking a bond to form radicals"],
+                a: "Replacement of one group by another",
+                exp: "This is a direct swap of one functional group or atom for another, maintaining the same degree of saturation."
+            },
+            {
+                type: "Matching",
+                q: "Match the term to its definition: \nHomolysis",
+                options: ["Removal of Hydrogen/Addition of Oxygen", "Addition of Hydrogen/Removal of Oxygen", "Reaction to form multiple bonds", "Replacement of one group by another", "Breaking a bond to form radicals"],
+                a: "Breaking a bond to form radicals",
+                exp: "Homolytic cleavage evenly divides the bonding electron pair, producing two highly reactive free radicals."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-orange-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Homolysis, Substitution, Elimination, Addition, Heterolysis";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-orange-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Removal of Hydrogen/Addition of Oxygen, Addition of Hydrogen/Removal of Oxygen, Reaction to form multiple bonds, Replacement of one group by another, Breaking a bond to form radicals";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-orange-500 hover:bg-orange-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-orange-500', 'hover:bg-orange-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-orange-500', 'hover:bg-orange-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء ناري ومثالي! 🔥 ميكانيكية التفاعلات واضحة تماماً بالنسبة لك.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع! تذكر دائماً الفرق بين الاستبدال والإضافة لتصبح خبيراً. ✨";
+            } else {
+                msgEl.textContent = "مفاهيم التفاعلات تحتاج لبعض التركيز. راجع التفسيرات وأعد الاختبار! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

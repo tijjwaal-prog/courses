@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Quiz: Temperature, Heat, and Thermodynamics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .disabled-card { opacity: 0.8; pointer-events: none; }
+        
+        /* Custom styling for physics equations */
+        .eq { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.1em; }
+        .math-symbol { font-family: 'Times New Roman', serif; font-style: italic; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-indigo-600 text-white rounded-2xl p-8 mb-10 shadow-lg text-center fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3">Temperature, Heat, and the First Law of Thermodynamics</h1>
+            <p class="text-indigo-100 text-lg">General Physics (1) Interactive Quiz</p>
+            <div class="mt-6 flex justify-center gap-4 text-sm font-medium">
+                <span class="bg-indigo-500 px-3 py-1 rounded-full">20 Questions</span>
+                <span class="bg-indigo-500 px-3 py-1 rounded-full">Immediate Feedback</span>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12"></div>
+        
+        <!-- Completion Section (Hidden initially) -->
+        <div id="completion-message" class="hidden text-center mt-12 mb-12 fade-in">
+            <div class="bg-emerald-100 text-emerald-800 p-8 rounded-2xl shadow-sm border border-emerald-200">
+                <h2 class="text-2xl font-bold mb-2">Quiz Completed!</h2>
+                <p class="text-lg">You have answered all the questions. Review your feedback above.</p>
+                <div class="mt-4 text-4xl font-black text-emerald-600" id="final-score"></div>
+                <button onclick="location.reload()" class="mt-6 bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Model based on General Physics (1) Pages 79-87 context
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                id: 1, section: "Multiple Choice", type: "mcq",
+                question: "Which of the following temperature scales does <strong>not</strong> have negative values?",
+                options: ["Celsius", "Fahrenheit", "Kelvin", "Reaumur"],
+                correct: 2,
+                explanation: "The Kelvin scale starts at absolute zero (0 K), which is the lowest possible theoretical temperature where molecular motion ceases. Therefore, it cannot have negative values."
+            },
+            {
+                id: 2, section: "Multiple Choice", type: "mcq",
+                question: "A gas expands from <span class='eq'>1.0 m<sup>3</sup></span> to <span class='eq'>3.0 m<sup>3</sup></span> at a constant pressure of <span class='eq'>101.3 kPa</span>. What is the work done by the gas?",
+                options: ["202.6 J", "202.6 kJ", "303.9 kJ", "0 J"],
+                correct: 1,
+                explanation: "Work done at constant pressure is <span class='eq'>W = P&Delta;V</span>. <br> W = (101.3 &times; 10<sup>3</sup> Pa) &times; (3.0 - 1.0 m<sup>3</sup>) = 202.6 &times; 10<sup>3</sup> J = 202.6 kJ."
+            },
+            {
+                id: 3, section: "Multiple Choice", type: "mcq",
+                question: "An ice cube of 50g at 0&deg;C is placed in 200g of water at 20&deg;C inside an isolated container. What is the main principle used to find the final equilibrium temperature?",
+                options: [
+                    "Latent heat of fusion is ignored.",
+                    "The sum of heat gained and lost is zero (&Sigma;Q = 0).",
+                    "The work done by the system is maximized.",
+                    "The heat capacity of ice is equal to that of water."
+                ],
+                correct: 1,
+                explanation: "In an isolated system, the principle of conservation of energy dictates that the heat lost by the warmer object (water) equals the heat gained by the colder object (ice), making the net heat transfer zero (&Sigma;Q = 0)."
+            },
+            {
+                id: 4, section: "Multiple Choice", type: "mcq",
+                question: "The First Law of Thermodynamics (<span class='eq'>&Delta;E<sub>int</sub> = Q - W</span>) is a restatement of which fundamental physics principle?",
+                options: ["Conservation of Momentum", "Conservation of Mass", "Conservation of Energy", "Conservation of Charge"],
+                correct: 2,
+                explanation: "The First Law of Thermodynamics is the law of Conservation of Energy applied to thermal systems. It states that energy cannot be created or destroyed, only transferred as heat (Q) or work (W)."
+            },
+            {
+                id: 5, section: "Multiple Choice", type: "mcq",
+                question: "What is the heat required to raise the temperature of 2.0 kg of water by 5.0&deg;C? (Specific heat of water, <span class='math-symbol'>c</span> = 4186 J/kg&middot;&deg;C)",
+                options: ["41,860 J", "20,930 J", "8,372 J", "4,186 J"],
+                correct: 0,
+                explanation: "Using the formula <span class='eq'>Q = mc&Delta;T</span>: <br> Q = (2.0 kg) &times; (4186 J/kg&middot;&deg;C) &times; (5.0&deg;C) = 41,860 J."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                id: 6, section: "True / False", type: "tf",
+                question: "Thermal expansion coefficients are identical for all solid materials.",
+                correct: false,
+                explanation: "Different materials have different atomic structures and bond strengths, leading to different coefficients of linear (&alpha;) and volume (&beta;) expansion."
+            },
+            {
+                id: 7, section: "True / False", type: "tf",
+                question: "The internal energy (<span class='eq'>E<sub>int</sub></span>) of an ideal gas depends <i>only</i> on its absolute temperature.",
+                correct: true,
+                explanation: "For an ideal gas, there are no intermolecular forces (potential energy is zero). Therefore, the internal energy is purely the sum of the kinetic energies of its molecules, which is directly proportional to the absolute temperature."
+            },
+            {
+                id: 8, section: "True / False", type: "tf",
+                question: "During a phase change (such as boiling water at 100&deg;C), the temperature of the substance continues to increase as heat is added.",
+                correct: false,
+                explanation: "During a phase change, the temperature remains constant. The added heat (Latent Heat) is used entirely to break the intermolecular bonds to change the state, not to increase the kinetic energy."
+            },
+            {
+                id: 9, section: "True / False", type: "tf",
+                question: "Heat (<span class='math-symbol'>Q</span>) and Work (<span class='math-symbol'>W</span>) are path-dependent functions, whereas internal energy change (<span class='eq'>&Delta;E<sub>int</sub></span>) is a state function.",
+                correct: true,
+                explanation: "The values of Q and W depend on the specific thermodynamic path taken between two states. However, &Delta;E<sub>int</sub> depends only on the initial and final states, making it a state function."
+            },
+            {
+                id: 10, section: "True / False", type: "tf",
+                question: "In an adiabatic process, the system exchanges a maximum amount of heat with its surroundings.",
+                correct: false,
+                explanation: "By definition, an adiabatic process is one in which the system is perfectly insulated, meaning <strong>zero</strong> heat is exchanged with the surroundings (<span class='eq'>Q = 0</span>)."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                id: 11, section: "Fill in the Blanks", type: "fib",
+                question: "The transfer of heat through a stationary material by atomic or molecular collisions is called ______.",
+                correct: "Conduction",
+                explanation: "Conduction relies on direct contact and the transfer of kinetic energy from more energetic molecules to adjacent less energetic ones, requiring a physical medium."
+            },
+            {
+                id: 12, section: "Fill in the Blanks", type: "fib",
+                question: "______ is the theoretical temperature (0 K) at which all molecular kinetic energy is at a minimum.",
+                correct: "Absolute Zero",
+                explanation: "Absolute Zero is the lowest limit of the thermodynamic temperature scale, where classical thermodynamics states that thermal motion ceases."
+            },
+            {
+                id: 13, section: "Fill in the Blanks", type: "fib",
+                question: "A thermodynamic process that occurs at a constant pressure is called an ______ process.",
+                correct: "Isobaric",
+                explanation: "The prefix 'iso-' means equal or constant, and 'baric' relates to pressure. In an isobaric process, &Delta;P = 0."
+            },
+            {
+                id: 14, section: "Fill in the Blanks", type: "fib",
+                question: "A device used to isolate a system and accurately measure the heat exchanged in a thermodynamic process is a ______.",
+                correct: "Calorimeter",
+                explanation: "A calorimeter provides an isolated environment (preventing heat leak to the outside) to precisely apply the principle of conservation of energy (&Sigma;Q = 0)."
+            },
+            {
+                id: 15, section: "Fill in the Blanks", type: "fib",
+                question: "______ is the transfer of heat by the bulk, macroscopic movement of a fluid (liquid or gas).",
+                correct: "Convection",
+                explanation: "Unlike conduction, convection involves the actual physical movement of the hotter fluid displacing the colder fluid, such as warm air rising."
+            },
+
+            // --- MATCHING ---
+            {
+                id: 16, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>Q = mL</span>",
+                correct: "D",
+                explanation: "This formula is used to calculate the heat (Q) required or released during a phase change, where m is mass and L is the latent heat (fusion or vaporization)."
+            },
+            {
+                id: 17, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>W = P&Delta;V</span>",
+                correct: "E",
+                explanation: "This is the formula for the thermodynamic work done by a gas during an isobaric (constant pressure) expansion or compression."
+            },
+            {
+                id: 18, section: "Matching", type: "match",
+                question: "Concept: Radiation",
+                correct: "A",
+                explanation: "Radiation is the only method of heat transfer that does not require a physical medium; it occurs via electromagnetic waves (e.g., heat from the Sun)."
+            },
+            {
+                id: 19, section: "Matching", type: "match",
+                question: "Symbol: Coefficient of Volume Expansion (<span class='math-symbol'>&beta;</span>)",
+                correct: "B",
+                explanation: "For isotropic solid materials, the volume expansion coefficient (&beta;) is approximately three times the linear expansion coefficient (&alpha;), so &beta; &asymp; 3&alpha;."
+            },
+            {
+                id: 20, section: "Matching", type: "match",
+                question: "Concept: Thermal Equilibrium",
+                correct: "C",
+                explanation: "Thermal equilibrium is reached when two objects in thermal contact stop exchanging net heat, meaning they have reached the exact same temperature."
+            }
+        ];
+
+        // Shared resources for specific sections
+        const wordBank = ["Calorimeter", "Absolute Zero", "Convection", "Isobaric", "Conduction"];
+        const matchOptions = [
+            { letter: "A", text: "Heat transfer via electromagnetic waves without needing a medium." },
+            { letter: "B", text: "Approximately equal to three times the linear coefficient (3&alpha;)." },
+            { letter: "C", text: "A state where two interacting objects have the exact same temperature." },
+            { letter: "D", text: "Formula used to calculate heat transfer during a phase change." },
+            { letter: "E", text: "Formula for the work done by a gas during an isobaric expansion." }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        // Render the Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const sections = ["Multiple Choice", "True / False", "Fill in the Blanks", "Matching"];
+
+            sections.forEach(sectionTitle => {
+                // Section Wrapper
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "mb-12";
+                
+                // Section Header
+                const sectionHeader = document.createElement('h2');
+                sectionHeader.className = "text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6";
+                sectionHeader.innerText = sectionTitle;
+                sectionDiv.appendChild(sectionHeader);
+
+                // Add Helpers for FIB and Matching
+                if (sectionTitle === "Fill in the Blanks") {
+                    const wbDiv = document.createElement('div');
+                    wbDiv.className = "bg-slate-100 p-4 rounded-xl mb-6 shadow-inner border border-slate-200";
+                    wbDiv.innerHTML = `<h3 class="font-bold text-slate-600 mb-2 text-sm uppercase tracking-wider">Word Bank</h3>
+                                       <div class="flex flex-wrap gap-2">${wordBank.map(w => `<span class="bg-white border border-slate-300 px-3 py-1 rounded-md text-slate-700 font-medium">${w}</span>`).join('')}</div>`;
+                    sectionDiv.appendChild(wbDiv);
+                } else if (sectionTitle === "Matching") {
+                    const matchTable = document.createElement('div');
+                    matchTable.className = "bg-slate-100 p-4 rounded-xl mb-6 shadow-inner border border-slate-200 text-sm";
+                    matchTable.innerHTML = `<h3 class="font-bold text-slate-600 mb-2 uppercase tracking-wider">List B (Definitions/Formulas)</h3>
+                                            <ul class="space-y-2">
+                                                ${matchOptions.map(opt => `<li class="flex gap-3"><strong class="text-indigo-600">${opt.letter}.</strong> <span>${opt.text}</span></li>`).join('')}
+                                            </ul>`;
+                    sectionDiv.appendChild(matchTable);
+                }
+
+                // Filter Questions
+                const sectionQuestions = quizData.filter(q => q.section === sectionTitle);
+                
+                sectionQuestions.forEach((q, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 transition-all relative overflow-hidden";
+                    qCard.id = `q-card-${q.id}`;
+
+                    let interactionHTML = '';
+
+                    // Generate Interactions based on type
+                    if (q.type === 'mcq') {
+                        interactionHTML = `<div class="mt-4 space-y-2">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="checkAnswer(${q.id}, ${i})" id="btn-${q.id}-${i}" 
+                                class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-colors font-medium">
+                                    <span class="inline-block w-6 font-bold text-slate-400">${String.fromCharCode(65 + i)}.</span> ${opt}
+                                </button>
+                            `).join('')}
+                        </div>`;
+                    } else if (q.type === 'tf') {
+                        interactionHTML = `<div class="mt-4 flex gap-4">
+                            <button onclick="checkAnswer(${q.id}, true)" id="btn-${q.id}-true" class="flex-1 p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-colors font-bold text-center">True</button>
+                            <button onclick="checkAnswer(${q.id}, false)" id="btn-${q.id}-false" class="flex-1 p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-colors font-bold text-center">False</button>
+                        </div>`;
+                    } else if (q.type === 'fib') {
+                        interactionHTML = `<div class="mt-4">
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full md:w-1/2 p-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium cursor-pointer">
+                                <option value="" disabled selected>--- Select the correct word ---</option>
+                                ${wordBank.sort().map(w => `<option value="${w}">${w}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    } else if (q.type === 'match') {
+                        interactionHTML = `<div class="mt-4 flex items-center gap-4">
+                            <span class="font-bold text-slate-500 whitespace-nowrap">Matches with:</span>
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full p-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium cursor-pointer">
+                                <option value="" disabled selected>--- Select Option ---</option>
+                                ${matchOptions.map(o => `<option value="${o.letter}">Option ${o.letter}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    }
+
+                    qCard.innerHTML = `
+                        <div class="flex gap-4">
+                            <div class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">${index + 1}</div>
+                            <div class="flex-1 text-lg font-medium text-slate-800 leading-relaxed">${q.question}</div>
+                        </div>
+                        ${interactionHTML}
+                        <div id="feedback-${q.id}" class="mt-4 hidden rounded-xl p-4 text-sm animate-fadeIn"></div>
+                    `;
+                    sectionDiv.appendChild(qCard);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle Evaluation
+        function checkAnswer(questionId, userAnswer) {
+            const questionData = quizData.find(q => q.id === questionId);
+            const isCorrect = userAnswer === questionData.correct;
+            const card = document.getElementById(`q-card-${questionId}`);
+            const feedbackBox = document.getElementById(`feedback-${questionId}`);
+
+            // Lock interaction
+            card.classList.add('disabled-card');
+            
+            // Format Feedback
+            let correctIndicator = '';
+            let explanationText = `<p class="mt-2 text-slate-700 font-medium leading-relaxed">${questionData.explanation}</p>`;
+            let bestAnswerNotice = '';
+
+            if (isCorrect) {
+                score++;
+                correctIndicator = `<div class="flex items-center gap-2 font-bold text-emerald-700 text-lg mb-1">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        Correct!
+                                    </div>`;
+                feedbackBox.className = "mt-4 rounded-xl p-5 bg-emerald-50 border border-emerald-200 block fade-in";
+                
+                // Highlight selected button (if applicable)
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const btn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                }
+            } else {
+                correctIndicator = `<div class="flex items-center gap-2 font-bold text-rose-700 text-lg mb-1">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        Incorrect.
+                                    </div>`;
+                
+                // Formulate what the correct answer was
+                let correctAnswerLabel = questionData.correct;
+                if (questionData.type === 'mcq') {
+                    correctAnswerLabel = `${String.fromCharCode(65 + questionData.correct)}. ${questionData.options[questionData.correct]}`;
+                } else if (questionData.type === 'tf') {
+                    correctAnswerLabel = questionData.correct ? "True" : "False";
+                }
+
+                bestAnswerNotice = `<p class="text-rose-800 font-semibold mb-2">The correct answer is: <span class="bg-rose-100 px-2 py-0.5 rounded">${correctAnswerLabel}</span></p>`;
+                
+                feedbackBox.className = "mt-4 rounded-xl p-5 bg-rose-50 border border-rose-200 block fade-in";
+
+                // Highlight selected wrong button & correct button
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const wrongBtn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    if(wrongBtn) wrongBtn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-900');
+                    
+                    const rightBtn = document.getElementById(`btn-${questionId}-${questionData.correct}`);
+                    if(rightBtn) rightBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                }
+            }
+
+            // For select inputs, lock them and change color
+            if(questionData.type === 'fib' || questionData.type === 'match') {
+                const sel = document.getElementById(`select-${questionId}`);
+                sel.disabled = true;
+                sel.classList.remove('bg-slate-50', 'border-slate-300');
+                if(isCorrect) {
+                    sel.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800');
+                } else {
+                    sel.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-800');
+                }
+            }
+
+            feedbackBox.innerHTML = correctIndicator + bestAnswerNotice + explanationText;
+
+            // Check for completion
+            answeredQuestions++;
+            if(answeredQuestions === quizData.length) {
+                document.getElementById('completion-message').classList.remove('hidden');
+                document.getElementById('final-score').innerText = `Score: ${score} / ${quizData.length}`;
+            }
+        }
+
+        // Initialize Quiz on load
+        window.onload = renderQuiz;
+
+    </script>
+</body>
+</html>

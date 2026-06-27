@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nomenclature of Carboxylic Acids and Their Derivatives</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fdf4ff;
+            /* خلفية أرجوانية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-fuchsia-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-list-ol text-fuchsia-600"></i>
+                Nomenclature of Carboxylic Acids
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (199 - 210): Acids & Their
+                Derivatives</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-fuchsia-200">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-fuchsia-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-fuchsia-100 text-fuchsia-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-fuchsia-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-fuchsia-500"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-fuchsia-200">
+            <i class="fa-solid fa-graduation-cap text-7xl text-fuchsia-600 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم تسمية الأحماض الكربوكسيلية ومشتقاتها.</p>
+
+            <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-fuchsia-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-fuchsia-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-fuchsia-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the systematic IUPAC suffix used to identify an open-chain carboxylic acid?",
+                options: ["-oate", "-oic acid", "-oyl halide", "-amide"],
+                a: "-oic acid",
+                exp: "According to IUPAC rules, the 'e' ending of the parent alkane is dropped and replaced by '-oic acid' (e.g., propane becomes propanoic acid)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the accepted common name for ethanoic acid (CH₃COOH)?",
+                options: ["Formic acid", "Propionic acid", "Acetic acid", "Butyric acid"],
+                a: "Acetic acid",
+                exp: "Acetic acid is the historical and widely used common name for the two-carbon carboxylic acid, which is the main component of vinegar."
+            },
+            {
+                type: "Multiple Choice",
+                q: "How are esters generally named in the IUPAC system?",
+                options: ["Alkanoyl alkanoate", "Alkyl alkanoate", "Alkyl alkanoic acid", "Alkanoyl ether"],
+                a: "Alkyl alkanoate",
+                exp: "The alkyl group attached to the oxygen is named first as a separate word, followed by the acyl group derived from the acid, which receives the '-oate' suffix."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the correct IUPAC name for the acid halide CH₃CH₂COCl?",
+                options: ["Propanoic chloride", "Propanoyl chloride", "Propyl chloride", "Chloropropanone"],
+                a: "Propanoyl chloride",
+                exp: "The parent chain has 3 carbons (propane). For acid halides, the suffix is '-oyl halide'. Therefore, it is propanoyl chloride."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which functional group structure corresponds to a primary amide?",
+                options: ["-COOH", "-COOR", "-COCl", "-CONH₂"],
+                a: "-CONH₂",
+                exp: "Amides are derivatives where the -OH of the carboxylic acid is replaced by an amine group. -CONH₂ represents a primary (unsubstituted) amide."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "In naming carboxylic acids, the carboxyl carbon is always designated as Carbon-1.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because the carboxyl group (-COOH) is located at the end of the chain and has the highest nomenclature priority of all standard functional groups, it automatically becomes C-1."
+            },
+            {
+                type: "True / False",
+                q: "The common name for the simplest, two-carbon dicarboxylic acid (HOOC-COOH) is malonic acid.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The simplest dicarboxylic acid (2 carbons) is Oxalic acid. Malonic acid contains 3 carbons (HOOC-CH₂-COOH)."
+            },
+            {
+                type: "True / False",
+                q: "Cyclic carboxylic acids, where the -COOH group is attached directly to the ring, are named using the suffix '-carboxylic acid'.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because the carboxyl carbon is not part of the ring numbering, the full suffix '-carboxylic acid' is added to the cycloalkane name (e.g., cyclopentanecarboxylic acid)."
+            },
+            {
+                type: "True / False",
+                q: "Symmetrical acid anhydrides are named by replacing the word 'acid' with 'anhydride' in the name of the parent carboxylic acid.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. For example, two molecules of ethanoic acid form ethanoic anhydride (or acetic anhydride)."
+            },
+            {
+                type: "True / False",
+                q: "Formic acid (HCOOH) is the strict systematic IUPAC name for a one-carbon carboxylic acid.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Methanoic acid is the systematic IUPAC name. Formic acid is the universally accepted common name, originally derived from the Latin word for ant (formica)."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "Carboxylic acids generally hold the highest nomenclature ________ over other functional groups like aldehydes, ketones, and alcohols.",
+                options: ["Oate", "Formic", "Oxalic", "Substituent", "Priority"],
+                a: "Priority",
+                exp: "Due to this supreme priority, if a molecule contains both an -OH and a -COOH group, the molecule is named as a carboxylic acid with a 'hydroxy-' substituent."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When naming an ester, the parent carboxylic acid portion of the molecule receives the suffix -________.",
+                options: ["Oate", "Formic", "Oxalic", "Substituent", "Priority"],
+                a: "Oate",
+                exp: "For instance, the ester formed from ethanol and acetic acid is named ethyl acetate (or ethyl ethanoate in IUPAC)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The simplest one-carbon carboxylic acid, famously found in ant venom, is known as ________ acid.",
+                options: ["Oate", "Formic", "Oxalic", "Substituent", "Priority"],
+                a: "Formic",
+                exp: "While its IUPAC name is methanoic acid, its historical common name (formic acid) remains predominantly used in chemistry and biology."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The two-carbon dicarboxylic acid (HOOC-COOH) is universally known as ________ acid.",
+                options: ["Oate", "Formic", "Oxalic", "Substituent", "Priority"],
+                a: "Oxalic",
+                exp: "Dicarboxylic acids use common names easily remembered by the mnemonic 'Oh My Such Good Apple Pie' (Oxalic, Malonic, Succinic, Glutaric, Adipic, Pimelic)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "In a substituted amide where the nitrogen is bonded to alkyl groups, these groups are named as a ________ with an 'N-' locant prefix.",
+                options: ["Oate", "Formic", "Oxalic", "Substituent", "Priority"],
+                a: "Substituent",
+                exp: "For example, N-methylacetamide indicates that a methyl group is attached directly to the nitrogen atom, not to the main carbon chain."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the structure or description to its correct chemical name: \nAn ester with the structure CH₃CH₂COOCH₃",
+                options: ["Acetyl chloride", "Benzamide", "Butyric acid", "Acetic anhydride", "Methyl propanoate"],
+                a: "Methyl propanoate",
+                exp: "The alkyl group attached to the oxygen is 'methyl', and the 3-carbon acid backbone is 'propanoate'."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure or description to its correct chemical name: \nA four-carbon carboxylic acid known for the smell of rancid butter",
+                options: ["Acetyl chloride", "Benzamide", "Butyric acid", "Acetic anhydride", "Methyl propanoate"],
+                a: "Butyric acid",
+                exp: "Its IUPAC name is butanoic acid. Its common name, butyric, stems from 'butyrum' (the Latin word for butter)."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure or description to its correct chemical name: \nA symmetrical acid anhydride formed from ethanoic acid",
+                options: ["Acetyl chloride", "Benzamide", "Butyric acid", "Acetic anhydride", "Methyl propanoate"],
+                a: "Acetic anhydride",
+                exp: "Also known systematically as ethanoic anhydride. It consists of two acetyl groups linked by a central oxygen atom."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure or description to its correct chemical name: \nAn aromatic amide consisting of a benzene ring attached directly to a -CONH₂ group",
+                options: ["Acetyl chloride", "Benzamide", "Butyric acid", "Acetic anhydride", "Methyl propanoate"],
+                a: "Benzamide",
+                exp: "Benzamide is the primary amide derivative of benzoic acid."
+            },
+            {
+                type: "Matching",
+                q: "Match the structure or description to its correct chemical name: \nA two-carbon acid halide (CH₃COCl)",
+                options: ["Acetyl chloride", "Benzamide", "Butyric acid", "Acetic anhydride", "Methyl propanoate"],
+                a: "Acetyl chloride",
+                exp: "While the IUPAC name is ethanoyl chloride, acetyl chloride is the extremely common and widely used name for this reactive reagent."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Oate, Formic, Oxalic, Substituent, Priority";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-fuchsia-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Acetyl chloride, Benzamide, Butyric acid, Acetic anhydride, Methyl propanoate";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-fuchsia-500 hover:bg-fuchsia-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-fuchsia-500', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-fuchsia-500', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء استثنائي ومثالي! 🌟 فهمك لقواعد التسمية والمشتقات والأولويات لا تشوبه شائبة.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل رائع جداً! 👏 مع مراجعة بسيطة للأسماء الشائعة للأحماض ثنائية الكربوكسيل ستصل للكمال.";
+            } else {
+                msgEl.textContent = "قواعد المشتقات الكربوكسيلية تتطلب تدريباً. راجع التفسيرات لكل تفاعل وأعد الاختبار! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

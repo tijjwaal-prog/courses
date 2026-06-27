@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Quiz: Chapter Problems (Sound)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #faf5ff; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .disabled-card { pointer-events: none; opacity: 0.9; }
+        
+        /* Custom styling for physics equations and math */
+        .eq { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.2em; font-weight: 700; color: #581c87; letter-spacing: 0.03em; }
+        .math-symbol { font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold; }
+        .physics-block { background-color: #f3e8ff; padding: 2px 8px; border-radius: 6px; border: 1px solid #d8b4fe; font-weight: bold; color: #4c1d95; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-gradient-to-br from-purple-800 to-violet-900 text-white rounded-3xl p-8 mb-10 shadow-2xl text-center fade-in border-b-8 border-purple-500 relative overflow-hidden">
+            <!-- Decorative geometric element -->
+            <div class="absolute inset-0 opacity-10">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute w-full h-full"><path d="M0,100 L100,0 L100,100 Z" fill="#ffffff"></path></svg>
+            </div>
+            
+            <h1 class="relative z-10 text-3xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Chapter Problems</h1>
+            <p class="relative z-10 text-purple-200 text-lg md:text-xl font-medium">Sound Waves - Final Assessment</p>
+            <div class="relative z-10 mt-6 flex flex-wrap justify-center gap-3 text-sm font-semibold">
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">20 Questions</span>
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">Problem Solving</span>
+                <span class="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm">Step-by-Step Explanations</span>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12"></div>
+        
+        <!-- Completion Section -->
+        <div id="completion-message" class="hidden text-center mt-12 mb-12 fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-2xl border-2 border-purple-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-400 to-violet-600"></div>
+                <h2 class="text-3xl font-black text-slate-800 mb-3">Assessment Completed! 🏆</h2>
+                <p class="text-lg text-slate-600">You have completed the final problems section. Review your solutions below.</p>
+                <div class="mt-6 text-6xl font-black text-purple-700 drop-shadow-sm mb-2" id="final-score"></div>
+                <button onclick="location.reload()" class="mt-8 bg-purple-700 text-white px-8 py-3 rounded-xl font-bold text-lg hover:bg-purple-800 hover:shadow-lg transition-all transform hover:-translate-y-1">Retake Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Model based on End of Chapter Problems for Sound Waves (Pages 136-138)
+        const quizData = [
+            // --- MULTIPLE CHOICE ---
+            {
+                id: 1, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A ship uses a sonar system to detect the ocean floor. The sound pulse is emitted, and the echo is received <span class='physics-block'>2.0 s</span> later. If the speed of sound in seawater is <span class='physics-block'>1530 m/s</span>, what is the depth of the ocean?",
+                options: ["3060 m", "1530 m", "765 m", "6120 m"],
+                correct: 1,
+                explanation: "The sound wave travels down to the ocean floor and bounces back up, meaning the total distance covered is twice the depth (<span class='eq'>2d = v &times; t</span>). <br>Depth (<span class='math-symbol'>d</span>) = (v &times; t) / 2 = (1530 m/s &times; 2.0 s) / 2 = <strong>1530 m</strong>."
+            },
+            {
+                id: 2, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> A train moving at <span class='physics-block'>30 m/s</span> emits a whistle with a frequency of <span class='physics-block'>500 Hz</span>. What frequency is heard by a stationary observer standing on the track <i>behind</i> the departing train? <br><span class='text-sm text-slate-500'>(Assume the speed of sound in air is 340 m/s)</span>",
+                options: ["500 Hz", "548 Hz", "459 Hz", "440 Hz"],
+                correct: 2,
+                explanation: "Using the Doppler Effect formula for a source moving <i>away</i> from a stationary observer: <span class='eq'>f' = f &times; [v / (v + v<sub>s</sub>)]</span>. <br>f' = 500 &times; [340 / (340 + 30)] = 500 &times; (340 / 370) &asymp; <strong>459.4 Hz</strong>."
+            },
+            {
+                id: 3, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> If the physical intensity (<span class='eq'>I</span>) of a sound is exactly doubled, by approximately how much does the sound intensity level (<span class='eq'>&beta;</span>) increase in decibels?",
+                options: ["2 dB", "3 dB", "10 dB", "20 dB"],
+                correct: 1,
+                explanation: "Using the decibel formula: <span class='eq'>&Delta;&beta; = 10 &times; log<sub>10</sub>(I<sub>2</sub> / I<sub>1</sub>)</span>. <br>If I<sub>2</sub> = 2I<sub>1</sub>, then &Delta;&beta; = 10 &times; log<sub>10</sub>(2). Since log<sub>10</sub>(2) &asymp; 0.301, the increase is 10 &times; 0.301 &asymp; <strong>3 dB</strong>."
+            },
+            {
+                id: 4, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> Two guitar strings are plucked simultaneously. String A has a known frequency of <span class='physics-block'>330 Hz</span>, producing exactly <span class='physics-block'>3 beats per second</span> when sounded with String B. What are the possible frequencies for String B?",
+                options: [
+                    "327 Hz only",
+                    "333 Hz only",
+                    "327 Hz or 333 Hz",
+                    "330 Hz or 333 Hz"
+                ],
+                correct: 2,
+                explanation: "The beat frequency is the absolute difference between the two frequencies: <span class='eq'>f<sub>beat</sub> = |f<sub>A</sub> - f<sub>B</sub>|</span>. <br>Therefore, 3 = |330 - f<sub>B</sub>|. This gives two mathematical possibilities: f<sub>B</sub> = 330 + 3 = <strong>333 Hz</strong> OR f<sub>B</sub> = 330 - 3 = <strong>327 Hz</strong>."
+            },
+            {
+                id: 5, section: "Multiple Choice", type: "mcq",
+                question: "<strong>Problem:</strong> What is the fundamental frequency (first harmonic) of a pipe <span class='physics-block'>0.50 m</span> long that is <i>open at both ends</i>? <br><span class='text-sm text-slate-500'>(Assume v = 340 m/s)</span>",
+                options: ["170 Hz", "340 Hz", "680 Hz", "85 Hz"],
+                correct: 1,
+                explanation: "For a pipe open at both ends, the fundamental wavelength is twice the length of the pipe (<span class='eq'>&lambda; = 2L</span>). <br>The frequency is <span class='eq'>f = v / &lambda; = v / 2L</span>. <br>f = 340 / (2 &times; 0.50) = 340 / 1.0 = <strong>340 Hz</strong>."
+            },
+
+            // --- TRUE / FALSE ---
+            {
+                id: 6, section: "True / False", type: "tf",
+                question: "The threshold of pain for the human ear is universally accepted to be at a sound intensity level of 120 dB.",
+                correct: true,
+                explanation: "True. An intensity level of 120 dB (which corresponds to an intensity of <span class='eq'>1 W/m<sup>2</sup></span>) represents the threshold of pain, where sound transitions from being loud to being physically painful."
+            },
+            {
+                id: 7, section: "True / False", type: "tf",
+                question: "When a sound wave travels from air into water, its frequency changes significantly while its speed remains constant.",
+                correct: false,
+                explanation: "False. It is the exact opposite. When a wave changes medium, its <strong>frequency remains constant</strong> (determined strictly by the source), but its <strong>speed and wavelength change</strong> depending on the new medium's properties."
+            },
+            {
+                id: 8, section: "True / False", type: "tf",
+                question: "For a pipe that is closed at one end and open at the other, only the odd harmonics (n = 1, 3, 5...) can form standing waves.",
+                correct: true,
+                explanation: "True. Because the closed end must be a displacement node and the open end a displacement antinode, only odd multiples of the fundamental quarter-wavelength (<span class='eq'>&lambda;/4</span>) can fit in the pipe."
+            },
+            {
+                id: 9, section: "True / False", type: "tf",
+                question: "If a sound source moves towards an observer at exactly the speed of sound (Mach 1), the Doppler formula predicts the observed frequency will be zero.",
+                correct: false,
+                explanation: "False. Using the formula <span class='eq'>f' = f &times; [v / (v - v<sub>s</sub>)]</span>, if <span class='eq'>v<sub>s</sub> = v</span>, the denominator becomes zero, which means the theoretical frequency approaches <strong>infinity</strong>. Physically, this represents the buildup of wave fronts into a shock wave (sonic boom)."
+            },
+            {
+                id: 10, section: "True / False", type: "tf",
+                question: "A sound of 60 dB carries twice the physical energy intensity (in W/m&sup2;) as a sound of 30 dB.",
+                correct: false,
+                explanation: "False. The decibel scale is logarithmic. A difference of 30 dB means the intensity is <span class='eq'>10<sup>3</sup></span> or <strong>1,000 times</strong> greater, not merely twice as great."
+            },
+
+            // --- FILL IN THE BLANKS ---
+            {
+                id: 11, section: "Fill in the Blanks", type: "fib",
+                question: "Sound waves with frequencies below 20 Hz, which are too low for the human ear to detect, are called ______ waves.",
+                correct: "Infrasonic",
+                explanation: "While humans cannot hear infrasonic waves, animals like elephants and whales use them for long-distance communication because low frequencies can travel further with less scattering."
+            },
+            {
+                id: 12, section: "Fill in the Blanks", type: "fib",
+                question: "The physical power transmitted by a sound wave per unit area perpendicular to the direction of wave propagation is defined as the wave's ______.",
+                correct: "Intensity",
+                explanation: "Intensity is measured in Watts per square meter (<span class='eq'>W/m<sup>2</sup></span>) and is the objective, measurable physical quantity that our brains perceive subjectively as 'loudness'."
+            },
+            {
+                id: 13, section: "Fill in the Blanks", type: "fib",
+                question: "In a standing wave pattern inside a pipe, a point where the air molecules experience zero physical displacement is called a ______.",
+                correct: "Node",
+                explanation: "A displacement node is always located at a closed end of a pipe. Conversely, the point of maximum displacement is called an antinode (always at an open end)."
+            },
+            {
+                id: 14, section: "Fill in the Blanks", type: "fib",
+                question: "Because sound is a mechanical wave, it absolutely requires a physical ______ to propagate and transfer its energy.",
+                correct: "Medium",
+                explanation: "Unlike electromagnetic waves (light), mechanical waves need particles to bump into each other to transfer the wave. Without a medium (like in a vacuum), there is no sound."
+            },
+            {
+                id: 15, section: "Fill in the Blanks", type: "fib",
+                question: "In the fundamental wave equation (<span class='eq'>v = f&lambda;</span>), the Greek letter &lambda; (lambda) represents the ______ of the sound wave.",
+                correct: "Wavelength",
+                explanation: "Wavelength is the physical distance between two consecutive points that are in phase on a wave, such as the distance from one compression peak to the next."
+            },
+
+            // --- MATCHING ---
+            {
+                id: 16, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>&beta; = 10 log<sub>10</sub>(I/I<sub>0</sub>)</span>",
+                correct: "A",
+                explanation: "This is the universal equation for calculating the Sound Intensity Level in Decibels (dB), scaling physical intensity to human perception."
+            },
+            {
+                id: 17, section: "Matching", type: "match",
+                question: "Concept: Supersonic Speed",
+                correct: "B",
+                explanation: "An object is traveling at supersonic speed when its velocity exceeds the local speed of sound in the surrounding medium (Mach > 1)."
+            },
+            {
+                id: 18, section: "Matching", type: "match",
+                question: "Equation: <span class='eq'>f<sub>n</sub> = n (v / 4L)</span> (where n = 1, 3, 5...)",
+                correct: "C",
+                explanation: "This equation specifically dictates the allowed resonant harmonic frequencies for a pipe that is closed at one end."
+            },
+            {
+                id: 19, section: "Matching", type: "match",
+                question: "Constant: <span class='eq'>10<sup>-12</sup> W/m<sup>2</sup></span>",
+                correct: "D",
+                explanation: "This value (<span class='eq'>I<sub>0</sub></span>) represents the standard Threshold of Hearing, the baseline reference intensity for the decibel scale."
+            },
+            {
+                id: 20, section: "Matching", type: "match",
+                question: "Phenomenon: Sonic Boom",
+                correct: "E",
+                explanation: "A sonic boom is the loud explosive noise heard when the conical shock wave created by an object traveling faster than sound reaches an observer."
+            }
+        ];
+
+        // Shared resources
+        const wordBank = ["Intensity", "Infrasonic", "Medium", "Node", "Wavelength"];
+        const matchOptions = [
+            { letter: "A", text: "Equation for Sound Intensity Level in Decibels." },
+            { letter: "B", text: "Traveling faster than the local speed of sound." },
+            { letter: "C", text: "Equation for the harmonics of a pipe closed at one end." },
+            { letter: "D", text: "The Reference Intensity / Threshold of Hearing." },
+            { letter: "E", text: "The shock wave produced by an object exceeding the speed of sound." }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        // Render Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const sections = ["Multiple Choice", "True / False", "Fill in the Blanks", "Matching"];
+
+            sections.forEach(sectionTitle => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "mb-16";
+                
+                const sectionHeader = document.createElement('h2');
+                sectionHeader.className = "text-2xl md:text-3xl font-black text-purple-900 border-b-4 border-purple-200 pb-3 mb-8 flex items-center gap-3";
+                
+                // Add icon based on section
+                let iconSvg = '';
+                if(sectionTitle === "Multiple Choice") iconSvg = '<svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>';
+                else if(sectionTitle === "True / False") iconSvg = '<svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                else if(sectionTitle === "Fill in the Blanks") iconSvg = '<svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>';
+                else iconSvg = '<svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>';
+
+                sectionHeader.innerHTML = `${iconSvg} ${sectionTitle}`;
+                sectionDiv.appendChild(sectionHeader);
+
+                if (sectionTitle === "Fill in the Blanks") {
+                    const wbDiv = document.createElement('div');
+                    wbDiv.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-purple-100";
+                    wbDiv.innerHTML = `<h3 class="font-bold text-purple-700 mb-3 text-sm uppercase tracking-widest">Word Bank Options</h3>
+                                       <div class="flex flex-wrap gap-3">${wordBank.sort().map(w => `<span class="bg-purple-50 border border-purple-200 px-4 py-2 rounded-lg text-purple-900 font-bold shadow-sm">${w}</span>`).join('')}</div>`;
+                    sectionDiv.appendChild(wbDiv);
+                } else if (sectionTitle === "Matching") {
+                    const matchTable = document.createElement('div');
+                    matchTable.className = "bg-white p-6 rounded-2xl mb-8 shadow-sm border border-purple-100";
+                    matchTable.innerHTML = `<h3 class="font-bold text-purple-700 mb-4 text-sm uppercase tracking-widest">List B (Definitions)</h3>
+                                            <ul class="space-y-3">
+                                                ${matchOptions.map(opt => `<li class="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200"><strong class="text-purple-700 font-black text-lg bg-purple-100 w-8 h-8 flex items-center justify-center rounded-lg shrink-0 shadow-sm">${opt.letter}</strong> <span class="text-slate-700 font-medium">${opt.text}</span></li>`).join('')}
+                                            </ul>`;
+                    sectionDiv.appendChild(matchTable);
+                }
+
+                const sectionQuestions = quizData.filter(q => q.section === sectionTitle);
+                
+                sectionQuestions.forEach((q, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = "bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-purple-100 mb-6 transition-all relative overflow-hidden group hover:border-purple-400 hover:shadow-lg";
+                    qCard.id = `q-card-${q.id}`;
+
+                    let interactionHTML = '';
+
+                    if (q.type === 'mcq') {
+                        interactionHTML = `<div class="mt-6 grid gap-3">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="checkAnswer(${q.id}, ${i})" id="btn-${q.id}-${i}" 
+                                class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-purple-400 hover:bg-purple-50 transition-all font-medium text-slate-700 text-lg flex items-start gap-4">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 font-bold text-sm shrink-0 mt-0.5">${String.fromCharCode(65 + i)}</span> 
+                                    <span class="leading-relaxed">${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>`;
+                    } else if (q.type === 'tf') {
+                        interactionHTML = `<div class="mt-6 flex gap-4">
+                            <button onclick="checkAnswer(${q.id}, true)" id="btn-${q.id}-true" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-purple-400 hover:bg-purple-50 transition-all font-black text-xl text-slate-700 shadow-sm">True</button>
+                            <button onclick="checkAnswer(${q.id}, false)" id="btn-${q.id}-false" class="flex-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-purple-400 hover:bg-purple-50 transition-all font-black text-xl text-slate-700 shadow-sm">False</button>
+                        </div>`;
+                    } else if (q.type === 'fib') {
+                        interactionHTML = `<div class="mt-6">
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full md:w-2/3 p-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 text-lg font-bold text-slate-700 cursor-pointer shadow-sm transition-all">
+                                <option value="" disabled selected>--- Select the correct missing word ---</option>
+                                ${wordBank.sort().map(w => `<option value="${w}">${w}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    } else if (q.type === 'match') {
+                        interactionHTML = `<div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-500 text-sm uppercase tracking-wider whitespace-nowrap">Matches with list B:</span>
+                            <select onchange="checkAnswer(${q.id}, this.value)" id="select-${q.id}" class="w-full p-4 rounded-xl border-2 border-slate-200 bg-white focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 font-black text-slate-700 cursor-pointer shadow-sm transition-all text-center">
+                                <option value="" disabled selected>--- Select Correct Option ---</option>
+                                ${matchOptions.map(o => `<option value="${o.letter}">Option ${o.letter}</option>`).join('')}
+                            </select>
+                        </div>`;
+                    }
+
+                    qCard.innerHTML = `
+                        <div class="flex gap-5">
+                            <div class="bg-purple-100 text-purple-800 w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl flex-shrink-0 shadow-sm border border-purple-200">${index + 1}</div>
+                            <div class="flex-1 text-xl font-semibold text-slate-800 leading-relaxed pt-1">${q.question}</div>
+                        </div>
+                        ${interactionHTML}
+                        <div id="feedback-${q.id}" class="mt-6 hidden rounded-2xl p-6 text-base animate-fadeIn border-l-4 shadow-sm"></div>
+                    `;
+                    sectionDiv.appendChild(qCard);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle Evaluation
+        function checkAnswer(questionId, userAnswer) {
+            const questionData = quizData.find(q => q.id === questionId);
+            const isCorrect = userAnswer === questionData.correct;
+            const card = document.getElementById(`q-card-${questionId}`);
+            const feedbackBox = document.getElementById(`feedback-${questionId}`);
+
+            // Lock interaction
+            card.classList.add('disabled-card');
+            card.classList.remove('hover:border-purple-400', 'hover:shadow-lg');
+            
+            let correctIndicator = '';
+            // Strong explanation structure
+            let explanationText = `<div class="mt-4 text-slate-800 font-medium leading-relaxed bg-white/80 p-5 rounded-xl border border-white/50 text-[1.05rem] shadow-sm"><span class="block font-black mb-2 text-sm uppercase tracking-widest text-slate-400">Detailed Solution & Explanation</span>${questionData.explanation}</div>`;
+            let bestAnswerNotice = '';
+
+            if (isCorrect) {
+                score++;
+                card.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-emerald-700 text-2xl mb-2">
+                                        <svg class="w-8 h-8 bg-emerald-100 rounded-full p-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        Correct! Well done.
+                                    </div>`;
+                feedbackBox.className = "mt-6 rounded-2xl p-6 bg-emerald-100 border-l-8 border-emerald-500 block fade-in";
+                
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const btn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    btn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-start gap-4 shadow-md";
+                }
+            } else {
+                card.classList.add('border-rose-300', 'bg-rose-50/40');
+                correctIndicator = `<div class="flex items-center gap-2 font-black text-rose-700 text-2xl mb-1">
+                                        <svg class="w-8 h-8 bg-rose-100 rounded-full p-1 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        Incorrect
+                                    </div>`;
+                
+                let correctAnswerLabel = questionData.correct;
+                if (questionData.type === 'mcq') {
+                    correctAnswerLabel = `${String.fromCharCode(65 + questionData.correct)}. ${questionData.options[questionData.correct]}`;
+                } else if (questionData.type === 'tf') {
+                    correctAnswerLabel = questionData.correct ? "True" : "False";
+                } else if (questionData.type === 'match') {
+                    correctAnswerLabel = `Option ${questionData.correct}`;
+                }
+
+                bestAnswerNotice = `<div class="text-rose-900 font-medium mt-3 text-lg bg-rose-200/50 p-4 rounded-lg border border-rose-300">
+                    The structurally correct answer is: <span class="bg-white px-3 py-1.5 rounded-md border border-rose-300 shadow-sm inline-block ml-1 font-black">${correctAnswerLabel}</span>
+                </div>`;
+                
+                feedbackBox.className = "mt-6 rounded-2xl p-6 bg-rose-100 border-l-8 border-rose-500 block fade-in";
+
+                if(questionData.type === 'mcq' || questionData.type === 'tf') {
+                    const wrongBtn = document.getElementById(`btn-${questionId}-${userAnswer}`);
+                    if(wrongBtn) wrongBtn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-300 bg-rose-50 font-medium text-rose-900 text-lg flex items-start gap-4 opacity-50 line-through";
+                    
+                    const rightBtn = document.getElementById(`btn-${questionId}-${questionData.correct}`);
+                    if(rightBtn) rightBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-900 text-lg flex items-start gap-4 shadow-md mt-2";
+                }
+            }
+
+            if(questionData.type === 'fib' || questionData.type === 'match') {
+                const sel = document.getElementById(`select-${questionId}`);
+                sel.disabled = true;
+                if(isCorrect) {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-black text-center appearance-none shadow-md";
+                } else {
+                    sel.className = "w-full md:w-2/3 p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-800 font-bold text-center appearance-none line-through opacity-70";
+                }
+            }
+
+            feedbackBox.innerHTML = correctIndicator + bestAnswerNotice + explanationText;
+
+            answeredQuestions++;
+            if(answeredQuestions === quizData.length) {
+                document.getElementById('completion-message').classList.remove('hidden');
+                
+                const finalScoreElem = document.getElementById('final-score');
+                finalScoreElem.innerText = `${score} / ${quizData.length}`;
+                if (score === 20) finalScoreElem.className = "mt-6 text-6xl font-black text-emerald-500 drop-shadow-md mb-2";
+                else if (score >= 15) finalScoreElem.className = "mt-6 text-6xl font-black text-purple-600 drop-shadow-md mb-2";
+                else if (score >= 10) finalScoreElem.className = "mt-6 text-6xl font-black text-amber-500 drop-shadow-md mb-2";
+                else finalScoreElem.className = "mt-6 text-6xl font-black text-rose-500 drop-shadow-md mb-2";
+            }
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>

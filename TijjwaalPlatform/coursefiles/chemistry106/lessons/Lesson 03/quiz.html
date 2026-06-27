@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structural Formulas</title>
+    <!-- استدعاء Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- خطوط عربية وإنجليزية -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-teal-800 mb-2" dir="ltr" style="font-family: 'Roboto', sans-serif;">
+                <i class="fa-solid fa-flask-vial text-teal-600 mr-2"></i>
+                Structural Formulas
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg">تغطية شاملة للصفحات (41 - 56): Alkenes & Alkynes</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-gray-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="bg-teal-500 h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text" class="en-text text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-relaxed">
+                    Question text goes here?
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r text-gray-800 text-sm shadow-sm">
+                    <!-- Word bank or matching list -->
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div>
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-correction" class="mb-2 font-medium text-sm hidden"></p>
+                            <div class="text-sm leading-relaxed">
+                                <strong class="text-gray-900">Explanation:</strong> <span
+                                    id="feedback-explanation"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-gray-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-teal-700 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-yellow-400"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span>التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-gray-100">
+            <i class="fa-solid fa-trophy text-7xl text-teal-500 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم فصل الألكينات والألكاينات.</p>
+
+            <div class="bg-teal-50 border border-teal-100 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-teal-700 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-teal-400">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-teal-800 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-6 rounded-xl transition-colors flex justify-center items-center gap-3 text-lg shadow-lg hover:shadow-xl">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار للتأكيد
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // قاعدة بيانات الأسئلة
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "What is the hybridization and approximate bond angle of the carbon atoms involved in a carbon-carbon double bond (C=C)?",
+                options: ["sp³ / 109.5°", "sp² / 120°", "sp / 180°", "sp² / 109.5°"],
+                a: "sp² / 120°",
+                exp: "Alkenes contain sp² hybridized carbon atoms. The three sp² orbitals arrange themselves in a trigonal planar geometry to minimize repulsion, resulting in bond angles of approximately 120°."
+            },
+            {
+                type: "Multiple Choice",
+                q: "According to Markovnikov's rule, what is the major product formed when HBr is added to propene (CH₃-CH=CH₂)?",
+                options: ["1-Bromopropane", "2-Bromopropane", "1,2-Dibromopropane", "Bromopropene"],
+                a: "2-Bromopropane",
+                exp: "Markovnikov's rule states that the proton (H⁺) adds to the carbon with the most hydrogens (C1), forming a more stable secondary carbocation at C2. Bromide (Br⁻) then attacks C2, yielding 2-Bromopropane."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which of the following molecules can exhibit cis-trans (geometric) isomerism?",
+                options: ["1-Butene", "2-Butene", "Propene", "2-Methyl-2-butene"],
+                a: "2-Butene",
+                exp: "For cis-trans isomerism to occur, there must be restricted rotation (a double bond) AND each carbon of the double bond must be attached to two different groups. 2-Butene meets this criterion, while 1-Butene has two identical Hydrogens on C1."
+            },
+            {
+                type: "Multiple Choice",
+                q: "What is the characteristic geometry around the sp-hybridized carbon atoms in an alkyne (-C≡C-)?",
+                options: ["Tetrahedral", "Trigonal planar", "Linear", "Bent"],
+                a: "Linear",
+                exp: "The two sp hybrid orbitals orient themselves as far apart as possible, which is 180° apart, giving alkynes their characteristic linear geometry."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which reagent is commonly used as a visual test for the presence of a double or triple bond by rapidly discharging its reddish-brown color?",
+                options: ["Cold KMnO₄", "Bromine in CCl₄ (Br₂/CCl₄)", "Tollens' reagent", "H₂ with Pt catalyst"],
+                a: "Bromine in CCl₄ (Br₂/CCl₄)",
+                exp: "Alkenes and alkynes rapidly undergo electrophilic addition with Br₂, converting the reddish-brown Bromine solution to a colorless dihalide or tetrahalide product. This is a standard qualitative test for unsaturation."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "A pi (π) bond is stronger than a sigma (σ) bond, which makes alkenes highly stable and less reactive than alkanes.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. A pi bond (formed by side-by-side overlap) is WEAKER than a sigma bond (head-on overlap). Because the pi electrons are more exposed and easier to break, alkenes are much MORE reactive than alkanes."
+            },
+            {
+                type: "True / False",
+                q: "Trans-isomers are generally more stable than their corresponding cis-isomers due to reduced steric hindrance.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. In a trans-isomer, the larger, bulkier groups are on opposite sides of the double bond. This keeps them physically separated, minimizing steric strain compared to the cis-isomer where they clash."
+            },
+            {
+                type: "True / False",
+                q: "Terminal alkynes (e.g., 1-butyne) possess a weakly acidic hydrogen atom that can be removed by a strong base like NaNH₂.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. The proton attached to an sp-hybridized carbon is slightly acidic. The high s-character (50%) of the sp orbital holds the electrons closer to the nucleus, stabilizing the resulting carbanion (acetylide ion)."
+            },
+            {
+                type: "True / False",
+                q: "The acid-catalyzed hydration of an alkene (addition of H₂O/H⁺) yields an ether as the final organic product.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Hydration of an alkene adds an -H and an -OH across the double bond (following Markovnikov's rule), which produces an ALCOHOL, not an ether."
+            },
+            {
+                type: "True / False",
+                q: "Alkynes undergo electrophilic addition reactions similarly to alkenes, but they have the capacity to react with two equivalents (moles) of the reagent.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Because alkynes possess two pi bonds, they can undergo addition twice. For example, adding excess Br₂ to an alkyne yields a tetrahalide."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "The addition of water to an alkene in the presence of an acid catalyst to form an alcohol is called ________.",
+                options: ["Electrophilic", "Markovnikov", "Vicinal", "Lindlar", "Hydration"],
+                a: "Hydration",
+                exp: "Hydration literally means adding water. In organic chemistry, it involves breaking the pi bond and adding an H atom to one carbon and an OH group to the other."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The most common and characteristic reaction mechanism for alkenes, where the electron-rich double bond attacks a positive species, is ________ addition.",
+                options: ["Electrophilic", "Markovnikov", "Vicinal", "Lindlar", "Hydration"],
+                a: "Electrophilic",
+                exp: "Because the pi bond is a cloud of electrons, it acts as a nucleophile and attacks an electrophile (electron-seeker), initiating the Electrophilic Addition."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "When an unsymmetrical reagent adds to an unsymmetrical alkene, the positive part (often H⁺) adds to the carbon with more hydrogen atoms. This is ________'s rule.",
+                options: ["Electrophilic", "Markovnikov", "Vicinal", "Lindlar", "Hydration"],
+                a: "Markovnikov",
+                exp: "Markovnikov's rule predicts the regioselectivity of electrophilic addition. It occurs this way because it forms the most stable carbocation intermediate possible."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The halogenation of an alkene with Br₂ produces a ________ dihalide, meaning the two bromine atoms attach to adjacent carbon atoms.",
+                options: ["Electrophilic", "Markovnikov", "Vicinal", "Lindlar", "Hydration"],
+                a: "Vicinal",
+                exp: "Vicinal (from Latin vicinus, meaning neighbor) describes two functional groups attached to adjacent carbon atoms. (Geminal means attached to the same carbon)."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "To partially reduce an alkyne specifically to a cis-alkene without over-reducing it to an alkane, a poisoned catalyst known as ________'s catalyst is used.",
+                options: ["Electrophilic", "Markovnikov", "Vicinal", "Lindlar", "Hydration"],
+                a: "Lindlar",
+                exp: "Lindlar's catalyst (Pd poisoned with lead or quinoline) slows down the hydrogenation process and specifically delivers the hydrogen atoms to the same side of the alkyne (syn addition), creating a cis-alkene."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the description to the correct term: \nA hydrocarbon containing at least one carbon-carbon double bond.",
+                options: ["Alkene", "Alkyne", "Cis-isomer", "Addition reaction", "Electrophile"],
+                a: "Alkene",
+                exp: "Alkenes are unsaturated hydrocarbons defined by the presence of a reactive C=C double bond."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct term: \nA hydrocarbon containing at least one carbon-carbon triple bond.",
+                options: ["Alkene", "Alkyne", "Cis-isomer", "Addition reaction", "Electrophile"],
+                a: "Alkyne",
+                exp: "Alkynes are even more highly unsaturated hydrocarbons, characterized by a C≡C triple bond."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct term: \nA geometric isomer where identical or similar bulky groups are on the same side of the double bond.",
+                options: ["Alkene", "Alkyne", "Cis-isomer", "Addition reaction", "Electrophile"],
+                a: "Cis-isomer",
+                exp: "The prefix 'cis-' means 'on this side' in Latin. It denotes that the significant substituents project out on the same side of the rigid double bond plane."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct term: \nA chemical reaction characteristic of unsaturated molecules where a pi bond breaks and two new sigma bonds are formed.",
+                options: ["Alkene", "Alkyne", "Cis-isomer", "Addition reaction", "Electrophile"],
+                a: "Addition reaction",
+                exp: "Unlike substitution (swapping parts), addition reactions combine two molecules into one larger molecule by utilizing the electrons from a pi bond."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct term: \nAn electron-deficient species (like H⁺ or a carbocation) that seeks a pair of electrons to form a bond.",
+                options: ["Alkene", "Alkyne", "Cis-isomer", "Addition reaction", "Electrophile"],
+                a: "Electrophile",
+                exp: "An electrophile (meaning 'electron-loving') has a positive charge or partial positive charge and reacts by accepting an electron pair from a nucleophile (like a pi bond)."
+            }
+        ];
+
+        // المتغيرات الأساسية
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        // عناصر DOM
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackCorrection = document.getElementById('feedback-correction');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+
+        // تهيئة الاختبار
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        // تحميل السؤال
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            // تحديث الواجهة العلوية
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+
+            // معالجة النص ليكون متناسق
+            elQuestionText.innerText = q.q;
+
+            // التعليمات الإضافية للأنواع الخاصة
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-yellow-700'><i class='fa-solid fa-list-ul mr-2'></i> Word Bank:</strong> Electrophilic, Markovnikov, Vicinal, Lindlar, Hydration";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-yellow-700'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Alkene, Alkyne, Cis-isomer, Addition reaction, Electrophile";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            // إخفاء التغذية الراجعة والزر
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            // بناء الخيارات
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-gray-200 rounded-xl p-4 text-gray-700 font-bold hover:border-teal-400 hover:bg-teal-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        // التحقق من الإجابة
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            // تعطيل جميع الأزرار وتلوينها
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-gray-200', 'hover:border-teal-400', 'hover:bg-teal-50', 'text-gray-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl drop-shadow-sm"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-gray-200', 'hover:border-teal-400', 'hover:bg-teal-50', 'text-gray-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl drop-shadow-sm"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            // إعداد صندوق التغذية الراجعة
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+            elFeedbackCorrection.classList.add('hidden');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-square-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ Correct!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+                elFeedbackExplanation.parentElement.className = "text-sm leading-relaxed text-green-800 bg-green-100 p-3 rounded-lg mt-2";
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-square-xmark text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ Incorrect";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackCorrection.innerHTML = `You chose <span class="line-through opacity-70">${selectedOption}</span>. The correct answer is <strong class="bg-white px-2 py-1 rounded border border-red-200 ml-1 shadow-sm">${q.a}</strong>.`;
+                elFeedbackCorrection.classList.remove('hidden');
+                elFeedbackCorrection.className = "mb-3 font-semibold text-base text-red-800";
+
+                elFeedbackExplanation.parentElement.className = "text-sm leading-relaxed text-red-800 bg-red-100 p-3 rounded-lg mt-2";
+            }
+
+            elFeedbackExplanation.textContent = q.exp;
+
+            // إظهار زر التالي
+            if (currentIdx === quizData.length - 1) {
+                elNextBtn.querySelector('span').textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.remove('bg-teal-600', 'hover:bg-teal-700');
+                elNextBtn.classList.add('bg-gray-800', 'hover:bg-gray-900', 'px-8', 'py-3', 'text-lg');
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        // الانتقال للسؤال التالي أو إنهاء الاختبار
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // عرض النتيجة النهائية
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء استثنائي! فهمك لتفاعلات الإضافة وقاعدة ماركوفنيكوف ممتاز جداً. 🌟";
+            } else if (score >= 13) {
+                msgEl.textContent = "مستوى رائع! مع مراجعة بسيطة لبعض الاستثناءات ستكون جاهزاً تماماً. 👍";
+            } else {
+                msgEl.textContent = "لا بأس! هذه المواضيع تحتاج للتدريب. اقرأ الشرح (Explanations) وأعد المحاولة. 💪";
+            }
+        }
+
+        // إعادة الاختبار
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+
+            elNextBtn.querySelector('span').textContent = "التالي";
+            elNextBtn.classList.add('bg-teal-600', 'hover:bg-teal-700');
+            elNextBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900', 'px-8', 'py-3', 'text-lg');
+
+            loadQuestion();
+        }
+
+        // بدء التشغيل
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

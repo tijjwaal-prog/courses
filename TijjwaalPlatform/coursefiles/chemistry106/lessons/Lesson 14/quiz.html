@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examples of Aromatic Compounds</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #faf5ff;
+            /* خلفية أرجوانية فاتحة جداً */
+        }
+
+        .en-text {
+            font-family: 'Roboto', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-gradient {
+            background: linear-gradient(135deg, #7e22ce 0%, #a21caf 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-10 px-4 flex justify-center items-center">
+
+    <div class="max-w-3xl w-full">
+        <!-- قسم رأس الاختبار -->
+        <div class="text-center mb-8">
+            <h1
+                class="text-3xl md:text-4xl font-bold text-purple-900 mb-2 en-text text-center flex justify-center items-center gap-3">
+                <i class="fa-solid fa-cubes text-purple-600"></i>
+                Examples of Aromatic Compounds
+            </h1>
+            <p class="text-gray-600 font-semibold text-lg mt-3">تغطية شاملة للصفحات (143 - 148): PAHs & Heterocycles</p>
+        </div>
+
+        <!-- حاوية الاختبار -->
+        <div id="quiz-container"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-purple-100">
+            <!-- شريط التقدم -->
+            <div class="bg-gray-200 h-2 w-full">
+                <div id="progress-bar" class="theme-gradient h-2 transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- معلومات السؤال الحالي -->
+                <div class="flex justify-between items-center border-b border-purple-100 pb-4 mb-6">
+                    <span id="question-type"
+                        class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Multiple Choice
+                    </span>
+                    <span class="text-gray-500 font-semibold text-sm border px-3 py-1 rounded-md bg-gray-50">
+                        السؤال <span id="current-q-num">1</span> من <span id="total-q-num">20</span>
+                    </span>
+                </div>
+
+                <!-- نص السؤال -->
+                <h2 id="question-text"
+                    class="en-text text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Loading question...
+                </h2>
+
+                <!-- تعليمات إضافية (لأسئلة الفراغات والتوصيل) -->
+                <div id="extra-instructions"
+                    class="en-text hidden mb-6 p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-r text-slate-800 text-sm shadow-sm">
+                </div>
+
+                <!-- الخيارات -->
+                <div id="options-container" class="en-text space-y-3 mb-8">
+                </div>
+
+                <!-- صندوق التغذية الراجعة (يظهر بعد الإجابة) -->
+                <div id="feedback-box" class="en-text hidden p-5 rounded-xl border mt-6 fade-in shadow-inner">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 text-2xl"></div>
+                        <div class="w-full">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <div class="text-sm leading-relaxed mt-2 p-3 rounded-lg" id="feedback-content-bg">
+                                <span id="feedback-explanation" class="font-medium block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ذيل الحاوية (الأزرار) -->
+            <div class="bg-slate-50 p-5 border-t border-gray-100 flex justify-between items-center">
+                <div id="score-display" class="font-bold text-purple-800 hidden text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-star text-purple-600"></i> النتيجة: <span id="current-score"
+                        class="text-xl">0</span>
+                </div>
+                <div></div> <!-- Spacer -->
+                <button id="next-btn"
+                    class="hidden theme-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition-opacity flex items-center gap-2 shadow-md"
+                    onclick="nextQuestion()">
+                    <span id="btn-text">التالي</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة النهائية -->
+        <div id="result-container"
+            class="hidden bg-white p-8 rounded-2xl shadow-xl text-center fade-in max-w-lg mx-auto mt-10 border border-purple-100">
+            <i class="fa-solid fa-medal text-7xl text-purple-700 mb-6 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">اكتمل الاختبار!</h2>
+            <p class="text-gray-600 mb-6 font-medium">لقد أنهيت تقييم أمثلة المركبات الأروماتية بنجاح.</p>
+
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-8 shadow-inner">
+                <div class="text-6xl font-black text-purple-800 en-text text-center">
+                    <span id="final-score">0</span> <span class="text-3xl text-purple-500">/ 20</span>
+                </div>
+                <p id="result-message" class="text-base text-purple-900 mt-4 font-bold"></p>
+            </div>
+
+            <button onclick="restartQuiz()"
+                class="w-full theme-gradient hover:opacity-90 text-white font-bold py-4 px-6 rounded-xl transition-opacity flex justify-center items-center gap-3 text-lg shadow-lg">
+                <i class="fa-solid fa-rotate-right"></i>
+                إعادة الاختبار
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // --- Multiple Choice (1-5) ---
+            {
+                type: "Multiple Choice",
+                q: "Which of the following is a polycyclic aromatic hydrocarbon (PAH) consisting of exactly two fused benzene rings?",
+                options: ["Anthracene", "Phenanthrene", "Naphthalene", "Pyridine"],
+                a: "Naphthalene",
+                exp: "Naphthalene (C₁₀H₈) is the simplest polycyclic aromatic hydrocarbon, composed of two fused benzene rings. Anthracene and Phenanthrene have three."
+            },
+            {
+                type: "Multiple Choice",
+                q: "In pyridine (a 6-membered heterocyclic aromatic), the nitrogen atom is sp² hybridized. Where does its lone pair of electrons reside?",
+                options: ["Delocalized within the aromatic pi cloud.", "In an unhybridized p-orbital.", "In an sp² orbital perpendicular to the pi system.", "In an sp³ orbital."],
+                a: "In an sp² orbital perpendicular to the pi system.",
+                exp: "Because the nitrogen already contributes one electron to the pi system via its p-orbital, its lone pair sits in an sp² orbital in the plane of the ring, OUTSIDE the aromatic pi cloud, making it available to act as a base."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Which five-membered heterocyclic aromatic compound contains an oxygen atom?",
+                options: ["Pyrrole", "Thiophene", "Furan", "Pyridine"],
+                a: "Furan",
+                exp: "Furan is the oxygen-containing analog. Pyrrole contains Nitrogen (NH), and Thiophene contains Sulfur (S)."
+            },
+            {
+                type: "Multiple Choice",
+                q: "How many pi electrons are completely delocalized in the aromatic system of anthracene (three linearly fused benzene rings)?",
+                options: ["10", "12", "14", "16"],
+                a: "14",
+                exp: "Anthracene has 3 fused rings, containing 7 double bonds total. 7 × 2 = 14 pi electrons. This perfectly satisfies Hückel's rule (4n + 2) where n = 3."
+            },
+            {
+                type: "Multiple Choice",
+                q: "Why is pyrrole an extremely weak base compared to a standard aliphatic amine?",
+                options: ["The nitrogen atom lacks a lone pair of electrons.", "The lone pair is strongly attracted by a nearby oxygen atom.", "The nitrogen is sp hybridized.", "The lone pair is actively delocalized into the ring to maintain aromaticity."],
+                a: "The lone pair is actively delocalized into the ring to maintain aromaticity.",
+                exp: "In pyrrole, the 4 carbons provide 4 pi electrons. The nitrogen MUST donate its lone pair (2 electrons) into the ring to reach the 6 pi electrons needed for aromaticity. Using this lone pair to bond with a proton (acting as a base) would destroy the molecule's aromatic stability."
+            },
+
+            // --- True / False (6-10) ---
+            {
+                type: "True / False",
+                q: "When naphthalene undergoes electrophilic aromatic substitution, the reaction occurs predominantly at the beta (C2) position.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. Substitution occurs primarily at the alpha (C1) position. Attack at the alpha position generates a more stable intermediate because the aromaticity of the adjacent intact benzene ring is preserved in more resonance structures."
+            },
+            {
+                type: "True / False",
+                q: "Thiophene is a highly stable, five-membered heterocyclic aromatic compound that contains a sulfur atom.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Thiophene is the sulfur analog of furan and pyrrole. The sulfur atom donates one of its lone pairs to the pi system to complete the aromatic sextet."
+            },
+            {
+                type: "True / False",
+                q: "Phenanthrene and Anthracene are structural isomers; both have the formula C₁₄H₁₀, but phenanthrene has an angular (kinked) fusion of rings.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. While anthracene is linear, phenanthrene consists of three fused rings arranged in an angular manner, which actually makes it slightly more stable than anthracene."
+            },
+            {
+                type: "True / False",
+                q: "Pyridine is much more reactive towards Electrophilic Aromatic Substitution (EAS) than benzene.",
+                options: ["True", "False"],
+                a: "False",
+                exp: "False. The highly electronegative nitrogen atom in pyridine pulls electron density out of the ring, severely DEACTIVATING it. EAS on pyridine is very difficult compared to benzene."
+            },
+            {
+                type: "True / False",
+                q: "Polycyclic Aromatic Hydrocarbons (PAHs) are typically found in coal tar, soot, and grilled meats, and many are known to be carcinogenic.",
+                options: ["True", "False"],
+                a: "True",
+                exp: "True. Compounds like benzo[a]pyrene (a larger PAH) are notorious carcinogens formed during the incomplete combustion of organic matter."
+            },
+
+            // --- Fill in the Blanks (11-15) ---
+            {
+                type: "Fill in the Blank",
+                q: "________ is a 6-membered heterocyclic aromatic compound containing one nitrogen atom, often used as a basic solvent in organic chemistry.",
+                options: ["Pyridine", "Naphthalene", "Pyrrole", "Anthracene", "Furan"],
+                a: "Pyridine",
+                exp: "Pyridine looks like a benzene ring where one C-H unit has been replaced by a bare Nitrogen atom."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The simplest polycyclic aromatic hydrocarbon, widely known for its historical use in mothballs, is ________.",
+                options: ["Pyridine", "Naphthalene", "Pyrrole", "Anthracene", "Furan"],
+                a: "Naphthalene",
+                exp: "Naphthalene (two fused rings) has a very distinct, strong odor and readily sublimes, making it effective for repelling moths."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "________ is a 5-membered heterocyclic compound containing an -NH- group. Its lone pair is essential for the ring's aromaticity.",
+                options: ["Pyridine", "Naphthalene", "Pyrrole", "Anthracene", "Furan"],
+                a: "Pyrrole",
+                exp: "Because the lone pair is tied up in the aromatic ring, pyrrole is a very weak base."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "Composed of three linearly fused benzene rings, ________ is frequently used in the production of certain dyes.",
+                options: ["Pyridine", "Naphthalene", "Pyrrole", "Anthracene", "Furan"],
+                a: "Anthracene",
+                exp: "Anthracene has a linear arrangement, which gives it different reactivity and UV absorption properties compared to its angular isomer, phenanthrene."
+            },
+            {
+                type: "Fill in the Blank",
+                q: "The 5-membered aromatic heterocycle containing an oxygen atom in the ring is called ________.",
+                options: ["Pyridine", "Naphthalene", "Pyrrole", "Anthracene", "Furan"],
+                a: "Furan",
+                exp: "Furan is a colorless, highly flammable, highly volatile liquid. Like pyrrole and thiophene, it is aromatic."
+            },
+
+            // --- Matching (16-20) ---
+            {
+                type: "Matching",
+                q: "Match the description to the correct compound: \nA 5-membered aromatic heterocycle containing a Sulfur (S) atom.",
+                options: ["Thiophene", "Pyridine", "Phenanthrene", "Anthracene", "Naphthalene"],
+                a: "Thiophene",
+                exp: "Thiophene behaves very similarly to benzene and is widely found in petroleum deposits."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct compound: \nA 6-membered aromatic heterocycle containing a Nitrogen (N) atom.",
+                options: ["Thiophene", "Pyridine", "Phenanthrene", "Anthracene", "Naphthalene"],
+                a: "Pyridine",
+                exp: "Pyridine is aromatic and acts as a weak base because its nitrogen lone pair is outside the aromatic pi system."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct compound: \nA PAH consisting of exactly three angularly (non-linearly) fused benzene rings.",
+                options: ["Thiophene", "Pyridine", "Phenanthrene", "Anthracene", "Naphthalene"],
+                a: "Phenanthrene",
+                exp: "The angular fusion provides slightly more resonance stability than the linear arrangement seen in anthracene."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct compound: \nA PAH consisting of exactly three linearly fused benzene rings.",
+                options: ["Thiophene", "Pyridine", "Phenanthrene", "Anthracene", "Naphthalene"],
+                a: "Anthracene",
+                exp: "Anthracene undergoes addition reactions more readily than benzene, particularly at its central ring."
+            },
+            {
+                type: "Matching",
+                q: "Match the description to the correct compound: \nA PAH consisting of exactly two fused benzene rings.",
+                options: ["Thiophene", "Pyridine", "Phenanthrene", "Anthracene", "Naphthalene"],
+                a: "Naphthalene",
+                exp: "Naphthalene has 10 pi electrons, satisfying Hückel's 4n+2 rule (where n=2)."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elOptionsContainer = document.getElementById('options-container');
+        const elCurrentQNum = document.getElementById('current-q-num');
+        const elTotalQNum = document.getElementById('total-q-num');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elQuestionType = document.getElementById('question-type');
+        const elNextBtn = document.getElementById('next-btn');
+        const elFeedbackBox = document.getElementById('feedback-box');
+        const elFeedbackIcon = document.getElementById('feedback-icon');
+        const elFeedbackTitle = document.getElementById('feedback-title');
+        const elFeedbackContentBg = document.getElementById('feedback-content-bg');
+        const elFeedbackExplanation = document.getElementById('feedback-explanation');
+        const elScoreDisplay = document.getElementById('score-display');
+        const elCurrentScore = document.getElementById('current-score');
+        const elExtraInstructions = document.getElementById('extra-instructions');
+        const elQuizContainer = document.getElementById('quiz-container');
+        const elResultContainer = document.getElementById('result-container');
+        const elBtnText = document.getElementById('btn-text');
+
+        function initQuiz() {
+            elTotalQNum.textContent = quizData.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = quizData[currentIdx];
+
+            elCurrentQNum.textContent = currentIdx + 1;
+            elProgressBar.style.width = `${((currentIdx) / quizData.length) * 100}%`;
+            elQuestionType.textContent = q.type;
+            elQuestionText.innerText = q.q;
+
+            if (q.type === "Fill in the Blank") {
+                elExtraInstructions.innerHTML = "<strong class='text-purple-800'><i class='fa-solid fa-layer-group mr-2'></i> Word Bank:</strong> Pyridine, Naphthalene, Pyrrole, Anthracene, Furan";
+                elExtraInstructions.classList.remove('hidden');
+            } else if (q.type === "Matching") {
+                elExtraInstructions.innerHTML = "<strong class='text-purple-800'><i class='fa-solid fa-link mr-2'></i> Select the correct match from List B:</strong> Thiophene, Pyridine, Phenanthrene, Anthracene, Naphthalene";
+                elExtraInstructions.classList.remove('hidden');
+            } else {
+                elExtraInstructions.classList.add('hidden');
+            }
+
+            elFeedbackBox.classList.add('hidden');
+            elNextBtn.classList.add('hidden');
+            elScoreDisplay.classList.remove('hidden');
+            elCurrentScore.textContent = score;
+
+            elOptionsContainer.innerHTML = '';
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white border-2 border-slate-200 rounded-xl p-4 text-slate-700 font-bold hover:border-purple-500 hover:bg-fuchsia-50 flex justify-between items-center";
+
+                const spanText = document.createElement('span');
+                spanText.textContent = option;
+                btn.appendChild(spanText);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "icon-placeholder";
+                btn.appendChild(iconSpan);
+
+                btn.onclick = () => checkAnswer(option, btn);
+                elOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedOption, btnElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizData[currentIdx];
+            const isCorrect = (selectedOption === q.a);
+            const allBtns = elOptionsContainer.querySelectorAll('button');
+
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.querySelector('span').textContent;
+                const iconContainer = btn.querySelector('.icon-placeholder');
+
+                if (btnText === q.a) {
+                    btn.classList.remove('border-slate-200', 'hover:border-purple-500', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-green-500 text-2xl"></i>';
+                } else if (btnText === selectedOption && !isCorrect) {
+                    btn.classList.remove('border-slate-200', 'hover:border-purple-500', 'hover:bg-fuchsia-50', 'text-slate-700');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                    iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500 text-2xl"></i>';
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            elFeedbackBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+
+            if (isCorrect) {
+                score++;
+                elCurrentScore.textContent = score;
+                elFeedbackBox.classList.add('bg-green-50', 'border-green-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-shield-check text-green-600"></i>';
+                elFeedbackTitle.textContent = "✔️ إجابة صحيحة!";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-green-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-3 rounded-lg bg-green-100 text-green-900";
+                elFeedbackExplanation.innerHTML = `<strong>التوضيح العلمي:</strong> ${q.exp}`;
+            } else {
+                elFeedbackBox.classList.add('bg-red-50', 'border-red-200');
+                elFeedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>';
+                elFeedbackTitle.textContent = "❌ إجابة خاطئة";
+                elFeedbackTitle.className = "font-extrabold text-xl mb-1 text-red-800";
+
+                elFeedbackContentBg.className = "text-sm leading-relaxed mt-2 p-4 rounded-lg bg-red-100 text-red-900 border border-red-200";
+                elFeedbackExplanation.innerHTML = `
+                    <div class="mb-3 border-b border-red-200 pb-2">
+                        لقد اخترت: <span class="line-through opacity-75">${selectedOption}</span><br>
+                        الخيار الصحيح هو: <strong class="bg-white px-2 py-1 rounded text-red-700 shadow-sm ml-1 inline-block mt-1">${q.a}</strong>
+                    </div>
+                    <strong>لماذا الخيار الصحيح أفضل؟</strong><br> ${q.exp}
+                `;
+            }
+
+            if (currentIdx === quizData.length - 1) {
+                elBtnText.textContent = "عرض النتيجة النهائية";
+                elNextBtn.classList.add('px-8', 'py-3', 'text-lg');
+            } else {
+                elBtnText.textContent = "التالي";
+            }
+            elNextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIdx < quizData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            elProgressBar.style.width = `100%`;
+            elQuizContainer.classList.add('hidden');
+            elResultContainer.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const msgEl = document.getElementById('result-message');
+            if (score >= 18) {
+                msgEl.textContent = "أداء علمي مذهل! 🌟 فهمك للمركبات متعددة الحلقات وغير المتجانسة عميق جداً.";
+            } else if (score >= 13) {
+                msgEl.textContent = "عمل ممتاز! 👏 مع مراجعة بسيطة لموقع الأزواج الحرة ستكون مثالياً.";
+            } else {
+                msgEl.textContent = "هذه المركبات تحتاج لربط الأسماء بالهياكل البصرية. راجع التوضيحات وأعد المحاولة! 💡";
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            elResultContainer.classList.add('hidden');
+            elQuizContainer.classList.remove('hidden');
+            elNextBtn.classList.remove('px-8', 'py-3', 'text-lg');
+            loadQuestion();
+        }
+
+        // Start Quiz
+        initQuiz();
+
+    </script>
+</body>
+
+</html>

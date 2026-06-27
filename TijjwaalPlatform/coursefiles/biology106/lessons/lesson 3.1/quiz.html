@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metabolism and Enzymes Quiz</title>
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --secondary-color: #7b1fa2;
+            --accent-color: #ffb300;
+            --bg-color: #f3e5f5;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f5e9;
+            --correct-text: #2e7d32;
+            --correct-border: #a5d6a7;
+            --incorrect-bg: #ffebee;
+            --incorrect-text: #c62828;
+            --incorrect-border: #ef9a9a;
+            --text-color: #212121;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(74, 20, 140, 0.15);
+            border-top: 6px solid var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 2.4em;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px dashed #ce93d8;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options label {
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border: 1px solid #bdbdbd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .options label:hover {
+            background-color: #f3e5f5;
+            border-color: var(--secondary-color);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fff8e1;
+            border: 2px solid #ffe082;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #f57f17;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 12px;
+            border: 1px solid #9e9e9e;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 5px;
+            outline: none;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(123, 31, 162, 0.3);
+        }
+
+        .check-btn {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .check-btn:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            line-height: 1.5;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Metabolism and Enzymes</h1>
+    <p class="subtitle">Interactive Quiz - Answer the questions to get instant feedback and explanations!</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        [ Word Bank: Substrate | Zymase | Pellagra | Denatured | Ribozymes ]
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match each term with its correct description.</p>
+    <div id="match-section"></div>
+
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "mcq1",
+                q: "1. Who was the first physiologist to use the term 'enzyme' (meaning 'in leaven') in 1877 to describe the biochemical process?",
+                options: ["A) Louis Pasteur", "B) Wilhelm Kühne", "C) Edward Buchner", "D) James B. Sumner"],
+                correct: 1, // B
+                exp: "Wilhelm Kühne first used the term 'enzyme' in 1877. Pasteur used 'ferments', Buchner discovered cell-free fermentation (zymase), and Sumner proved urease is a protein."
+            },
+            {
+                id: "mcq2",
+                q: "2. According to the 'Induced Fit' model (proposed by Koshland), what happens when a substrate binds to an enzyme's active site?",
+                options: [
+                    "A) The active site acts as a rigid lock that perfectly fits the substrate without any changes.",
+                    "B) The substrate permanently bonds to the active site and cannot be released.",
+                    "C) The initial weak interaction rapidly induces conformational changes in the enzyme that strengthen binding and lower activation energy.",
+                    "D) The enzyme changes the temperature of the substrate to speed up the reaction."
+                ],
+                correct: 2, // C
+                exp: "Unlike the rigid Lock and Key model, the Induced Fit model proposes that the enzyme's active site is continually reshaped by interactions with the substrate until it binds completely, stabilizing the transition state."
+            },
+            {
+                id: "mcq3",
+                q: "3. Based on the temperature curve for enzymatic reactions, what typically happens to an enzyme if the temperature rises significantly beyond its optimal point (e.g., beyond 40°C)?",
+                options: [
+                    "A) The reaction rate continues to double for every 10°C rise indefinitely.",
+                    "B) The enzyme's shape changes (it becomes denatured), and the reaction rate declines rapidly.",
+                    "C) The enzyme converts into a non-protein coenzyme to survive the heat.",
+                    "D) The free energy of the product increases."
+                ],
+                correct: 1, // B
+                exp: "If the temperature rises beyond a certain point, the enzyme's globular shape changes (denaturation). It can no longer bind its substrate efficiently, causing the reaction rate to drop rapidly."
+            },
+            {
+                id: "mcq4",
+                q: "4. In a metabolic pathway, how does 'Noncompetitive Inhibition' regulate the production of an end product (F)?",
+                options: [
+                    "A) The end product (F) competes directly with the initial substrate for the active site of the first enzyme.",
+                    "B) The end product (F) binds to an allosteric site on the first enzyme, changing the shape of its active site so the substrate cannot bind.",
+                    "C) The end product (F) irreversibly destroys the enzyme by breaking its peptide bonds.",
+                    "D) The end product (F) increases the activation energy of the entire pathway."
+                ],
+                correct: 1, // B
+                exp: "In noncompetitive inhibition, the inhibitor (end product) binds to an allosteric site, NOT the active site. This alters the shape of the active site, preventing the substrate from binding and halting the pathway."
+            },
+            {
+                id: "mcq5",
+                q: "5. What is the biochemical role of 'Coenzymes' (such as NAD+ and FAD) in an enzymatic reaction?",
+                options: [
+                    "A) They are inorganic metal ions like copper or iron.",
+                    "B) They are nonprotein organic molecules (often derived from vitamins) that participate in the reaction at the active site.",
+                    "C) They are purely RNA molecules that act as biological catalysts.",
+                    "D) They are inhibitors that permanently bind to the allosteric site."
+                ],
+                correct: 1, // B
+                exp: "Coenzymes are nonprotein organic molecules required by certain enzymes to function. They participate at the active site and are often synthesized from trace vitamins in the diet."
+            }
+        ],
+        tf: [
+            {
+                id: "tf1",
+                q: "1. Enzymes accelerate chemical reactions by lowering the Activation Energy (Ea) required, without changing the final energy content of the product.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. Enzymes lower the activation energy, allowing reactions to occur under mild conditions faster, while the product's final energy remains exactly the same as it would without the enzyme."
+            },
+            {
+                id: "tf2",
+                q: "2. All biological catalysts are strictly made of protein molecules; there are absolutely no exceptions in biology.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Ribozymes are a major exception. They are made of RNA instead of proteins, but they still serve as biological catalysts (e.g., in protein synthesis at the ribosomes)."
+            },
+            {
+                id: "tf3",
+                q: "3. The optimal pH for the enzyme 'pepsin' (found in the stomach) and the enzyme 'trypsin' (found in the small intestine) is exactly the same.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Enzymes have specific optimal pH levels based on their environment. Pepsin works best in highly acidic conditions (pH ~2), whereas trypsin works best in alkaline conditions (pH ~8)."
+            },
+            {
+                id: "tf4",
+                q: "4. Siamese cats possess a mutated enzyme controlling dark coat color that is active ONLY at cooler body temperatures.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. The mutation causes the enzyme to denature or be inactive at warmer core body temperatures, so the dark pigment is only produced in cooler extremities (face, ears, tail, legs)."
+            },
+            {
+                id: "tf5",
+                q: "5. The lock and key model perfectly explains the stabilization of the transition state that enzymes achieve during a chemical reaction.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. The lock and key model fails to explain the stabilization of the transition state. The 'Induced fit' model is the favored model because it explains how conformational changes stabilize the transition state."
+            }
+        ],
+        fill: [
+            {
+                id: "fill1",
+                q: "1. The specific reactant molecule that an enzyme binds to at its active site is called the _________.",
+                correct: "substrate",
+                exp: "The enzyme complexes with its specific substrate(s). When the reaction finishes, products are released and the enzyme is ready for a new substrate."
+            },
+            {
+                id: "fill2",
+                q: "2. In 1897, Edward Buchner demonstrated cell-free fermentation using an enzyme extracted from yeast which he named _________.",
+                correct: "zymase",
+                exp: "Buchner discovered that the enzyme zymase could ferment sucrose even without living yeast cells, which earned him the Nobel Prize in Chemistry."
+            },
+            {
+                id: "fill3",
+                q: "3. A deficiency in the vitamin Niacin leads to a decrease in coenzyme synthesis and causes a skin disease known as _________.",
+                correct: "pellagra",
+                exp: "Vitamins are required in trace amounts to synthesize coenzymes. Lack of Niacin causes the vitamin-deficiency disorder pellagra."
+            },
+            {
+                id: "fill4",
+                q: "4. When exposed to extreme heat or severe changes in pH, an enzyme loses its globular structure and becomes _________, making it unable to bind its substrate.",
+                correct: "denatured",
+                exp: "Denaturation alters the shape of the enzyme's active site permanently or temporarily, severely decreasing the reaction rate."
+            },
+            {
+                id: "fill5",
+                q: "5. Biological catalysts that are made of RNA rather than proteins are called _________.",
+                correct: "ribozymes",
+                exp: "Ribozymes prove that not all enzymes are proteins. They are crucial in processes like RNA synthesis and peptide bond formation."
+            }
+        ],
+        match: [
+            {
+                id: "m1",
+                term: "1. Active Site",
+                correctIndex: 0,
+                exp: "The active site is a small cleft or pocket on the enzyme lined by specific amino acids where the substrate binds and the catalytic reaction occurs."
+            },
+            {
+                id: "m2",
+                term: "2. Cofactor",
+                correctIndex: 1,
+                exp: "Cofactors are inorganic metal ions (like zinc, copper, iron) that must be present at the active site for certain enzymes to function properly."
+            },
+            {
+                id: "m3",
+                term: "3. Competitive Inhibition",
+                correctIndex: 2,
+                exp: "In competitive inhibition, an inhibitor mimics the substrate and fights for the exact same active site on the enzyme."
+            },
+            {
+                id: "m4",
+                term: "4. End Product (in a pathway)",
+                correctIndex: 3,
+                exp: "Once sufficient end product is formed, it acts as an inhibitor by binding to an allosteric site to conserve energy and raw materials."
+            },
+            {
+                id: "m5",
+                term: "5. Lysozyme",
+                correctIndex: 4,
+                exp: "Lysozyme (found in tears/saliva) was the first enzyme to have its 3D structure analyzed via X-ray crystallography by David Phillips in 1965."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) A small cleft or pocket lined with specific amino acids where the enzyme and substrate fit together.",
+        "B) An inorganic metal ion (e.g., copper, zinc, iron) required by an enzyme to be active.",
+        "C) Occurs when an inhibitor competes directly with the substrate for the active site of the enzyme.",
+        "D) Often acts as a noncompetitive inhibitor by binding to an allosteric site to stop its own overproduction.",
+        "E) An enzyme found in tears and egg whites that was the first to be mapped using X-ray crystallography."
+    ];
+
+    function checkRadio(id, correctVal, explanation) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (!selected) {
+            alert("Please select an option before checking.");
+            return;
+        }
+
+        const userVal = parseInt(selected.value);
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect.</div>
+                                  <div class="explanation"><b>Why the correct option is better:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+    }
+
+    function checkText(id, correctVal, explanation) {
+        const input = document.getElementById(`input_${id}`);
+        const userVal = input.value.trim().toLowerCase();
+
+        if (userVal === "") {
+            alert("Please type a word from the bank before checking.");
+            return;
+        }
+
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal.toLowerCase()) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect. The correct word is '${correctVal}'.</div>
+                                  <div class="explanation"><b>Explanation:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        input.disabled = true;
+    }
+
+    function checkSelect(id, correctVal, explanation) {
+        const select = document.getElementById(`select_${id}`);
+        const userVal = parseInt(select.value);
+
+        if (isNaN(userVal)) {
+            alert("Please select a definition from the dropdown list.");
+            return;
+        }
+
+        const feedback = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+
+        if (userVal === correctVal) {
+            feedback.className = "feedback correct";
+            feedback.innerHTML = `<div class="feedback-title">✔️ Correct Match!</div>
+                                  <div class="explanation">${explanation}</div>`;
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = `<div class="feedback-title">❌ Incorrect Match.</div>
+                                  <div class="explanation"><b>Why this is the correct match:</b><br>${explanation}</div>`;
+        }
+        
+        btn.disabled = true;
+        select.disabled = true;
+    }
+
+    function renderQuiz() {
+        // Render MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsHTML = '';
+            q.options.forEach((opt, index) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${index}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkRadio('${q.id}', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsHTML = '';
+            q.options.forEach((opt, index) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${index}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkRadio('${q.id}', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Fill
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type your answer...">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkText('${q.id}', '${q.correct}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Match
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let optionsHTML = `<option value="none" selected disabled>-- Select the matching definition --</option>`;
+            matchDefinitions.forEach((def, index) => {
+                optionsHTML += `<option value="${index}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${optionsHTML}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkSelect('${q.id}', ${q.correctIndex}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    // Initialize Quiz
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
