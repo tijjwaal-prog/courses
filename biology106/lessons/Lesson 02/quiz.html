@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Organization, Taxonomy of Organisms, and Importance of Biology to Medicine</title>
+    <style>
+        :root {
+            --primary: #2b5876;
+            --secondary: #4e4376;
+            --correct-bg: #e6ffed;
+            --correct-text: #0a5c36;
+            --correct-border: #b7ebc5;
+            --incorrect-bg: #ffeef0;
+            --incorrect-text: #8c1d18;
+            --incorrect-border: #f4c2c2;
+            --bg: #f9f9fb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        h2 {
+            color: var(--secondary);
+            margin-top: 40px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border: 1px solid #e1e4e8;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: box-shadow 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #24292e;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background: #f1f8ff;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .word-bank {
+            background: #f1f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #0366d6;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #0366d6;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            border: 1px solid #d1d5da;
+            border-radius: 6px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 5px;
+            background-color: #fafbfc;
+        }
+
+        .btn-check {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-check:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .feedback.correct {
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+            display: block;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hierarchical Organization, Taxonomy of Organisms, and Importance of Biology to Medicine</h1>
+    <p style="text-align: center; color: #586069; font-size: 1.1em;">Read each question carefully. Click "Check Answer" to get immediate feedback and an explanation.</p>
+
+    <h2>Part 1: Multiple Choice</h2>
+    <div id="

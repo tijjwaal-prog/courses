@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Biology and Characteristics of Life</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --correct: #d4edda;
+            --correct-text: #155724;
+            --correct-border: #c3e6cb;
+            --incorrect: #f8d7da;
+            --incorrect-text: #721c24;
+            --incorrect-border: #f5c6cb;
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--secondary);
+            margin-top: 40px;
+        }
+
+        .question-card {
+            background: #fafafa;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background: #e9ecef;
+        }
+
+        .word-bank {
+            background: #e1f5fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #0277bd;
+            text-align: center;
+        }
+
+        input[type="text"], select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 5px;
+        }
+
+        .btn-check {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-check:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-check:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .feedback.correct {
+            background-color: var(--correct);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--incorrect);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+            display: block;
+        }
+
+        .explanation {
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Introduction to Biology and Characteristics of Life</h1>
+    <p style="text-align: center;">Answer the questions below and click "Check Answer" to get immediate feedback.</p>
+
+    <h2>Part 1: Multiple Choice</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Atoms | DNA | Homeostasis | Tissue | Biodegradation
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching</h2>
+    <p>Select the correct definition from the dropdown list for each term.</p>
+    <div id="match-section"></div>
+
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "mcq1",
+                q: "1. Which of the following is NOT a characteristic of life mentioned in the text?",
+                options: ["Homeostasis", "Sensitivity", "Radioactivity", "Energy utilization"],
+                correct: 2, // Index 2 -> Radioactivity
+                exp: "The characteristics of life include order, cellular organization, energy utilization, homeostasis, sensitivity, growth, development, reproduce, and evolutionary adaptation. Radioactivity is not one of them[cite: 21, 60, 79, 95, 107, 113, 119]."
+            },
+            {
+                id: "mcq2",
+                q: "2. What process do plants use to convert sunlight, carbon dioxide, and water into food?",
+                options: ["Biodegradation", "Photosynthesis", "Cellular Respiration", "Evolution"],
+                correct: 1,
+                exp: "Plants make their own food by photosynthesis process, taking in sunlight, CO2, and water to produce sugar[cite: 83]."
+            },
+            {
+                id: "mcq3",
+                q: "3. Which level of biological organization is defined as a group of individual organisms of the same species living in the same place?",
+                options: ["Community", "Ecosystem", "Population", "Biosphere"],
+                correct: 2,
+                exp: "A population is individual organisms grouped from the same species living in the same place[cite: 168]."
+            },
+            {
+                id: "mcq4",
+                q: "4. According to the text, which biological molecule functions primarily for information storage?",
+                options: ["Proteins", "Lipids", "Carbohydrates", "Nucleic Acids"],
+                correct: 3,
+                exp: "Nucleic acids (like DNA and RNA) function in information storage, structure, enzymes, and energy transfer[cite: 44, 45, 46]."
+            },
+            {
+                id: "mcq5",
+                q: "5. What provides a selective barrier to entry and exit of various substances to maintain internal homeostasis?",
+                options: ["Cell wall", "Cell membrane", "Cytoplasm", "Nucleus"],
+                correct: 1,
+                exp: "The surrounding cell membrane provides a selective barrier to entry and exit of various substances, allowing the cell to maintain homeostasis[cite: 97, 98]."
+            }
+        ],
+        tf: [
+            {
+                id: "tf1",
+                q: "1. All living organisms can obtain their energy directly from sunlight.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Animals and other forms of life cannot obtain their energy and raw materials from sunlight; they obtain it from plants and other animals[cite: 84, 85]."
+            },
+            {
+                id: "tf2",
+                q: "2. Biotechnology provides solutions to malnutrition by producing enriched food nutrients like Golden Rice.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. Biotechnology offered solutions by producing enriched food nutrients such as Golden Rice, Maize, potato, and soybean[cite: 11]."
+            },
+            {
+                id: "tf3",
+                q: "3. The ecosystem level includes only the living organisms in a given area.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Ecosystem includes all living organisms in a given area in addition to all the nonliving matter and energy[cite: 170]."
+            },
+            {
+                id: "tf4",
+                q: "4. Non-living things have the ability to create proteins, carbohydrates, lipids, and nucleic acids.",
+                options: ["True", "False"],
+                correct: 1, // False
+                exp: "False. Living organisms can combine various elements to create these molecules, which non-living things cannot create[cite: 24]."
+            },
+            {
+                id: "tf5",
+                q: "5. Evolution explains why there are many different forms of life today on Earth.",
+                options: ["True", "False"],
+                correct: 0, // True
+                exp: "True. Succession of many generations leads to adaptations, and evolution explains why there are many forms of life today on earth[cite: 120, 122, 123]."
+            }
+        ],
+        fill: [
+            {
+                id: "fill1",
+                q: "1. _________ are the smallest units of matter that join together to form molecules.",
+                correct: "atoms",
+                exp: "Atoms are the smallest units of matter. Atoms joined together into clusters called molecules[cite: 136]."
+            },
+            {
+                id: "fill2",
+                q: "2. The genetic material that determines the capacity of growth and reproduction is called _________.",
+                correct: "dna",
+                exp: "The genetic material stored in the cell determining capacity of growth and reproduction is called DNA[cite: 115]."
+            },
+            {
+                id: "fill3",
+                q: "3. _________ is the ability of living things to maintain relatively constant internal conditions.",
+                correct: "homeostasis",
+                exp: "All living things maintain homeostasis, meaning they must maintain relatively constant internal condition, different from their environment[cite: 95, 96]."
+            },
+            {
+                id: "fill4",
+                q: "4. When similar cells group and act as a functional unit, they become a _________.",
+                correct: "tissue",
+                exp: "When similar cells in groups act as a functional unit, they become a tissue[cite: 142]."
+            },
+            {
+                id: "fill5",
+                q: "5. Environmental pollution can be controlled through _________ of potential pollutants.",
+                correct: "biodegradation",
+                exp: "Environmental pollution can be controlled through biodegradation of potential pollutants[cite: 12]."
+            }
+        ],
+        match: [
+            {
+                id: "m1",
+                term: "1. Cell",
+                correct: 2,
+                exp: "A cell is the smallest unit representing all characteristics of life and carries out basic activities of living organisms[cite: 77, 78]."
+            },
+            {
+                id: "m2",
+                term: "2. Community",
+                correct: 3,
+                exp: "Community is several populations from different species that inhabit the same area and interact with each other[cite: 169]."
+            },
+            {
+                id: "m3",
+                term: "3. Organ System",
+                correct: 4,
+                exp: "An organ system is formed when organs work together to perform a general function[cite: 144]."
+            },
+            {
+                id: "m4",
+                term: "4. Biosphere",
+                correct: 0,
+                exp: "Biosphere is the highest level, where all ecosystems combine in the earth surface and atmosphere occupied by living organisms[cite: 171]."
+            },
+            {
+                id: "m5",
+                term: "5. Lipids",
+                correct: 1,
+                exp: "Lipids function in energy storage, insulation, cushioning, and forming membranes[cite: 50, 51, 52]."
+            }
+        ]
+    };
+
+    const matchOptions = [
+        "All ecosystems combined in the earth surface.",
+        "Molecules functioning in energy storage and membranes.",
+        "The smallest unit representing all characteristics of life.",
+        "Several populations from different species in the same area.",
+        "Organs working together to perform a general function."
+    ];
+
+    function checkAnswer(id, type, correctVal, expText, elementId) {
+        let userAns;
+        let isCorrect = false;
+
+        if (type === 'radio') {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("Please select an answer first.");
+                return;
+            }
+            userAns = parseInt(selected.value);
+            isCorrect = (userAns === correctVal);
+        } else if (type === 'text') {
+            const inputField = document.getElementById(`input_${id}`);
+            userAns = inputField.value.trim().toLowerCase();
+            if (userAns === "") {
+                alert("Please type an answer first.");
+                return;
+            }
+            isCorrect = (userAns === correctVal.toLowerCase());
+        } else if (type === 'select') {
+            const selectField = document.getElementById(`select_${id}`);
+            userAns = parseInt(selectField.value);
+            if (isNaN(userAns)) {
+                alert("Please select an option first.");
+                return;
+            }
+            isCorrect = (userAns === correctVal);
+        }
+
+        const feedbackDiv = document.getElementById(`feedback_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+        
+        if (isCorrect) {
+            feedbackDiv.innerHTML = `<strong>✔️ Correct!</strong> <div class="explanation">${expText}</div>`;
+            feedbackDiv.className = "feedback correct";
+        } else {
+            feedbackDiv.innerHTML = `<strong>❌ Incorrect.</strong> <div class="explanation">${expText}</div>`;
+            feedbackDiv.className = "feedback incorrect";
+        }
+        
+        btn.disabled = true; // Disable after checking
+    }
+
+    function renderQuiz() {
+        // Render MCQ
+        const mcqContainer = document.getElementById('mcq-section');
+        quizData.mcq.forEach((q, index) => {
+            let optionsHTML = "";
+            q.options.forEach((opt, i) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${i}"> ${opt}</label>`;
+            });
+            mcqContainer.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="btn-check" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render TF
+        const tfContainer = document.getElementById('tf-section');
+        quizData.tf.forEach((q, index) => {
+            let optionsHTML = "";
+            q.options.forEach((opt, i) => {
+                optionsHTML += `<label><input type="radio" name="${q.id}" value="${i}"> ${opt}</label>`;
+            });
+            tfContainer.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <button id="btn_${q.id}" class="btn-check" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Fill in the Blanks
+        const fillContainer = document.getElementById('fill-section');
+        quizData.fill.forEach((q, index) => {
+            fillContainer.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type your answer here...">
+                    <br>
+                    <button id="btn_${q.id}" class="btn-check" onclick="checkAnswer('${q.id}', 'text', '${q.correct}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Render Matching
+        const matchContainer = document.getElementById('match-section');
+        quizData.match.forEach((q, index) => {
+            let optionsHTML = `<option value="none" selected disabled>Select the correct definition...</option>`;
+            matchOptions.forEach((opt, i) => {
+                optionsHTML += `<option value="${i}">${opt}</option>`;
+            });
+            matchContainer.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">
+                        ${optionsHTML}
+                    </select>
+                    <br>
+                    <button id="btn_${q.id}" class="btn-check" onclick="checkAnswer('${q.id}', 'select', ${q.correct}, '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    // Initialize Quiz
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
