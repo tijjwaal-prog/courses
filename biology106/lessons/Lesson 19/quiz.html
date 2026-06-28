@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive System Quiz</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #2980b9;
+            --accent: #e67e22;
+            --bg: #ebf5fb;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f8f5;
+            --correct-text: #117a65;
+            --correct-border: #a3e4d7;
+            --incorrect-bg: #fdedec;
+            --incorrect-text: #922b21;
+            --incorrect-border: #f5b7b1;
+            --text: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-top: 8px solid var(--secondary);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.4em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid #d4e6f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            background-color: #fcfdfe;
+            border: 1px solid #d4e6f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .options label:hover {
+            background: #eaf2f8;
+            border-color: var(--secondary);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fef9e7;
+            border: 2px dashed var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #d35400;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 450px;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--secondary);
+        }
+
+        .check-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: #1f618d;
+        }
+
+        .check-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-icon {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            line-height: 1.5;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Reproductive System</h1>
+    <p class="subtitle">Interactive Quiz (Chapter 12: Pages 1-9) - Test your knowledge!</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Epididymides | Mitochondria | Inhibin | Sertoli | GnRH
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match the structure with its correct function or description.</p>
+    <div id="match-section"></div>
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "q_mcq_1",
+                q: "1. What is the main function of the acrosome located in the head of a mature sperm cell?",
+                options: [
+                    "A) It provides energy for the sperm's movement.",
+                    "B) It controls the production of testosterone.",
+                    "C) It stores enzymes needed to penetrate the egg.",
+                    "D) It stores the newly produced immature sperm."
+                ],
+                correct: 2, // C
+                correctStr: "C) It stores enzymes needed to penetrate the egg.",
+                exp: "Page 7 states that the head of the sperm contains a nucleus covered by a cap called the acrosome, which stores enzymes needed to penetrate the layers surrounding the human egg."
+            },
+            {
+                id: "q_mcq_2",
+                q: "2. Which hormone controls the production of the androgen testosterone by the interstitial (Leydig) cells in males?",
+                options: [
+                    "A) Follicle-stimulating hormone (FSH)",
+                    "B) Luteinizing hormone (LH)",
+                    "C) Gonadotropic releasing hormone (GnRH)",
+                    "D) Inhibin"
+                ],
+                correct: 1, // B
+                correctStr: "B) Luteinizing hormone (LH)",
+                exp: "Page 7 specifically explains that 'LH in males controls the production of the androgen testosterone by the interstitial cells (Leydig cells).'"
+            },
+            {
+                id: "q_mcq_3",
+                q: "3. Why must the testes descend into the scrotum for normal sperm development?",
+                options: [
+                    "A) To be closer to the urethra for ejaculation.",
+                    "B) To maintain a cooler temperature than the body cavity.",
+                    "C) To receive direct hormonal signals from the pituitary gland.",
+                    "D) To allow the epididymides to produce fluid."
+                ],
+                correct: 1, // B
+                correctStr: "B) To maintain a cooler temperature than the body cavity.",
+                exp: "Page 3 states that sterility occurs if testes do not descend because 'undescended testes developing in the body cavity are subject to higher body temperatures... A cooler temperature is critical for the normal development of sperm.'"
+            },
+            {
+                id: "q_mcq_4",
+                q: "4. According to Table 12-1, which of the following structures contributes fluid to the semen?",
+                options: [
+                    "A) Testes",
+                    "B) Vasa deferentia",
+                    "C) Urethra",
+                    "D) Prostate gland"
+                ],
+                correct: 3, // D
+                correctStr: "D) Prostate gland",
+                exp: "Table 12-1 on Page 4 lists the Seminal vesicles, Prostate gland, and Bulbourethral glands as structures that 'contribute fluid to semen'."
+            },
+            {
+                id: "q_mcq_5",
+                q: "5. What is the normal range of sperm count in the ejaculated semen of a healthy male?",
+                options: [
+                    "A) 1 to 5 million per milliliter",
+                    "B) 25 to 40 million per milliliter",
+                    "C) 50 to 150 million per milliliter",
+                    "D) Over 500 million per milliliter"
+                ],
+                correct: 2, // C
+                correctStr: "C) 50 to 150 million per milliliter",
+                exp: "Page 7 specifies: 'The ejaculated semen of a normal male contains between 50 and 150 million sperm per milliliter. If less than 25 million... infertility may result.'"
+            }
+        ],
+        tf: [
+            {
+                id: "q_tf_1",
+                q: "1. A gamete is a diploid cell that contains exactly 46 chromosomes in humans.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 1 defines a gamete as a HAPLOID cell that has one complete set of chromosomes; in humans that would be 22 autosomes and one sex chromosome (23 total)."
+            },
+            {
+                id: "q_tf_2",
+                q: "2. Vasectomy is a surgical form of birth control that involves severing or blocking the vasa deferentia.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 3 states: 'The vasa deferentia are severed or blocked in a surgical form of birth control called a vasectomy. Sperm are unable to complete their journey...'"
+            },
+            {
+                id: "q_tf_3",
+                q: "3. Spermatogenesis takes approximately 20 days for spermatogonia to fully develop into mature sperm.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 7 states explicitly: 'It takes approximately 74 days for spermatogonia to develop into sperm.'"
+            },
+            {
+                id: "q_tf_4",
+                q: "4. Testosterone is responsible for bringing about male secondary sex characteristics, such as a deeper voice and muscular development.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 8 confirms that testosterone brings about secondary sex characteristics like broader shoulders, deeper voice (larger larynx), greater muscular development, and facial hair."
+            },
+            {
+                id: "q_tf_5",
+                q: "5. The oviducts (fallopian tubes) are directly and firmly attached to the ovaries.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Pages 9-10 clarify: '...however, the oviducts are not attached to the ovaries. Instead, they have fingerlike projections called fimbriae that sweep over the ovaries.'"
+            }
+        ],
+        fill: [
+            {
+                id: "q_fill_1",
+                q: "1. Sperm produced in the seminiferous tubules mature within the _________, which are tightly coiled tubules lying just outside the testes.",
+                correct: "Epididymides",
+                exp: "Page 3 states: 'Sperm produced in the seminiferous tubules of the testes mature within the epididymides, which are tightly coiled tubules lying just outside the testes.'"
+            },
+            {
+                id: "q_fill_2",
+                q: "2. In the middle piece of the mature sperm, _________ are wrapped around the microtubules to provide the energy needed for movement.",
+                correct: "Mitochondria",
+                exp: "Page 7 mentions: 'In the middle piece, mitochondria are wrapped around the microtubules and provide the energy for movement.'"
+            },
+            {
+                id: "q_fill_3",
+                q: "3. The seminiferous tubules release a hormone called _________, which is involved in a negative feedback relationship to regulate sperm production.",
+                correct: "Inhibin",
+                exp: "Pages 7-8 state: 'All these hormones, including inhibin, a hormone released by the seminiferous tubules, are involved in a negative feedback relationship...'"
+            },
+            {
+                id: "q_fill_4",
+                q: "4. Located inside the seminiferous tubules are _________ cells, which support, nourish, and regulate the process of spermatogenesis.",
+                correct: "Sertoli",
+                exp: "Page 7 explains: 'Also present are Sertoli cells, which support, nourish, and regulate spermatogenesis.'"
+            },
+            {
+                id: "q_fill_5",
+                q: "5. The hypothalamus has ultimate control of sexual function by secreting a hormone called _________, which stimulates the anterior pituitary.",
+                correct: "GnRH",
+                exp: "Page 7 states: 'The hypothalamus... secretes a hormone called gonadotropic releasing hormone, or GnRH, that stimulates the anterior pituitary...'"
+            }
+        ],
+        match: [
+            {
+                id: "q_match_1",
+                term: "1. Vasa deferentia",
+                correctIndex: 2, // Matches C
+                correctStr: "Conduct and store sperm before they enter the ejaculatory ducts.",
+                exp: "Table 12-1 and Page 3 state the vasa deferentia conduct and store sperm, and propel them into the ejaculatory ducts during arousal."
+            },
+            {
+                id: "q_match_2",
+                term: "2. Urethra",
+                correctIndex: 4, // Matches E
+                correctStr: "Conducts both sperm and urine out of the male body through the penis.",
+                exp: "Table 12-1 notes the urethra conducts sperm (and urine) and is part of the penis structure."
+            },
+            {
+                id: "q_match_3",
+                term: "3. Fimbriae",
+                correctIndex: 0, // Matches A
+                correctStr: "Fingerlike projections of the oviducts that sweep over the ovaries.",
+                exp: "Page 10 states that oviducts have fingerlike projections called fimbriae that sweep over the ovaries to catch the oocyte."
+            },
+            {
+                id: "q_match_4",
+                term: "4. Seminal vesicles",
+                correctIndex: 3, // Matches D
+                correctStr: "Accessory glands that contribute fluid to the semen.",
+                exp: "Table 12-1 lists the seminal vesicles as glands that contribute fluid to semen."
+            },
+            {
+                id: "q_match_5",
+                term: "5. Testes",
+                correctIndex: 1, // Matches B
+                correctStr: "Male gonads that produce sperm and sex hormones like testosterone.",
+                exp: "Page 3 and Table 12-1 explain that the testes are the male gonads responsible for producing sperm and sex hormones."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) Fingerlike projections of the oviducts that sweep over the ovaries.",
+        "B) Male gonads that produce sperm and sex hormones like testosterone.",
+        "C) Conduct and store sperm before they enter the ejaculatory ducts.",
+        "D) Accessory glands that contribute fluid to the semen.",
+        "E) Conducts both sperm and urine out of the male body through the penis."
+    ];
+
+    function checkAnswer(id, type, correctValue, correctString, explanation) {
+        let isCorrect = false;
+
+        if (type === 'radio') {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("Please select an answer before checking!");
+                return;
+            }
+            const userIndex = parseInt(selected.value);
+            isCorrect = (userIndex === correctValue);
+        } else if (type === 'text') {
+            const inputElement = document.getElementById(`input_${id}`);
+            const userText = inputElement.value.trim().toLowerCase();
+            if (userText === "") {
+                alert("Please type a word from the bank!");
+                return;
+            }
+            isCorrect = (userText === correctValue.toLowerCase());
+        } else if (type === 'select') {
+            const selectElement = document.getElementById(`select_${id}`);
+            const userIndex = parseInt(selectElement.value);
+            if (isNaN(userIndex)) {
+                alert("Please select a definition from the dropdown list!");
+                return;
+            }
+            isCorrect = (userIndex === correctValue);
+        }
+
+        const feedbackBox = document.getElementById(`feedback_${id}`);
+        const submitBtn = document.getElementById(`btn_${id}`);
+
+        if (isCorrect) {
+            feedbackBox.className = "feedback correct";
+            feedbackBox.innerHTML = `<span class="feedback-icon">✔️ Correct!</span>
+                                     <div class="explanation">${explanation}</div>`;
+        } else {
+            feedbackBox.className = "feedback incorrect";
+            feedbackBox.innerHTML = `<span class="feedback-icon">❌ Incorrect.</span> The correct answer is: <b>${correctString}</b>
+                                     <div class="explanation"><b>Why is this the correct choice?</b><br>${explanation}</div>`;
+        }
+
+        submitBtn.disabled = true;
+        
+        // Disable inputs after checking
+        if (type === 'radio') {
+            document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+        } else if (type === 'text') {
+            document.getElementById(`input_${id}`).disabled = true;
+        } else if (type === 'select') {
+            document.getElementById(`select_${id}`).disabled = true;
+        }
+    }
+
+    function init() {
+        // Generate MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Fill in the Blanks
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type the answer from the word bank..." autocomplete="off">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'text', '${q.correct}', '${q.correct.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Matching
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let selectStr = `<option value="none" selected disabled>--- Select Corresponding Definition ---</option>`;
+            matchDefinitions.forEach((def, idx) => {
+                selectStr += `<option value="${idx}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${selectStr}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'select', ${q.correctIndex}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Human Reproductive System and Hormonal Regulation</title>
+    <style>
+        :root {
+            --primary: #880e4f;
+            --secondary: #c2185b;
+            --accent: #f48fb1;
+            --bg: #fce4ec;
+            --card-bg: #ffffff;
+            --correct-bg: #e8f5e9;
+            --correct-text: #2e7d32;
+            --correct-border: #a5d6a7;
+            --incorrect-bg: #ffebee;
+            --incorrect-text: #c62828;
+            --incorrect-border: #ef9a9a;
+            --text: #212121;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(136, 14, 79, 0.1);
+            border-top: 8px solid var(--primary);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.3em;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ad1457;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            background-color: #fffafb;
+            border: 1px solid var(--accent);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .options label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #f8bbd0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .options label:hover {
+            background: #fce4ec;
+            border-color: var(--secondary);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+
+        .word-bank {
+            background-color: #fff3e0;
+            border: 2px dashed #ffb300;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #e65100;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            max-width: 480px;
+            padding: 12px;
+            border: 1px solid #f8bbd0;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-top: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--secondary);
+        }
+
+        .check-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .check-btn:disabled {
+            background-color: #f8bbd0;
+            color: #fff;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 6px;
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: var(--correct-bg);
+            color: var(--correct-text);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: var(--incorrect-bg);
+            color: var(--incorrect-text);
+            border: 1px solid var(--incorrect-border);
+        }
+
+        .feedback-icon {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            margin-top: 8px;
+            line-height: 1.5;
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>The Human Reproductive System and Hormonal Regulation</h1>
+    <p class="subtitle">Interactive Quiz (Chapter 12: Pages 9-30) - Test your knowledge!</p>
+
+    <h2>Part 1: Multiple Choice (A-D)</h2>
+    <div id="mcq-section"></div>
+
+    <h2>Part 2: True / False</h2>
+    <div id="tf-section"></div>
+
+    <h2>Part 3: Fill in the Blanks</h2>
+    <div class="word-bank">
+        Word Bank: Colostrum | Endometrium | Menarche | Fimbriae | Progesterone
+    </div>
+    <div id="fill-section"></div>
+
+    <h2>Part 4: Matching (List A with List B)</h2>
+    <p style="margin-bottom: 15px; color: #555;">Match the term from the dropdown list to its correct definition.</p>
+    <div id="match-section"></div>
+</div>
+
+<script>
+    const quizData = {
+        mcq: [
+            {
+                id: "q_mcq_1",
+                q: "1. What condition results if an embryo embeds itself in a location other than the uterine lining, such as an oviduct?",
+                options: [
+                    "A) Tubal ligation",
+                    "B) Ectopic pregnancy",
+                    "C) Amenorrhea",
+                    "D) Parthenogenesis"
+                ],
+                correct: 1, // B
+                correctStr: "B) Ectopic pregnancy",
+                exp: "Page 10 states: 'If, by chance, the embryo should embed itself in another location, such as an oviduct, a so-called ectopic pregnancy results.'"
+            },
+            {
+                id: "q_mcq_2",
+                q: "2. Which hormone, secreted by the anterior pituitary, primarily promotes the development of a follicle during the first half of the ovarian cycle?",
+                options: [
+                    "A) Follicle-stimulating hormone (FSH)",
+                    "B) Progesterone",
+                    "C) Luteinizing hormone (LH)",
+                    "D) Human chorionic gonadotropin (HCG)"
+                ],
+                correct: 0, // A
+                correctStr: "A) Follicle-stimulating hormone (FSH)",
+                exp: "Page 15 notes: 'During the first half, or follicular phase, of the cycle, FSH promotes the development of a follicle that primarily secretes estrogen.'"
+            },
+            {
+                id: "q_mcq_3",
+                q: "3. During days 15-28 of a typical 28-day uterine cycle, the endometrium doubles in thickness and produces a thick mucoid secretion. What is this phase called?",
+                options: [
+                    "A) Proliferative phase",
+                    "B) Follicular phase",
+                    "C) Secretory phase",
+                    "D) Menstruation"
+                ],
+                correct: 2, // C
+                correctStr: "C) Secretory phase",
+                exp: "Page 17 explains: 'During days 15-28, increased production of progesterone by the corpus luteum causes the endometrium to double in thickness... This is called the secretory phase of the uterine cycle.'"
+            },
+            {
+                id: "q_mcq_4",
+                q: "4. What is the primary function of human chorionic gonadotropin (HCG) produced by the placenta during early pregnancy?",
+                options: [
+                    "A) It stimulates the anterior pituitary to produce LH and FSH.",
+                    "B) It causes the alveoli in the breast to produce milk.",
+                    "C) It causes the endometrium to disintegrate.",
+                    "D) It maintains the corpus luteum until the placenta produces its own progesterone and estrogen."
+                ],
+                correct: 3, // D
+                correctStr: "D) It maintains the corpus luteum until the placenta produces its own progesterone and estrogen.",
+                exp: "Page 19 states: 'At first, the placenta produces human chorionic gonadotropin (HCG), which maintains the corpus luteum until the placenta begins its own production of progesterone and estrogen.'"
+            },
+            {
+                id: "q_mcq_5",
+                q: "5. Which hormone stimulates the cells lining the alveoli in the female breast to produce milk (lactation)?",
+                options: [
+                    "A) Estrogen",
+                    "B) Prolactin",
+                    "C) Oxytocin",
+                    "D) Fibrinolysin"
+                ],
+                correct: 1, // B
+                correctStr: "B) Prolactin",
+                exp: "Page 19 and 21 state: 'Lactation, the production of milk by the cells of the alveoli, is caused by the hormone prolactin.'"
+            }
+        ],
+        tf: [
+            {
+                id: "q_tf_1",
+                q: "1. The oviducts (fallopian tubes) are securely attached to the ovaries to facilitate the transport of the released oocyte.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 10 clarifies: 'however, the oviducts are not attached to the ovaries. Instead, they have fingerlike projections called fimbriae that sweep over the ovaries.'"
+            },
+            {
+                id: "q_tf_2",
+                q: "2. When the sperm nucleus unites with the egg nucleus, a zygote containing 46 chromosomes is produced.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 12 states: 'When the sperm nucleus unites with the egg nucleus, a zygote with 46 chromosomes is produced.'"
+            },
+            {
+                id: "q_tf_3",
+                q: "3. During menstruation, an enzyme called fibrinolysin is released by dying cells to prevent the menstrual blood from clotting.",
+                options: ["True", "False"],
+                correct: 0, // True
+                correctStr: "True",
+                exp: "True. Page 18 notes: 'Fibrinolysin, an enzyme released by dying cells, prevents the blood from clotting.' during the menstrual flow."
+            },
+            {
+                id: "q_tf_4",
+                q: "4. Prolactin is primarily responsible for the development of female secondary sex characteristics, such as a wider pelvic girdle and greater fat accumulation.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 19 explains that ESTROGEN is largely responsible for the secondary sex characteristics in females, including body hair, fat distribution, and a wider pelvic girdle."
+            },
+            {
+                id: "q_tf_5",
+                q: "5. Menopause is considered complete immediately after a woman misses her first menstrual period.",
+                options: ["True", "False"],
+                correct: 1, // False
+                correctStr: "False",
+                exp: "False. Page 18 explicitly states: 'Menopause is not complete until menstruation is absent for a year.'"
+            }
+        ],
+        fill: [
+            {
+                id: "q_fill_1",
+                q: "1. The fingerlike projections of the oviducts that sweep over the ovaries to catch the released oocyte are called _________.",
+                correct: "Fimbriae",
+                exp: "Page 10 states: 'Instead, they have fingerlike projections called fimbriae (sing., fimbria) that sweep over the ovaries.'"
+            },
+            {
+                id: "q_fill_2",
+                q: "2. The developing embryo completes its development after embedding itself in the uterine lining, which is known as the _________.",
+                correct: "Endometrium",
+                exp: "Page 10 states: 'The embryo completes its development after embedding itself in the uterine lining, called the endometrium.'"
+            },
+            {
+                id: "q_fill_3",
+                q: "3. During the luteal phase of the ovarian cycle, LH promotes the development of the corpus luteum, which primarily secretes _________.",
+                correct: "Progesterone",
+                exp: "Page 15 states: 'During the second half, or luteal phase... LH promotes the development of the corpus luteum, which primarily secretes progesterone.'"
+            },
+            {
+                id: "q_fill_4",
+                q: "4. The first menstrual period, which typically occurs between the ages of 11 and 13, is called _________.",
+                correct: "Menarche",
+                exp: "Page 18 states: 'The first menstrual period, called menarche, typically occurs between the ages of 11 and 13.'"
+            },
+            {
+                id: "q_fill_5",
+                q: "5. Before milk production begins after delivery, the breasts produce a yellowish-white fluid called _________, which is rich in IgA antibodies.",
+                correct: "Colostrum",
+                exp: "Page 20 states: 'the breasts produce a watery, yellowish-white fluid called colostrum... rich in IgA antibodies that may provide some degree of immunity.'"
+            }
+        ],
+        match: [
+            {
+                id: "q_match_1",
+                term: "1. Cervix",
+                correctIndex: 1, // Matches B
+                correctStr: "The narrow end of the uterus that protrudes into the cavity of the vagina.",
+                exp: "Page 10 and Glossary (Page 25): 'The narrow end of the uterus is called the cervix.' and 'the part of the uterus that protrudes into the cavity of the vagina.'"
+            },
+            {
+                id: "q_match_2",
+                term: "2. Parthenogenesis",
+                correctIndex: 4, // Matches E
+                correctStr: "Reproduction by development of an unfertilized usually female gamete.",
+                exp: "Glossary (Page 28): 'Parthenogenesis: reproduction by development of an unfertilized usually female gamete...'"
+            },
+            {
+                id: "q_match_3",
+                term: "3. Viviparous",
+                correctIndex: 0, // Matches A
+                correctStr: "Producing living young instead of eggs from within the body.",
+                exp: "Glossary (Page 30): 'Viviparous: producing living young instead of eggs from within the body in the manner of nearly all mammals...'"
+            },
+            {
+                id: "q_match_4",
+                term: "4. Placenta",
+                correctIndex: 3, // Matches D
+                correctStr: "The vascular organ that unites the fetus to the maternal uterus and mediates its metabolic exchanges.",
+                exp: "Page 19 and Glossary (Page 28): The placenta is the region of exchange between the fetal blood and the mother's blood."
+            },
+            {
+                id: "q_match_5",
+                term: "5. Ovulation",
+                correctIndex: 2, // Matches C
+                correctStr: "The discharge of a mature ovum from the ovary, usually occurring on day 14.",
+                exp: "Page 12 and Glossary (Page 28): 'Ovulation: the discharge of a mature ovum from the ovary.' It usually occurs on day 14 of the cycle."
+            }
+        ]
+    };
+
+    const matchDefinitions = [
+        "A) Producing living young instead of eggs from within the body.",
+        "B) The narrow end of the uterus that protrudes into the cavity of the vagina.",
+        "C) The discharge of a mature ovum from the ovary, usually occurring on day 14.",
+        "D) The vascular organ that unites the fetus to the maternal uterus and mediates its metabolic exchanges.",
+        "E) Reproduction by development of an unfertilized usually female gamete."
+    ];
+
+    function checkAnswer(id, type, correctValue, correctString, explanation) {
+        let isCorrect = false;
+
+        if (type === 'radio') {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (!selected) {
+                alert("Please select an answer before checking!");
+                return;
+            }
+            const userIndex = parseInt(selected.value);
+            isCorrect = (userIndex === correctValue);
+        } else if (type === 'text') {
+            const inputElement = document.getElementById(`input_${id}`);
+            const userText = inputElement.value.trim().toLowerCase();
+            if (userText === "") {
+                alert("Please type a word from the bank!");
+                return;
+            }
+            isCorrect = (userText === correctValue.toLowerCase());
+        } else if (type === 'select') {
+            const selectElement = document.getElementById(`select_${id}`);
+            const userIndex = parseInt(selectElement.value);
+            if (isNaN(userIndex)) {
+                alert("Please select a definition from the dropdown list!");
+                return;
+            }
+            isCorrect = (userIndex === correctValue);
+        }
+
+        const feedbackBox = document.getElementById(`feedback_${id}`);
+        const submitBtn = document.getElementById(`btn_${id}`);
+
+        if (isCorrect) {
+            feedbackBox.className = "feedback correct";
+            feedbackBox.innerHTML = `<span class="feedback-icon">✔️ Correct!</span>
+                                     <div class="explanation">${explanation}</div>`;
+        } else {
+            feedbackBox.className = "feedback incorrect";
+            feedbackBox.innerHTML = `<span class="feedback-icon">❌ Incorrect.</span> The correct answer is: <b>${correctString}</b>
+                                     <div class="explanation"><b>Why is this the correct choice?</b><br>${explanation}</div>`;
+        }
+
+        submitBtn.disabled = true;
+        
+        // Disable inputs after checking
+        if (type === 'radio') {
+            document.querySelectorAll(`input[name="${id}"]`).forEach(el => el.disabled = true);
+        } else if (type === 'text') {
+            document.getElementById(`input_${id}`).disabled = true;
+        } else if (type === 'select') {
+            document.getElementById(`select_${id}`).disabled = true;
+        }
+    }
+
+    function init() {
+        // Generate MCQ
+        const mcqSec = document.getElementById('mcq-section');
+        quizData.mcq.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            mcqSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate TF
+        const tfSec = document.getElementById('tf-section');
+        quizData.tf.forEach(q => {
+            let optionsStr = "";
+            q.options.forEach((opt, idx) => {
+                optionsStr += `<label><input type="radio" name="${q.id}" value="${idx}"> ${opt}</label>`;
+            });
+            tfSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">${optionsStr}</div>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'radio', ${q.correct}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Fill in the Blanks
+        const fillSec = document.getElementById('fill-section');
+        quizData.fill.forEach(q => {
+            fillSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.q}</div>
+                    <input type="text" id="input_${q.id}" placeholder="Type the answer from the word bank..." autocomplete="off">
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'text', '${q.correct}', '${q.correct.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+
+        // Generate Matching
+        const matchSec = document.getElementById('match-section');
+        quizData.match.forEach(q => {
+            let selectStr = `<option value="none" selected disabled>--- Select Corresponding Definition ---</option>`;
+            matchDefinitions.forEach((def, idx) => {
+                selectStr += `<option value="${idx}">${def}</option>`;
+            });
+            matchSec.innerHTML += `
+                <div class="question-card">
+                    <div class="question-text">${q.term}</div>
+                    <select id="select_${q.id}">${selectStr}</select>
+                    <br>
+                    <button id="btn_${q.id}" class="check-btn" onclick="checkAnswer('${q.id}', 'select', ${q.correctIndex}, '${q.correctStr.replace(/'/g, "\\'")}', '${q.exp.replace(/'/g, "\\'")}')">Check Answer</button>
+                    <div id="feedback_${q.id}" class="feedback"></div>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
